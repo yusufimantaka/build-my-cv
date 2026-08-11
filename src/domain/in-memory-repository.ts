@@ -20,7 +20,7 @@ export class InMemoryRepository implements WorkspaceRepository {
         }
 
         if (foundPosition === -1) {
-            this.documents.push(document)
+            this.documents = [...this.documents, document]
         } else {
             this.documents[foundPosition] = document;
         }
