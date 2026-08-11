@@ -288,7 +288,7 @@ export default function BuildPage() {
 
       <div className="flex min-h-0 flex-1">
         {/* Panel kiri: daftar blok (sticky, scroll sendiri jika panjang) */}
-        <aside className="no-print flex w-52 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-[#1d1d1d] p-4">
+        <aside className="no-print no-scrollbar flex w-52 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-[#1d1d1d] p-4">
           <h2 className="text-sm font-medium">Tambah blok</h2>
           <div className="mt-3 flex flex-col gap-2">
             <button onClick={() => tambahBlok("header")} className="rounded-md bg-white/5 px-3 py-2 text-left text-sm hover:bg-white/10">
@@ -307,7 +307,7 @@ export default function BuildPage() {
         </aside>
 
         {/* Tengah: kertas A4 — satu-satunya area yang scroll */}
-        <section className="print-area min-w-0 flex-1 overflow-y-auto bg-[#1d1d1d] p-6">
+        <section className="print-area no-scrollbar min-w-0 flex-1 overflow-y-auto bg-[#1d1d1d] p-6">
           {Array.from({ length: jumlahHalaman }, (_, page) => (
             <div
               key={page}
@@ -414,7 +414,7 @@ export default function BuildPage() {
         </section>
 
         {/* Panel kanan: properti blok (sticky, scroll sendiri jika panjang) */}
-        <aside className="no-print flex w-80 shrink-0 flex-col overflow-y-auto border-l border-white/10 bg-[#1d1d1d] p-4">
+        <aside className="no-print no-scrollbar flex w-80 shrink-0 flex-col overflow-y-auto border-l border-white/10 bg-[#1d1d1d] p-4">
           <h2 className="text-sm font-medium">Properti</h2>
           {blokTerpilih ? (
             <EditorBlok blok={blokTerpilih} onChange={perbaruiBlok} />
@@ -526,7 +526,7 @@ function PreviewBlok({ blok }: { blok: CVBlock }) {
 
 function EditorBlok({ blok, onChange }: { blok: CVBlock; onChange: (b: CVBlock) => void }) {
   // Kontrol gaya berlaku untuk semua jenis blok
-  const style = blok.style ?? { fontSize: 16, color: "#171717", spacing: 24 };
+  const style = blok.style ?? { fontSize: 16, color: "#171717" };
 
   function ubahStyle(perubahan: Partial<BlockStyle>): void {
     onChange({ ...blok, style: { ...style, ...perubahan } });
@@ -542,38 +542,25 @@ function EditorBlok({ blok, onChange }: { blok: CVBlock; onChange: (b: CVBlock) 
 
       <div className="rounded border border-white/10 p-3">
         <p className="text-xs text-[#a7a39a]">Ukuran & warna</p>
-        <div className="mt-2 flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-xs">
-              Font
-              <input
-                type="number"
-                min={8}
-                max={48}
-                value={style.fontSize}
-                onChange={(e) => ubahStyle({ fontSize: Number(e.target.value) })}
-                className="w-16 rounded bg-white/5 px-2 py-1 text-sm outline-none focus:bg-white/10"
-              />
-            </label>
-            <label className="flex items-center gap-2 text-xs">
-              Warna
-              <input
-                type="color"
-                value={style.color}
-                onChange={(e) => ubahStyle({ color: e.target.value })}
-                className="h-8 w-10 cursor-pointer rounded border border-white/20 bg-transparent"
-              />
-            </label>
-          </div>
+        <div className="mt-2 flex items-center gap-3">
           <label className="flex items-center gap-2 text-xs">
-            Jarak antar blok (px)
+            Font
             <input
               type="number"
-              min={0}
-              max={120}
-              value={style.spacing ?? 24}
-              onChange={(e) => ubahStyle({ spacing: Number(e.target.value) })}
+              min={8}
+              max={48}
+              value={style.fontSize}
+              onChange={(e) => ubahStyle({ fontSize: Number(e.target.value) })}
               className="w-16 rounded bg-white/5 px-2 py-1 text-sm outline-none focus:bg-white/10"
+            />
+          </label>
+          <label className="flex items-center gap-2 text-xs">
+            Warna
+            <input
+              type="color"
+              value={style.color}
+              onChange={(e) => ubahStyle({ color: e.target.value })}
+              className="h-8 w-10 cursor-pointer rounded border border-white/20 bg-transparent"
             />
           </label>
         </div>

@@ -25,6 +25,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Sembunyikan scrollbar tapi tetap bisa scroll */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Export PDF: hanya kertas yang tampil saat print */
 @media print {
   @page {
@@ -52,10 +61,12 @@ body {
     margin: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    break-after: page;
   }
 
-  .paper-sheet:last-child {
-    break-after: auto;
+  /* Kertas kedua dan seterusnya mulai di halaman baru.
+     Dipakai break-before, bukan break-after, supaya kertas
+     terakhir tidak menghasilkan halaman kosong ekstra. */
+  .paper-sheet + .paper-sheet {
+    break-before: page;
   }
 }
