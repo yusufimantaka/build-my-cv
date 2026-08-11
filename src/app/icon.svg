@@ -1,0 +1,13 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="14" fill="#3F6382"/>
+  <!-- Kertas CV -->
+  <rect x="14" y="10" width="36" height="44" rx="4" fill="#F6F3ED"/>
+  <!-- Garis nama -->
+  <rect x="19" y="17" width="20" height="4" rx="2" fill="#171717" opacity="0.75"/>
+  <!-- Garis judul -->
+  <rect x="19" y="25" width="13" height="3" rx="1.5" fill="#7895B2"/>
+  <!-- Blok section -->
+  <rect x="19" y="34" width="26" height="3" rx="1.5" fill="#3F6382" opacity="0.55"/>
+  <rect x="19" y="41" width="22" height="3" rx="1.5" fill="#E4DDCD"/>
+  <rect x="19" y="47" width="17" height="3" rx="1.5" fill="#E4DDCD"/>
+</svg>
