@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { IndexedDBRepository } from "@/domain/indexed-db-repository";
@@ -517,7 +517,7 @@ export default function BuildPage() {
             title="Seret untuk ubah lebar"
             className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-full bg-[#171717]/10 transition-colors hover:bg-[#3f6382]"
           />
-          <h2 className="flex items-center gap-2 border-b border-[#171717]/10 pb-3 text-sm font-semibold text-[#3f6382]">
+          <h2 className="sticky top-0 z-10 -mx-4 flex items-center gap-2 border-b border-[#171717]/10 bg-white/85 px-4 pb-3 pt-1 text-sm font-semibold text-[#3f6382] backdrop-blur-md">
             <iconify-icon icon="mdi:tune-variant" width="16" height="16" />
             Properti
           </h2>
@@ -635,17 +635,36 @@ function TeksEditable({
     placeholder?: string;
     style?: React.CSSProperties;
 }) {
+    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+    const selectionRef = useRef<{ start: number; end: number } | null>(null);
     const kelas =
         "w-full resize-none rounded-sm border-none bg-transparent p-0 outline-none transition-shadow focus:ring-1 focus:ring-[#7895b2]/60 " +
         className;
     // Input/textarea tidak mewarisi font dari parent secara default,
     // jadi font-size dan warna di-set ke inherit (bisa ditimpa via style).
     const gaya: React.CSSProperties = { fontSize: "inherit", color: "inherit", ...style };
+
+    useLayoutEffect(() => {
+        const element = inputRef.current;
+        const selection = selectionRef.current;
+        if (!element || !selection || document.activeElement !== element) return;
+        element.setSelectionRange(selection.start, selection.end);
+    }, [value]);
+
+    function ubahTeks(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+        selectionRef.current = {
+            start: event.target.selectionStart ?? event.target.value.length,
+            end: event.target.selectionEnd ?? event.target.value.length,
+        };
+        onUbah(event.target.value);
+    }
+
     if (multiline) {
         return (
             <textarea
+                ref={inputRef as React.RefObject<HTMLTextAreaElement>}
                 value={value}
-                onChange={(e) => onUbah(e.target.value)}
+                onChange={ubahTeks}
                 placeholder={placeholder}
                 rows={2}
                 style={gaya}
@@ -655,8 +674,9 @@ function TeksEditable({
     }
     return (
         <input
+            ref={inputRef as React.RefObject<HTMLInputElement>}
             value={value}
-            onChange={(e) => onUbah(e.target.value)}
+            onChange={ubahTeks}
             placeholder={placeholder}
             style={gaya}
             className={kelas}
@@ -1006,6 +1026,103 @@ function EditorBlok({
   );
 }
 
+function FotoProfil({
+  photo,
+  onChange,
+}: {
+  photo?: string;
+  onChange: (photo: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
+  const [processing, setProcessing] = useState(false);
+
+  function pilihFile(): void {
+    inputRef.current?.click();
+  }
+
+  function prosesFile(file: File): void {
+    if (!file.type.startsWith("image/")) return;
+    setProcessing(true);
+    resizeFoto(file).then((dataUrl) => {
+      onChange(dataUrl);
+      setProcessing(false);
+    });
+  }
+
+  function hapusFoto(): void {
+    onChange("");
+  }
+
+  return (
+    <div className="rounded-xl border border-[#171717]/10 bg-[#f6f3ed] p-4">
+      <div className="flex items-center gap-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#7895b2]/40 bg-white text-[#7895b2]">
+          {photo ? (
+            <img src={photo} alt="Foto profil" className="h-full w-full object-cover" />
+          ) : (
+            <iconify-icon icon="mdi:account-outline" width="24" height="24" />
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold">Foto profil</p>
+          <p className="mt-0.5 text-xs text-[#6e6a5e]">
+            {photo ? "Foto tersimpan di perangkat ini" : "Tambahkan foto agar header lebih personal"}
+          </p>
+        </div>
+        {photo && (
+          <button
+            type="button"
+            onClick={hapusFoto}
+            title="Hapus foto"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#ff746c] transition-transform hover:scale-105 hover:bg-[#ff746c]/10 active:scale-95"
+          >
+            <iconify-icon icon="mdi:trash-can-outline" width="17" height="17" />
+          </button>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={pilihFile}
+        onDragEnter={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragOver={(e) => e.preventDefault()}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          const file = e.dataTransfer.files[0];
+          if (file) prosesFile(file);
+        }}
+        className={
+          "mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed px-3 py-2 text-xs transition-colors " +
+          (dragging
+            ? "border-[#3f6382] bg-[#3f6382]/10 text-[#3f6382]"
+            : "border-[#171717]/20 bg-white text-[#6e6a5e] hover:border-[#3f6382] hover:bg-white")
+        }
+      >
+        <iconify-icon icon={photo ? "mdi:image-edit-outline" : "mdi:cloud-upload-outline"} width="17" height="17" />
+        {processing ? "Memproses foto…" : photo ? "Ganti foto" : "Upload foto"}
+      </button>
+      <p className="mt-2 text-center text-[11px] text-[#8a8578]">JPG, PNG, atau WEBP · maksimal 200px</p>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) prosesFile(file);
+          e.target.value = "";
+        }}
+      />
+    </div>
+  );
+}
+
 function EditorHeader({
   blok,
   onChange,
@@ -1019,37 +1136,7 @@ function EditorHeader({
 
   return (
     <div className="flex flex-col gap-3">
-      {blok.data.photo && (
-        <div className="flex items-center justify-between">
-          <img
-            src={blok.data.photo}
-            alt="Foto profil"
-            className="h-14 w-14 rounded-full border border-[#171717]/15 object-cover"
-          />
-          <button
-            onClick={() => ubah("photo", "")}
-            title="Hapus foto"
-            className="flex h-7 w-7 items-center justify-center rounded text-[#ff746c] transition-transform hover:scale-110 hover:bg-[#ff746c]/10 active:scale-95"
-          >
-            <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
-          </button>
-        </div>
-      )}
-      <label className="flex flex-col gap-1">
-        <span className="text-xs text-[#6e6a5e]">Foto profil</span>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              resizeFoto(file).then((dataUrl) => ubah("photo", dataUrl));
-            }
-            e.target.value = "";
-          }}
-          className="text-sm"
-        />
-      </label>
+      <FotoProfil photo={blok.data.photo} onChange={(photo) => ubah("photo", photo)} />
       <LabelInput label="Nama" value={blok.data.fullName} onUbah={(v) => ubah("fullName", v)} />
       <LabelInput label="Judul" value={blok.data.title} onUbah={(v) => ubah("title", v)} />
       <LabelInput label="Email" value={blok.data.email} onUbah={(v) => ubah("email", v)} />
