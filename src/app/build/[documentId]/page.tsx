@@ -636,7 +636,7 @@ function TeksEditable({
     if (multiline) {
         // rows mengikuti jumlah baris isi, supaya textarea tumbuh
         // dan kertas menyesuaikan tinggi secara dinamis.
-        const jumlahBaris = Math.min(Math.max(value.split("\n").length, 2), 30);
+        const jumlahBaris = Math.min(Math.max(value.split("\n").length, 1), 30);
         return (
             <textarea
                 ref={inputRef as React.RefObject<HTMLTextAreaElement>}
@@ -664,7 +664,7 @@ function TeksEditable({
 function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => void }) {
   const fontSize = blok.style?.fontSize ?? 16;
   const color = blok.style?.color ?? "#171717";
-  const gap = 6;
+  const gap = 3;
 
   if (blok.type === "header") {
     return (
