@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-/* Dark mode manual: class .dark di <html> (toggle, bukan ikut OS) */
-@custom-variant dark (&:where(.dark, .dark *));
-
 :root {
   /* Tema terang: broken white + ink (gaya Notion) */
   --app-bg: #f7f7f5;
@@ -13,18 +10,6 @@
   --hair: rgba(23, 23, 23, 0.1);
   --background: #f7f7f5;
   --foreground: #37352f;
-}
-
-.dark {
-  /* Tema gelap: kertas dokumen tetap putih, UI jadi gelap */
-  --app-bg: #191919;
-  --panel-bg: #202020;
-  --panel-2: #2b2b2b;
-  --ink: #f0f0f0;
-  --muted: #9b9a97;
-  --hair: rgba(255, 255, 255, 0.12);
-  --background: #191919;
-  --foreground: #f0f0f0;
 }
 
 @theme inline {
@@ -73,13 +58,6 @@
     to {
       opacity: 1;
     }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
   }
 }
 

@@ -41,7 +41,7 @@ UI → Repository → IndexedDB. UI tidak pernah menyentuh IndexedDB langsung.
 - `src/app/_components/dashboard.tsx` — dashboard: kategori, search, sort, zoom grid, backup/restore JSON
 - `src/app/_components/template-thumb.tsx` — thumbnail kertas template (akui band/sidebar/bar)
 - `src/app/_components/landscape-bg.tsx` — mengembalikan null (latar polos ala Notion)
-- `src/app/_components/topnav.tsx` — TopNav sticky, dark mode toggle, AI Chat "Segera" modal, CTA GitHub
+- `src/app/_components/topnav.tsx` — TopNav sticky, AI Chat "Segera" modal, CTA GitHub
 - `src/app/library/page.tsx` — contoh CV siap pakai (templatesContoh) dengan filter kategori
 - `src/app/explore/page.tsx` — katalog template desain (templatesDesain) dengan filter kategori
 - `src/app/build/[documentId]/page.tsx` — editor blok (panel Layers, rich text contentEditable, floating controls, multi-halaman, export PDF via print CSS)
@@ -73,9 +73,9 @@ UI → Repository → IndexedDB. UI tidak pernah menyentuh IndexedDB langsung.
 
 ## Tema
 
-- Background app: broken white `#f7f7f5` (var `--app-bg`), dark mode `#191919` (class `.dark` di `<html>`)
-- Kertas dokumen: putih murni `#ffffff` — tetap putih di dark mode
-- Ink: `#37352f` (var `--ink`, terang `#f0f0f0` di dark), muted `#787774`, border `--hair`
+- Background app: broken white `#f7f7f5` (var `--app-bg`)
+- Kertas dokumen: putih murni `#ffffff`
+- Ink: `#37352f` (var `--ink`), muted `#787774`, border `--hair`
 - Aksen interaksi: `#2383E2` (ring fokus) — badge kategori memakai `ink`, bukan warna aksen template
 - Danger: `#ff746c`
 - Sudut: semua sharp (`rounded-none`) — kontrol native select/color diratakan via CSS

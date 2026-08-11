@@ -14,8 +14,6 @@ export default function TopNav() {
     const pathname = usePathname();
     const [showAiChat, setShowAiChat] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    // Inisialisasi dari class .dark di <html> (di-set script di <head>)
-    const [dark, setDark] = useState(() => typeof document !== "undefined" && document.documentElement.classList.contains("dark"));
 
     useEffect(() => {
         function onScroll(): void {
@@ -25,17 +23,6 @@ export default function TopNav() {
         onScroll();
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
-
-    function toggleTema(): void {
-        const next = !dark;
-        setDark(next);
-        document.documentElement.classList.toggle("dark", next);
-        try {
-            localStorage.setItem("theme", next ? "dark" : "light");
-        } catch {
-            // penyimpanan lokal tidak tersedia — abaikan
-        }
-    }
 
     return (
         <>
@@ -69,15 +56,8 @@ export default function TopNav() {
                     );
                 })}
                 <button
-                    onClick={toggleTema}
-                    title={dark ? "Mode terang" : "Mode gelap"}
-                    className="ml-auto flex h-8 w-8 items-center justify-center rounded-none text-ink transition-colors hover:bg-panel2"
-                >
-                    <iconify-icon icon={dark ? "mdi:white-balance-sunny" : "mdi:weather-night"} width="16" height="16" />
-                </button>
-                <button
                     onClick={() => setShowAiChat(true)}
-                    className="flex items-center gap-2 rounded-none px-3 py-1.5 text-sm text-ink transition-colors hover:bg-panel2"
+                    className="ml-auto flex items-center gap-2 rounded-none px-3 py-1.5 text-sm text-ink transition-colors hover:bg-panel2"
                 >
                     <iconify-icon icon="mdi:robot-outline" width="15" height="15" className="text-ink" />
                     AI Chat

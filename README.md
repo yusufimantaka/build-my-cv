@@ -16,7 +16,6 @@ Buat CV dari blok-blok. Simpan di perangkatmu. Tidak perlu akun. Tidak perlu ser
 - **Explore** — katalog template desain dengan gaya berbeda.
 - **Layout dokumen** — pilih satu kolom atau dua kolom, warna aksen, dan font (sans/serif/mono).
 - **Foto profil** — upload foto di header, otomatis dikecilkan dan disimpan lokal.
-- **Dark mode** — toggle terang/gelap, tersimpan di browser.
 - **Multi halaman** — tambah dan hapus halaman A4.
 - **Kertas A4** — preview menyerupai kertas sungguhan.
 - **Export PDF** — cetak dari browser, hasil satu halaman per kertas.
