@@ -70,6 +70,14 @@ body {
   display: none;
 }
 
+/* Semua sudut siku (gaya sharp, tanpa rounded) — termasuk kontrol
+   native browser (select, color input) yang punya radius bawaan */
+select,
+input[type="color"],
+input[type="range"] {
+  border-radius: 0;
+}
+
 /* Field teks kaya (gaya Notion): placeholder abu-abu saat kosong */
 .rich-teks:empty::before {
   content: attr(data-placeholder);

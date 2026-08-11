@@ -55,7 +55,7 @@ export default function LibraryPage() {
                                 key={k}
                                 onClick={() => setFilter(k)}
                                 className={
-                                    "rounded-full px-4 py-1.5 text-sm transition-colors " +
+                                    "rounded-none px-4 py-1.5 text-sm transition-colors " +
                                     (aktif
                                         ? "bg-[#37352F] font-medium text-white"
                                         : "border border-[#171717]/15 bg-white text-[#171717] hover:bg-[#efefef]")
@@ -71,7 +71,7 @@ export default function LibraryPage() {
                     {tampil.map((t, idx) => (
                         <li
                             key={t.id}
-                            className="flex animate-fade-up flex-col rounded-md border border-[#171717]/15 bg-white p-4 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
+                            className="flex animate-fade-up flex-col rounded-none border border-[#171717]/15 bg-white p-4 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
                             style={{ animationDelay: `${Math.min(idx * 50, 400)}ms` }}
                         >
                             {/* Thumbnail template */}
@@ -80,7 +80,7 @@ export default function LibraryPage() {
                             <div className="mt-4 flex items-start justify-between gap-2">
                                 <h2 className="font-semibold leading-tight">{t.name}</h2>
                                 <span
-                                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium"
+                                    className="shrink-0 rounded-none px-2 py-0.5 text-[10px] font-medium"
                                     style={{ background: `${t.accent}1A`, color: t.accent }}
                                 >
                                     {NAMA_KATEGORI[t.category]}
@@ -90,7 +90,7 @@ export default function LibraryPage() {
 
                             <button
                                 onClick={() => pakaiTemplate(t.id)}
-                                className="mt-4 flex items-center justify-center gap-2 rounded-md bg-[#37352F] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#2f2b26] hover:scale-[1.02] active:scale-95"
+                                className="mt-4 flex items-center justify-center gap-2 rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#2f2b26] hover:scale-[1.02] active:scale-95"
                             >
                                 <iconify-icon icon="mdi:plus" width="15" height="15" />
                                 Pakai template

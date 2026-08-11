@@ -44,7 +44,7 @@ export default function TopNav() {
                             key={item.href}
                             href={item.href}
                             className={
-                                "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors " +
+                                "flex items-center gap-2 rounded-none px-3 py-1.5 text-sm transition-colors " +
                                 (aktif
                                     ? "bg-[#37352F] text-white"
                                     : "text-[#171717] hover:bg-[#efefef]")
@@ -57,11 +57,11 @@ export default function TopNav() {
                 })}
                 <button
                     onClick={() => setShowAiChat(true)}
-                    className="ml-auto flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-[#171717] transition-colors hover:bg-[#efefef]"
+                    className="ml-auto flex items-center gap-2 rounded-none px-3 py-1.5 text-sm text-[#171717] transition-colors hover:bg-[#efefef]"
                 >
                     <iconify-icon icon="mdi:robot-outline" width="15" height="15" className="text-[#37352F]" />
                     AI Chat
-                    <span className="rounded-full bg-[#37352F]/10 px-2 py-0.5 text-[10px] font-medium text-[#37352F]">
+                    <span className="rounded-none bg-[#37352F]/10 px-2 py-0.5 text-[10px] font-medium text-[#37352F]">
                         Segera
                     </span>
                 </button>
@@ -69,7 +69,7 @@ export default function TopNav() {
                     href="https://github.com/yusufimantaka/build-my-cv"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="ml-2 flex items-center gap-2 rounded-md bg-[#171717] px-3 py-1.5 text-sm font-medium text-white transition-transform hover:scale-[1.03] active:scale-95"
+                    className="ml-2 flex items-center gap-2 rounded-none bg-[#171717] px-3 py-1.5 text-sm font-medium text-white transition-transform hover:scale-[1.03] active:scale-95"
                 >
                     <iconify-icon icon="mdi:github" width="15" height="15" />
                     GitHub
@@ -78,19 +78,19 @@ export default function TopNav() {
 
             {showAiChat && (
                 <div className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/40">
-                    <div className="w-full max-w-sm animate-pop rounded-md bg-white p-6 text-center shadow-xl">
+                    <div className="w-full max-w-sm animate-pop rounded-none bg-white p-6 text-center shadow-xl">
                         <iconify-icon icon="mdi:robot-outline" width="48" height="48" className="text-[#37352F]" />
                         <h2 className="mt-3 text-lg font-semibold">AI Chat</h2>
                         <p className="mt-2 text-sm text-[#787774]">
                             Bantu tulis dan perbaiki CV dengan AI. Segera hadir.
                         </p>
-                        <span className="mt-3 inline-block rounded-full bg-[#37352F]/10 px-3 py-1 text-xs font-medium text-[#37352F]">
+                        <span className="mt-3 inline-block rounded-none bg-[#37352F]/10 px-3 py-1 text-xs font-medium text-[#37352F]">
                             Coming soon
                         </span>
                         <div className="mt-5 flex justify-center">
                             <button
                                 onClick={() => setShowAiChat(false)}
-                                className="rounded-md bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
+                                className="rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
                             >
                                 Tutup
                             </button>

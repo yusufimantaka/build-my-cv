@@ -355,14 +355,14 @@ export default function BuildPage() {
             value={doc.title}
             onChange={(e) => ubahJudul(e.target.value)}
             placeholder="Judul CV"
-            className="w-64 rounded-md border border-transparent bg-transparent px-2 py-1 text-base font-semibold outline-none transition-colors hover:border-[#171717]/15 focus:border-[#37352F] focus:bg-white"
+            className="w-64 rounded-none border border-transparent bg-transparent px-2 py-1 text-base font-semibold outline-none transition-colors hover:border-[#171717]/15 focus:border-[#37352F] focus:bg-white"
           />
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-[#787774]">Tersimpan lokal</span>
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-2 rounded-md bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
+            className="flex items-center gap-2 rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
           >
             <iconify-icon icon="mdi:file-pdf-box" width="16" height="16" />
             Export PDF
@@ -373,30 +373,30 @@ export default function BuildPage() {
       <div className="min-h-0 flex-1">
         {/* Panel kiri: daftar blok (floating pill kiri, bisa di-resize) */}
         <aside
-          className="no-print no-scrollbar fixed left-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col gap-1 overflow-y-auto rounded-2xl border border-[#171717]/10 bg-white p-2 shadow-lg lg:flex"
+          className="no-print no-scrollbar fixed left-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col gap-1 overflow-y-auto rounded-none border border-[#171717]/10 bg-white p-2 shadow-lg lg:flex"
           style={{ width: leftWidth }}
         >
           <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#37352F]">
             <iconify-icon icon="mdi:view-grid-plus" width="14" height="14" />
             Tambah blok
           </h2>
-          <button onClick={() => tambahBlok("header")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
+          <button onClick={() => tambahBlok("header")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
             <iconify-icon icon="mdi:account-circle-outline" width="16" height="16" className="text-[#37352F]" />
             Header
           </button>
-          <button onClick={() => tambahBlok("experience")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
+          <button onClick={() => tambahBlok("experience")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
             <iconify-icon icon="mdi:briefcase-outline" width="16" height="16" className="text-[#37352F]" />
             Experience
           </button>
-          <button onClick={() => tambahBlok("skills")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
+          <button onClick={() => tambahBlok("skills")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
             <iconify-icon icon="mdi:lightbulb-on-outline" width="16" height="16" className="text-[#37352F]" />
             Skills
           </button>
-          <button onClick={() => tambahBlok("custom")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
+          <button onClick={() => tambahBlok("custom")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
             <iconify-icon icon="mdi:text-box-outline" width="16" height="16" className="text-[#37352F]" />
             Section
           </button>
-          <button onClick={() => tambahBlok("paragraph")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
+          <button onClick={() => tambahBlok("paragraph")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
             <iconify-icon icon="mdi:format-paragraph" width="16" height="16" className="text-[#37352F]" />
             Paragraf
           </button>
@@ -425,7 +425,7 @@ export default function BuildPage() {
                           setSelectedPage(page);
                         }}
                         className={
-                          "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 transition-colors " +
+                          "flex cursor-pointer items-center gap-1.5 rounded-none px-2.5 py-1.5 transition-colors " +
                           (selectedId === blok.id ? "bg-[#37352F] text-white" : "hover:bg-[#efefef]")
                         }
                       >
@@ -483,7 +483,7 @@ export default function BuildPage() {
           <div
             onMouseDown={mulaiDragKiri}
             title="Seret untuk ubah lebar"
-            className="absolute -right-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-full bg-[#171717]/10 transition-colors hover:bg-[#37352F]"
+            className="absolute -right-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-none bg-[#171717]/10 transition-colors hover:bg-[#37352F]"
           />
         </aside>
 
@@ -614,7 +614,7 @@ export default function BuildPage() {
           <div className="no-print mt-2 text-center">
             <button
               onClick={tambahHalaman}
-              className="rounded-md border border-[#171717]/15 px-4 py-2 text-sm text-[#171717] hover:bg-[#e8e8e6]"
+              className="rounded-none border border-[#171717]/15 px-4 py-2 text-sm text-[#171717] hover:bg-[#e8e8e6]"
             >
               + Tambah halaman
             </button>
@@ -623,14 +623,14 @@ export default function BuildPage() {
 
         {/* Panel kanan: properti blok (floating pill kanan, bisa di-resize) */}
         <aside
-          className="no-print no-scrollbar fixed right-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col overflow-y-auto rounded-2xl border border-[#171717]/10 bg-white shadow-lg lg:flex"
+          className="no-print no-scrollbar fixed right-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col overflow-y-auto rounded-none border border-[#171717]/10 bg-white shadow-lg lg:flex"
           style={{ width: rightWidth }}
         >
           {/* Handle resize panel kanan */}
           <div
             onMouseDown={mulaiDragKanan}
             title="Seret untuk ubah lebar"
-            className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-full bg-[#171717]/10 transition-colors hover:bg-[#37352F]"
+            className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-none bg-[#171717]/10 transition-colors hover:bg-[#37352F]"
           />
           {/* Header menempel penuh ke tepi atas panel (tanpa padding panel
               di atasnya), jadi blur menutup seluruh lebar saat scroll. */}
@@ -759,7 +759,7 @@ function TeksEditable({
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     const selectionRef = useRef<{ start: number; end: number } | null>(null);
     const kelas =
-        "resize-none rounded-sm border-none bg-transparent p-0 outline-none transition-shadow focus:ring-1 focus:ring-[#2383E2]/60 " +
+        "resize-none rounded-none border-none bg-transparent p-0 outline-none transition-shadow focus:ring-1 focus:ring-[#2383E2]/60 " +
         className;
     // Input/textarea tidak mewarisi font dari parent secara default,
     // jadi font-size dan warna di-set ke inherit (bisa ditimpa via style).
@@ -885,7 +885,7 @@ function TeksRich({
     return (
         <div className="relative">
             {fokus && adaSeleksi && (
-                <div className="absolute -top-7 left-0 z-10 flex items-center gap-0.5 rounded-md border border-[#171717]/10 bg-white px-1 py-0.5 shadow-md">
+                <div className="absolute -top-7 left-0 z-10 flex items-center gap-0.5 rounded-none border border-[#171717]/10 bg-white px-1 py-0.5 shadow-md">
                     <button
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
@@ -990,7 +990,7 @@ function PreviewBlok({
         <div style={{ fontSize: `${fontSize}px`, color: "#ffffff" }}>
           <div className="-m-1.5 flex items-center gap-4 p-6" style={{ background: accent }}>
             {blok.data.photo && (
-              <img src={blok.data.photo} alt="Foto profil" className="h-20 w-20 shrink-0 rounded-full border-2 border-white/60 object-cover" />
+              <img src={blok.data.photo} alt="Foto profil" className="h-20 w-20 shrink-0 rounded-none border-2 border-white/60 object-cover" />
             )}
             <div className="min-w-0 flex-1">
               <TeksEditable
@@ -1033,7 +1033,7 @@ function PreviewBlok({
         <div style={{ fontSize: `${fontSize}px`, color }}>
           <div className="-m-1.5 mb-1.5 flex items-center gap-4 bg-[#EEF0EE] p-5">
             {blok.data.photo && (
-              <img src={blok.data.photo} alt="Foto profil" className="h-16 w-16 shrink-0 rounded-full object-cover" />
+              <img src={blok.data.photo} alt="Foto profil" className="h-16 w-16 shrink-0 rounded-none object-cover" />
             )}
             <div className="min-w-0 flex-1">
               <TeksEditable
@@ -1076,7 +1076,7 @@ function PreviewBlok({
       <div style={{ fontSize: `${fontSize}px`, color }}>
         <div className={"flex items-center gap-4 " + (headerStyle === "center" && !sidebarMode ? "flex-col text-center" : "")}>
           {blok.data.photo && (
-            <img src={blok.data.photo} alt="Foto profil" className="h-20 w-20 shrink-0 rounded-full object-cover" />
+            <img src={blok.data.photo} alt="Foto profil" className="h-20 w-20 shrink-0 rounded-none object-cover" />
           )}
           <div className="min-w-0 flex-1">
             <TeksEditable
@@ -1399,9 +1399,9 @@ function FotoProfil({
   }
 
   return (
-    <div className="rounded-xl border border-[#171717]/10 bg-[#f7f7f5] p-4">
+    <div className="rounded-none border border-[#171717]/10 bg-[#f7f7f5] p-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#2383E2]/40 bg-white text-[#2383E2]">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-none border border-[#2383E2]/40 bg-white text-[#2383E2]">
           {photo ? (
             <img src={photo} alt="Foto profil" className="h-full w-full object-cover" />
           ) : (
@@ -1419,7 +1419,7 @@ function FotoProfil({
             type="button"
             onClick={hapusFoto}
             title="Hapus foto"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#ff746c] transition-transform hover:scale-105 hover:bg-[#ff746c]/10 active:scale-95"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-[#ff746c] transition-transform hover:scale-105 hover:bg-[#ff746c]/10 active:scale-95"
           >
             <iconify-icon icon="mdi:trash-can-outline" width="17" height="17" />
           </button>
@@ -1442,7 +1442,7 @@ function FotoProfil({
           if (file) prosesFile(file);
         }}
         className={
-          "mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed px-3 py-2 text-xs transition-colors " +
+          "mt-3 flex w-full items-center justify-center gap-2 rounded-none border border-dashed px-3 py-2 text-xs transition-colors " +
           (dragging
             ? "border-[#37352F] bg-[#37352F]/10 text-[#37352F]"
             : "border-[#171717]/20 bg-white text-[#787774] hover:border-[#37352F] hover:bg-white")
@@ -1523,7 +1523,7 @@ function EditorExperience({
 
   return (
     <div className="flex flex-col gap-2">
-      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-md bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
+      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah item
       </button>
@@ -1603,7 +1603,7 @@ function EditorSkills({
 
   return (
     <div className="flex flex-col gap-2">
-      <button onClick={tambahSkill} className="flex items-center justify-center gap-1.5 rounded-md bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
+      <button onClick={tambahSkill} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah skill
       </button>
@@ -1677,7 +1677,7 @@ function EditorCustom({
 
   return (
     <div className="flex flex-col gap-2">
-      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-md bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
+      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah item
       </button>
