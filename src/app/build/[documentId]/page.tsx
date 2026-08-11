@@ -454,6 +454,7 @@ export default function BuildPage() {
                           onPindah={(arah) => pindahBlok(blok.id, arah)}
                           onHapus={() => hapusBlok(blok.id)}
                           onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
+                          onUbah={perbaruiBlok}
                         />
                       ))}
                   </div>
@@ -471,6 +472,7 @@ export default function BuildPage() {
                           onPindah={(arah) => pindahBlok(blok.id, arah)}
                           onHapus={() => hapusBlok(blok.id)}
                           onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
+                          onUbah={perbaruiBlok}
                         />
                       ))}
                   </div>
@@ -487,6 +489,7 @@ export default function BuildPage() {
                     onPindah={(arah) => pindahBlok(blok.id, arah)}
                     onHapus={() => hapusBlok(blok.id)}
                     onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
+                    onUbah={perbaruiBlok}
                   />
                 ))
               )}
@@ -542,6 +545,7 @@ function BlokEditor({
     onPindah,
     onHapus,
     onSeretKeBlok,
+    onUbah,
 }: {
     blok: CVBlock;
     index: number;
@@ -551,6 +555,7 @@ function BlokEditor({
     onPindah: (arah: number) => void;
     onHapus: () => void;
     onSeretKeBlok: (draggedId: string) => void;
+    onUbah: (b: CVBlock) => void;
 }) {
     return (
         <div
@@ -607,12 +612,59 @@ function BlokEditor({
                     <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
                 </button>
             </div>
-            <PreviewBlok blok={blok} />
+            <PreviewBlok blok={blok} onUbah={onUbah} />
         </div>
     );
 }
 
-function PreviewBlok({ blok }: { blok: CVBlock }) {
+// Input/textarea yang tampil seperti teks biasa di kertas.
+// Tanpa border dan background; hanya ring tipis saat fokus.
+// Saat print, nilai tercetak seperti teks normal.
+function TeksEditable({
+    value,
+    onUbah,
+    multiline = false,
+    className = "",
+    placeholder = "",
+    style,
+}: {
+    value: string;
+    onUbah: (nilai: string) => void;
+    multiline?: boolean;
+    className?: string;
+    placeholder?: string;
+    style?: React.CSSProperties;
+}) {
+    const kelas =
+        "w-full resize-none rounded-sm border-none bg-transparent p-0 outline-none transition-shadow focus:ring-1 focus:ring-[#7895b2]/60 " +
+        className;
+    // Input/textarea tidak mewarisi font dari parent secara default,
+    // jadi font-size dan warna di-set ke inherit (bisa ditimpa via style).
+    const gaya: React.CSSProperties = { fontSize: "inherit", color: "inherit", ...style };
+    if (multiline) {
+        return (
+            <textarea
+                value={value}
+                onChange={(e) => onUbah(e.target.value)}
+                placeholder={placeholder}
+                rows={2}
+                style={gaya}
+                className={kelas}
+            />
+        );
+    }
+    return (
+        <input
+            value={value}
+            onChange={(e) => onUbah(e.target.value)}
+            placeholder={placeholder}
+            style={gaya}
+            className={kelas}
+        />
+    );
+}
+
+function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => void }) {
   const fontSize = blok.style?.fontSize ?? 16;
   const color = blok.style?.color ?? "#171717";
 
@@ -627,14 +679,33 @@ function PreviewBlok({ blok }: { blok: CVBlock }) {
               className="h-20 w-20 shrink-0 rounded-full object-cover"
             />
           )}
-          <div>
-            <h2 className="font-bold" style={{ fontSize: "1.9em" }}>
-              {blok.data.fullName || "Nama Lengkap"}
-            </h2>
-            <p style={{ fontSize: "1.2em" }}>{blok.data.title || "Judul / Posisi"}</p>
-            <p className="opacity-60" style={{ fontSize: "0.85em" }}>
-              {[blok.data.email, blok.data.phone].filter(Boolean).join(" · ")}
-            </p>
+          <div className="min-w-0 flex-1">
+            <TeksEditable
+              value={blok.data.fullName}
+              onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, fullName: v } })}
+              placeholder="Nama Lengkap"
+              className="font-bold"
+              style={{ fontSize: "1.9em" }}
+            />
+            <TeksEditable
+              value={blok.data.title}
+              onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, title: v } })}
+              placeholder="Judul / Posisi"
+              style={{ fontSize: "1.2em" }}
+            />
+            <div className="flex gap-3 opacity-60" style={{ fontSize: "0.85em" }}>
+              <TeksEditable
+                value={blok.data.email}
+                onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, email: v } })}
+                placeholder="email@contoh.com"
+              />
+              <span aria-hidden="true">·</span>
+              <TeksEditable
+                value={blok.data.phone}
+                onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, phone: v } })}
+                placeholder="Telepon"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -644,25 +715,63 @@ function PreviewBlok({ blok }: { blok: CVBlock }) {
   if (blok.type === "experience") {
     return (
       <div style={{ fontSize: `${fontSize}px`, color }}>
-        <h3
+        <TeksEditable
+          value={blok.name ?? ""}
+          onUbah={(v) => onUbah({ ...blok, name: v })}
+          placeholder="Nama section"
           className="mb-2 border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
-          style={{ fontSize: "0.9em" }}
-        >
-          {blok.name || "Pengalaman"}
-        </h3>
+        />
         {blok.data.items.length === 0 ? (
           <p className="text-sm opacity-50">Belum ada item.</p>
         ) : (
           blok.data.items.map((item, i) => (
             <div key={i} className="mb-3">
-              <div className="flex items-baseline justify-between">
-                <p className="font-semibold">{item.title || "Posisi"}</p>
-                <p className="opacity-60" style={{ fontSize: "0.85em" }}>
-                  {item.period}
-                </p>
+              <div className="flex items-baseline gap-3">
+                <TeksEditable
+                  value={item.title}
+                  onUbah={(v) =>
+                    onUbah({
+                      ...blok,
+                      data: { items: blok.data.items.map((x, j) => (j === i ? { ...x, title: v } : x)) },
+                    })
+                  }
+                  placeholder="Posisi"
+                  className="font-semibold"
+                />
+                <TeksEditable
+                  value={item.period}
+                  onUbah={(v) =>
+                    onUbah({
+                      ...blok,
+                      data: { items: blok.data.items.map((x, j) => (j === i ? { ...x, period: v } : x)) },
+                    })
+                  }
+                  placeholder="Periode"
+                  className="w-32 shrink-0 text-right opacity-60"
+                />
               </div>
-              <p>{item.company}</p>
-              <p className="opacity-70">{item.description}</p>
+              <TeksEditable
+                value={item.company}
+                onUbah={(v) =>
+                  onUbah({
+                    ...blok,
+                    data: { items: blok.data.items.map((x, j) => (j === i ? { ...x, company: v } : x)) },
+                  })
+                }
+                placeholder="Perusahaan"
+              />
+              <TeksEditable
+                value={item.description}
+                onUbah={(v) =>
+                  onUbah({
+                    ...blok,
+                    data: { items: blok.data.items.map((x, j) => (j === i ? { ...x, description: v } : x)) },
+                  })
+                }
+                placeholder="Deskripsi"
+                multiline
+                className="opacity-70"
+              />
             </div>
           ))
         )}
@@ -673,18 +782,30 @@ function PreviewBlok({ blok }: { blok: CVBlock }) {
   if (blok.type === "skills") {
     return (
       <div style={{ fontSize: `${fontSize}px`, color }}>
-        <h3
+        <TeksEditable
+          value={blok.name ?? ""}
+          onUbah={(v) => onUbah({ ...blok, name: v })}
+          placeholder="Nama section"
           className="mb-2 border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
-          style={{ fontSize: "0.9em" }}
-        >
-          {blok.name || "Keahlian"}
-        </h3>
+        />
         {blok.data.skills.length === 0 ? (
           <p className="text-sm opacity-50">Belum ada skill.</p>
         ) : (
           <ul className="list-inside list-disc">
             {blok.data.skills.map((skill, i) => (
-              <li key={i}>{skill}</li>
+              <li key={i}>
+                <TeksEditable
+                  value={skill}
+                  onUbah={(v) =>
+                    onUbah({
+                      ...blok,
+                      data: { skills: blok.data.skills.map((s, j) => (j === i ? v : s)) },
+                    })
+                  }
+                  placeholder="Skill"
+                  className="ml-0 inline-block w-5/6 align-baseline"
+                />
+              </li>
             ))}
           </ul>
         )}
@@ -694,20 +815,41 @@ function PreviewBlok({ blok }: { blok: CVBlock }) {
 
   return (
     <div style={{ fontSize: `${fontSize}px`, color }}>
-      <h3
+      <TeksEditable
+        value={blok.name ?? ""}
+        onUbah={(v) => onUbah({ ...blok, name: v })}
+        placeholder="Nama section"
         className="mb-2 border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
-        style={{ fontSize: "0.9em" }}
-      >
-        {blok.name || "Section"}
-      </h3>
+      />
       {blok.data.items.length === 0 ? (
         <p className="text-sm opacity-50">Belum ada item.</p>
       ) : (
         <ul className="list-inside">
           {blok.data.items.map((item, i) => (
             <li key={i} className="mb-1">
-              {item.label && <span className="font-semibold">{item.label}: </span>}
-              {item.value}
+              <TeksEditable
+                value={item.label}
+                onUbah={(v) =>
+                  onUbah({
+                    ...blok,
+                    data: { items: blok.data.items.map((x, j) => (j === i ? { ...x, label: v } : x)) },
+                  })
+                }
+                placeholder="Label"
+                className="inline-block w-1/3 align-baseline font-semibold"
+              />
+              <span aria-hidden="true">: </span>
+              <TeksEditable
+                value={item.value}
+                onUbah={(v) =>
+                  onUbah({
+                    ...blok,
+                    data: { items: blok.data.items.map((x, j) => (j === i ? { ...x, value: v } : x)) },
+                  })
+                }
+                placeholder="Isi"
+                className="inline-block w-3/5 align-baseline"
+              />
             </li>
           ))}
         </ul>
@@ -841,6 +983,18 @@ function EditorBlok({
               className="h-8 w-10 cursor-pointer rounded border border-[#171717]/20 bg-transparent"
             />
           </label>
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <label className="text-xs text-[#6e6a5e]">Jarak antar blok</label>
+          <input
+            type="range"
+            min={0}
+            max={64}
+            value={style.spacing ?? 24}
+            onChange={(e) => ubahStyle({ spacing: Number(e.target.value) })}
+            className="flex-1 accent-[#3f6382]"
+          />
+          <span className="w-8 text-right text-xs text-[#6e6a5e]">{style.spacing ?? 24}px</span>
         </div>
       </div>
 
