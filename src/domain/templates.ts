@@ -3,6 +3,7 @@ import type {
     CustomData,
     CVDocument,
     CVBlock,
+    DocumentFont,
     ExperienceData,
     HeaderData,
     SkillsData,
@@ -12,10 +13,10 @@ import type {
 // Blok template = blok CV tanpa id/order/visible/page.
 // id dan urutan diisi saat template dipakai menjadi dokumen baru.
 export type TemplateBlok =
-    | { type: "header"; name?: string; style?: BlockStyle; data: HeaderData }
-    | { type: "experience"; name?: string; style?: BlockStyle; data: ExperienceData }
-    | { type: "skills"; name?: string; style?: BlockStyle; data: SkillsData }
-    | { type: "custom"; name?: string; style?: BlockStyle; data: CustomData };
+    | { type: "header"; name?: string; sidebar?: boolean; style?: BlockStyle; data: HeaderData }
+    | { type: "experience"; name?: string; sidebar?: boolean; style?: BlockStyle; data: ExperienceData }
+    | { type: "skills"; name?: string; sidebar?: boolean; style?: BlockStyle; data: SkillsData }
+    | { type: "custom"; name?: string; sidebar?: boolean; style?: BlockStyle; data: CustomData };
 
 export interface CVTemplate {
     id: string;
@@ -24,6 +25,12 @@ export interface CVTemplate {
     accent: string;
     description: string;
     blocks: TemplateBlok[];
+    // Gaya template (dikunci, disalin ke dokumen saat dipakai):
+    layout?: "single" | "sidebar";
+    sidebarColor?: string;
+    headerStyle?: "center" | "band" | "topbar" | "sidebar";
+    sectionStyle?: "rule" | "bar";
+    font?: DocumentFont;
 }
 
 const styleHeader: BlockStyle = { fontSize: 24, color: "#171717" };
@@ -51,7 +58,14 @@ function skills(name: string, daftar: string[]): TemplateBlok {
     return { type: "skills", name, style: styleIsi, data: { skills: daftar } };
 }
 
-export const templates: CVTemplate[] = [
+// Blok untuk kolom sidebar (hanya dipakai template dengan layout "sidebar").
+// Teksnya dibuat putih karena sidebar berlatar warna gelap.
+function sidebar(blok: TemplateBlok): TemplateBlok {
+    const gaya = { fontSize: blok.style?.fontSize ?? 14, color: "#ffffff" };
+    return { ...blok, sidebar: true, style: gaya };
+}
+
+const templatesDasar: CVTemplate[] = [
     // ── First Job ──────────────────────────────────────────────
     {
         id: "kepanitiaan-kampus",
@@ -390,8 +404,315 @@ export const templates: CVTemplate[] = [
     },
 ];
 
+// ── Template v2 (gaya dari referensi: header band / topbar / sidebar,
+//    section rule / bar, font serif / sans) ──────────────────────
+
+const templateV2: CVTemplate[] = [
+    // Classic Clear: single, header center serif, section rule, formal.
+    {
+        id: "classic-clear",
+        name: "Classic Clear",
+        category: "simple",
+        accent: "#171717",
+        description: "Formal dan bersih: header tengah, garis tipis, font serif.",
+        layout: "single",
+        headerStyle: "center",
+        sectionStyle: "rule",
+        font: "serif",
+        blocks: [
+            header("Nama Lengkap", "Project Manager", "nama@mail.ugm.ac.id", "0812-3456-7890"),
+            custom("Ringkasan", [
+                { label: "", value: "Project manager dengan 6 tahun pengalaman mengoordinasikan inisiatif lintas tim di bidang teknologi dan operasional bisnis." },
+            ]),
+            experience("Pengalaman Profesional", [
+                {
+                    title: "Project Manager",
+                    company: "Perusahaan Digital",
+                    period: "2022 - sekarang",
+                    description: "Memimpin rencana rilis di tim produk, engineering, dan operasional. Mengoordinasikan update stakeholder dan laporan milestone.",
+                },
+                {
+                    title: "Project Coordinator",
+                    company: "Solusi Teknologi",
+                    period: "2019 - 2022",
+                    description: "Mendukung jadwal, anggaran, dan dokumentasi inisiatif transformasi. Memfasilitasi rapat tim dan log aksi antar divisi.",
+                },
+            ]),
+            custom("Pendidikan", [
+                { label: "Universitas Gadjah Mada", value: "S1 Manajemen, 2016 - 2020" },
+            ]),
+            skills("Keahlian", ["Perencanaan Proyek", "Manajemen Risiko", "Agile", "Jira", "Excel"]),
+        ],
+    },
+
+    // True Blue: single, section rule, aksen biru korporat.
+    {
+        id: "true-blue",
+        name: "True Blue",
+        category: "simple",
+        accent: "#1F4E8C",
+        description: "Korporat modern: heading biru dengan garis pembatas biru.",
+        layout: "single",
+        headerStyle: "center",
+        sectionStyle: "rule",
+        font: "sans",
+        blocks: [
+            header("Nama Lengkap", "Sales Manager", "nama@mail.ugm.ac.id", "0812-3456-7890"),
+            custom("Ringkasan", [
+                { label: "", value: "Sales professional dengan 8 tahun pengalaman mendukung pertumbuhan pendapatan di lingkungan B2B." },
+            ]),
+            experience("Pengalaman Profesional", [
+                {
+                    title: "Sales Manager",
+                    company: "Solusi Nexora",
+                    period: "2022 - sekarang",
+                    description: "Mengelola tim account executive. Meningkatkan akurasi pipeline tracking dan laporan forecast mingguan.",
+                },
+                {
+                    title: "Senior Sales Specialist",
+                    company: "BrightPath Systems",
+                    period: "2019 - 2022",
+                    description: "Mencapai target kuartalan melalui consultative selling dan ekspansi akun.",
+                },
+            ]),
+            custom("Pendidikan", [
+                { label: "Universitas Indonesia", value: "S1 Marketing, 2014 - 2018" },
+            ]),
+            skills("Keahlian", ["Sales Strategy", "Revenue Growth", "Negosiasi", "CRM", "Forecasting"]),
+        ],
+    },
+
+    // Editorial Rule: single, serif, section rule abu, padat.
+    {
+        id: "editorial-rule",
+        name: "Editorial Rule",
+        category: "modern",
+        accent: "#333333",
+        description: "Gaya editorial: serif, garis abu tipis, padat dan teratur.",
+        layout: "single",
+        headerStyle: "center",
+        sectionStyle: "rule",
+        font: "serif",
+        blocks: [
+            header("Nama Lengkap", "Operations Manager", "nama@mail.ugm.ac.id", "0812-3456-7890"),
+            custom("Ringkasan", [
+                { label: "", value: "Professional operasional dengan 7+ tahun pengalaman mendukung logistik, perbaikan proses, dan koordinasi lintas fungsi." },
+            ]),
+            experience("Pengalaman Profesional", [
+                {
+                    title: "Operations Manager",
+                    company: "Nova Retail Group",
+                    period: "2022 - sekarang",
+                    description: "Memimpin operasi harian di gudang, procurement, dan tim pendukung. Meningkatkan akurasi pesanan 15%.",
+                },
+                {
+                    title: "Operations Coordinator",
+                    company: "Urban Freight Solutions",
+                    period: "2019 - 2022",
+                    description: "Mengoordinasikan jadwal transportasi dan menyelesaikan eskalasi pengiriman.",
+                },
+            ]),
+            custom("Pendidikan", [
+                { label: "Universitas Gadjah Mada", value: "M.Sc Manajemen, 2015 - 2017" },
+            ]),
+            skills("Keahlian", ["Process Improvement", "Vendor Management", "KPI Reporting", "SAP", "Excel"]),
+        ],
+    },
+
+    // Mercury Flow: single, header topbar abu + foto, section bar.
+    {
+        id: "mercury-flow",
+        name: "Mercury Flow",
+        category: "modern",
+        accent: "#4A5D4E",
+        description: "Modern ringan: header abu-abu dengan foto, section bar lembut.",
+        layout: "single",
+        headerStyle: "topbar",
+        sectionStyle: "bar",
+        font: "sans",
+        blocks: [
+            header("Nama Lengkap", "Sales Manager", "nama@mail.ugm.ac.id", "0812-3456-7890"),
+            custom("Ringkasan", [
+                { label: "", value: "Sales professional dengan 6 tahun pengalaman di account growth, client relationship, dan pipeline development B2B." },
+            ]),
+            experience("Pengalaman Profesional", [
+                {
+                    title: "Sales Manager",
+                    company: "BrightPath Business Solutions",
+                    period: "2023 - sekarang",
+                    description: "Mengelola portofolio klien mid-market. Meningkatkan conversion rate tim 14%.",
+                },
+                {
+                    title: "Account Manager",
+                    company: "Horizon Office Supply",
+                    period: "2020 - 2022",
+                    description: "Memegang aktivitas sales inbound dan outbound untuk akun bisnis regional.",
+                },
+            ]),
+            custom("Pendidikan", [
+                { label: "Universitas Bina Nusantara", value: "S1 Business Administration, 2014 - 2018" },
+            ]),
+            skills("Keahlian", ["Account Management", "Negosiasi", "CRM", "Client Retention", "Sales Forecasting"]),
+        ],
+    },
+
+    // Steady Form: single, topbar abu biru + foto, section bar.
+    {
+        id: "steady-form",
+        name: "Steady Form",
+        category: "creative",
+        accent: "#5B6B8C",
+        description: "Terstruktur lapang: header abu-biru dengan foto, bar section pucat.",
+        layout: "single",
+        headerStyle: "topbar",
+        sectionStyle: "bar",
+        font: "sans",
+        blocks: [
+            header("Nama Lengkap", "Project Engineer", "nama@mail.ugm.ac.id", "0812-3456-7890"),
+            custom("Ringkasan", [
+                { label: "", value: "Project engineer dengan 6 tahun pengalaman mendukung proyek industri dan infrastruktur di lingkungan engineering cepat." },
+            ]),
+            experience("Pengalaman Profesional", [
+                {
+                    title: "Project Engineer",
+                    company: "PT Infrastruktur Nusantara",
+                    period: "2022 - sekarang",
+                    description: "Memimpin koordinasi proyek upgrade utilitas. Meningkatkan akurasi tracking proyek dan standarisasi laporan.",
+                },
+                {
+                    title: "Mechanical Engineer",
+                    company: "PT Rekayasa Mesin",
+                    period: "2019 - 2021",
+                    description: "Mendukung instalasi peralatan untuk proyek manufaktur. Menjaga kepatuhan standar keselamatan.",
+                },
+            ]),
+            custom("Pendidikan", [
+                { label: "Institut Teknologi Bandung", value: "S1 Teknik Mesin, 2013 - 2017" },
+            ]),
+            skills("Keahlian", ["Project Coordination", "Vendor Management", "Quality Assurance", "AutoCAD"]),
+        ],
+    },
+
+    // Cobalt Edge: header band teal + foto, section rule.
+    {
+        id: "cobalt-edge",
+        name: "Cobalt Edge",
+        category: "creative",
+        accent: "#1B6B7A",
+        description: "Korporat kontemporer: band header teal penuh lebar dengan foto.",
+        layout: "single",
+        headerStyle: "band",
+        sectionStyle: "rule",
+        font: "sans",
+        blocks: [
+            header("Nama Lengkap", "Sales Manager", "nama@mail.ugm.ac.id", "0812-3456-7890"),
+            custom("Ringkasan", [
+                { label: "", value: "Sales professional dengan 7 tahun pengalaman di B2B account growth, client relationship, dan sales execution regional." },
+            ]),
+            experience("Pengalaman Profesional", [
+                {
+                    title: "Sales Manager",
+                    company: "Grupo Delta Comercial",
+                    period: "2022 - sekarang",
+                    description: "Mengelola akun regional dan konsisten melampaui target pendapatan kuartalan.",
+                },
+                {
+                    title: "Senior Sales Executive",
+                    company: "Nova Industrial Solutions",
+                    period: "2019 - 2021",
+                    description: "Memegang akun B2B kunci dan menghasilkan pertumbuhan sales year-over-year.",
+                },
+            ]),
+            custom("Pendidikan", [
+                { label: "Universitas Gadjah Mada", value: "S1 Business Administration, 2014 - 2018" },
+            ]),
+            skills("Keahlian", ["Account Management", "Pipeline Forecasting", "CRM", "Revenue Growth", "Client Retention"]),
+        ],
+    },
+
+    // Atlantic Blue: sidebar navy, foto di sidebar, section rule.
+    {
+        id: "atlantic-blue",
+        name: "Atlantic Blue",
+        category: "photo",
+        accent: "#17384A",
+        description: "Dua kolom: sidebar biru laut dengan foto dan kontak, konten utama putih.",
+        layout: "sidebar",
+        sidebarColor: "#17384A",
+        headerStyle: "sidebar",
+        sectionStyle: "rule",
+        font: "sans",
+        blocks: [
+            sidebar(header("Nama Lengkap", "Business Development Consultant", "nama@mail.ugm.ac.id", "0812-3456-7890")),
+            sidebar(custom("Profil", [{ label: "", value: "Konsultan pengembangan bisnis dengan passion membantu perusahaan mencapai potensi pertumbuhan." }])),
+            sidebar(skills("Bahasa", ["Indonesia", "Inggris", "Spanyol"])),
+            experience("Pengalaman Kerja", [
+                {
+                    title: "Business Development Consultant",
+                    company: "PT Aplikasi Bisnis",
+                    period: "2022 - sekarang",
+                    description: "Mengembangkan dan mengimplementasikan rencana strategis yang meningkatkan peluang bisnis baru 30%.",
+                },
+                {
+                    title: "Business Development",
+                    company: "Nexus Consulting",
+                    period: "2018 - 2022",
+                    description: "Bekerja dengan perusahaan teknologi untuk menyediakan layanan konsultasi dan advisory.",
+                },
+            ]),
+            custom("Pendidikan", [
+                { label: "Harvard Business School", value: "MBA, 2016 - 2018" },
+            ]),
+            skills("Keahlian", ["Strategic Thinking", "Relationship Building", "Negosiasi", "Team Management"]),
+        ],
+    },
+
+    // Hunter Green: sidebar hijau tua, foto, section rule.
+    {
+        id: "hunter-green",
+        name: "Hunter Green",
+        category: "photo",
+        accent: "#1E4D3C",
+        description: "Dua kolom: sidebar hijau tua dengan kontak dan ringkasan, riwayat di kanan.",
+        layout: "sidebar",
+        sidebarColor: "#1E4D3C",
+        headerStyle: "sidebar",
+        sectionStyle: "rule",
+        font: "sans",
+        blocks: [
+            sidebar(header("Nama Lengkap", "Sales Manager", "nama@mail.ugm.ac.id", "0812-3456-7890")),
+            sidebar(custom("Ringkasan", [{ label: "", value: "Sales manager hasil-tinggi dengan 6 tahun pengalaman di B2B sales dan account development." }])),
+            sidebar(skills("Bahasa", ["Indonesia", "Arab", "Inggris"])),
+            experience("Pengalaman Profesional", [
+                {
+                    title: "Sales Manager",
+                    company: "Tunisie Connect",
+                    period: "2022 - sekarang",
+                    description: "Mengelola portofolio akun bisnis kunci. Memimpin perencanaan sales kuartalan.",
+                },
+                {
+                    title: "Senior Sales Executive",
+                    company: "Maghreb Business Solutions",
+                    period: "2019 - 2021",
+                    description: "Memegang siklus sales penuh dari prospecting sampai negosiasi dan closing.",
+                },
+            ]),
+            custom("Pendidikan", [
+                { label: "Universitas Indonesia", value: "S1 Marketing, 2015 - 2017" },
+            ]),
+            skills("Keahlian", ["Account Management", "Lead Generation", "Negosiasi", "CRM", "Sales Forecasting"]),
+        ],
+    },
+];
+
+// Semua template: yang lama (dasar, Bahasa Indonesia) + template v2
+// (gaya dari referensi). Library menampilkan keduanya.
+export const templates: CVTemplate[] = [...templatesDasar, ...templateV2];
+
 // Mengubah template menjadi dokumen CV baru.
 // Setiap blok mendapat id baru agar tidak bentrok dengan dokumen lain.
+// Gaya template (layout/sidebar/header/section/font) ikut disalin —
+// dikunci dari template, bukan kontrol user.
 export function templateKeDokumen(template: CVTemplate, judul: string): CVDocument {
     const blocks: CVBlock[] = [];
     for (let i = 0; i < template.blocks.length; i++) {
@@ -411,7 +732,11 @@ export function templateKeDokumen(template: CVTemplate, judul: string): CVDocume
         templateId: template.id,
         templateCategory: template.category,
         accentColor: template.accent,
-        font: "sans",
+        font: template.font ?? "sans",
+        layout: template.layout ?? "single",
+        sidebarColor: template.sidebarColor,
+        headerStyle: template.headerStyle ?? "center",
+        sectionStyle: template.sectionStyle ?? "rule",
         updatedAt: Date.now(),
     };
 }

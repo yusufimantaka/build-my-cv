@@ -4,7 +4,6 @@ export interface HeaderData {
     email: string;
     phone: string;
     photo?: string; // data URL hasil upload
-    photoSize?: number; // diameter foto profil (px), default 80
 }
 
 export interface ExperienceItem {
@@ -37,10 +36,10 @@ export interface BlockStyle {
 }
 
 export type CVBlock =
-| {id: string; type: 'header'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: HeaderData}
-| {id: string; type: 'experience'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: ExperienceData}
-| {id: string; type: 'skills'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: SkillsData}
-| {id: string; type: 'custom'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: CustomData}
+| {id: string; type: 'header'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: HeaderData}
+| {id: string; type: 'experience'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: ExperienceData}
+| {id: string; type: 'skills'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: SkillsData}
+| {id: string; type: 'custom'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: CustomData}
 
 export interface CVDocument {
     id: string;
@@ -52,6 +51,11 @@ export interface CVDocument {
     templateCategory?: TemplateCategory;
     accentColor?: string;
     font?: DocumentFont;
+    // Gaya template (dikunci dari template, bukan kontrol user):
+    layout?: "single" | "sidebar"; // sidebar = kolom kiri berwarna
+    sidebarColor?: string; // warna sidebar (mis. navy)
+    headerStyle?: "center" | "band" | "topbar" | "sidebar"; // gaya header
+    sectionStyle?: "rule" | "bar"; // gaya heading section
     updatedAt: number;
 }
 

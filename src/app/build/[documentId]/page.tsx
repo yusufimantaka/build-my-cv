@@ -123,6 +123,26 @@ function pindahkanBlokKeHalaman(daftar: CVBlock[], draggedId: string, page: numb
   return [...sisa, dragged];
 }
 
+// Drag & drop: pindahkan blok ke kolom tertentu (sidebar / konten utama),
+// tetap di halaman yang sama. Dipakai template dengan layout sidebar.
+function pindahkanBlokKeKolomDalamDaftar(daftar: CVBlock[], draggedId: string, keSidebar: boolean, page: number): CVBlock[] {
+  let draggedIndex = -1;
+  for (let i = 0; i < daftar.length; i++) {
+    if (daftar[i].id === draggedId) {
+      draggedIndex = i;
+      break;
+    }
+  }
+  if (draggedIndex === -1) return daftar;
+
+  const dragged = { ...daftar[draggedIndex], sidebar: keSidebar, page };
+  const sisa: CVBlock[] = [];
+  for (let i = 0; i < daftar.length; i++) {
+    if (i !== draggedIndex) sisa.push(daftar[i]);
+  }
+  return [...sisa, dragged];
+}
+
 // Mengganti judul dokumen dengan waktu terbaru
 function dokumenDenganJudul(doc: CVDocument, judul: string): CVDocument {
   return { ...doc, title: judul, updatedAt: Date.now() };
@@ -288,6 +308,11 @@ export default function BuildPage() {
     simpan(dokumenBaru(doc, pindahkanBlokKeHalaman(doc.blocks, draggedId, page)));
   }
 
+  function pindahkanBlokKeKolom(draggedId: string, keSidebar: boolean, page: number): void {
+    if (!doc) return;
+    simpan(dokumenBaru(doc, pindahkanBlokKeKolomDalamDaftar(doc.blocks, draggedId, keSidebar, page)));
+  }
+
   function tambahHalaman(): void {
     if (!doc) return;
     const jumlahSekarang = doc.pageCount ?? 1;
@@ -439,6 +464,69 @@ export default function BuildPage() {
                 <p className="no-print mt-4 text-center text-sm text-[#6e6a5e]">
                   Halaman kosong. Seret blok ke sini.
                 </p>
+              ) : doc.layout === "sidebar" ? (
+                <div className="grid grid-cols-[32%_1fr] gap-0">
+                  {/* Kolom kiri: sidebar berwarna, teks terang */}
+                  <div
+                    className="min-w-0 p-4"
+                    style={{ background: doc.sidebarColor ?? "#17384A" }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const draggedId = e.dataTransfer.getData("text/plain");
+                      if (draggedId) pindahkanBlokKeKolom(draggedId, true, page);
+                    }}
+                  >
+                    {blokDiHalaman(doc, page)
+                      .filter((b) => b.sidebar)
+                      .map((blok, index) => (
+                        <BlokEditor
+                          key={blok.id}
+                          blok={blok}
+                          index={index}
+                          totalDiHalaman={blokDiHalaman(doc, page).filter((b) => b.sidebar).length}
+                          terpilih={selectedId === blok.id}
+                          onPilih={() => setSelectedId(blok.id)}
+                          onPindah={(arah) => pindahBlok(blok.id, arah)}
+                          onHapus={() => hapusBlok(blok.id)}
+                          onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
+                          onUbah={perbaruiBlok}
+                          sidebarMode
+                          docStyle={{ accentColor: doc.accentColor, headerStyle: doc.headerStyle, sectionStyle: doc.sectionStyle }}
+                        />
+                      ))}
+                  </div>
+                  {/* Kolom kanan: konten utama putih */}
+                  <div
+                    className="min-w-0 p-4"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const draggedId = e.dataTransfer.getData("text/plain");
+                      if (draggedId) pindahkanBlokKeKolom(draggedId, false, page);
+                    }}
+                  >
+                    {blokDiHalaman(doc, page)
+                      .filter((b) => !b.sidebar)
+                      .map((blok, index) => (
+                        <BlokEditor
+                          key={blok.id}
+                          blok={blok}
+                          index={index}
+                          totalDiHalaman={blokDiHalaman(doc, page).filter((b) => !b.sidebar).length}
+                          terpilih={selectedId === blok.id}
+                          onPilih={() => setSelectedId(blok.id)}
+                          onPindah={(arah) => pindahBlok(blok.id, arah)}
+                          onHapus={() => hapusBlok(blok.id)}
+                          onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
+                          onUbah={perbaruiBlok}
+                          docStyle={{ accentColor: doc.accentColor, headerStyle: doc.headerStyle, sectionStyle: doc.sectionStyle }}
+                        />
+                      ))}
+                  </div>
+                </div>
               ) : (
                 blokDiHalaman(doc, page).map((blok, index) => (
                   <BlokEditor
@@ -452,6 +540,7 @@ export default function BuildPage() {
                     onHapus={() => hapusBlok(blok.id)}
                     onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
                     onUbah={perbaruiBlok}
+                    docStyle={{ accentColor: doc.accentColor, headerStyle: doc.headerStyle, sectionStyle: doc.sectionStyle }}
                   />
                 ))
               )}
@@ -512,6 +601,8 @@ function BlokEditor({
     onHapus,
     onSeretKeBlok,
     onUbah,
+    sidebarMode = false,
+    docStyle,
 }: {
     blok: CVBlock;
     index: number;
@@ -522,6 +613,8 @@ function BlokEditor({
     onHapus: () => void;
     onSeretKeBlok: (draggedId: string) => void;
     onUbah: (b: CVBlock) => void;
+    sidebarMode?: boolean;
+    docStyle?: { accentColor?: string; headerStyle?: "center" | "band" | "topbar" | "sidebar"; sectionStyle?: "rule" | "bar" };
 }) {
     return (
         <div
@@ -586,7 +679,7 @@ function BlokEditor({
                     <iconify-icon icon="mdi:trash-can-outline" width="14" height="14" />
                 </button>
             </div>
-            <PreviewBlok blok={blok} onUbah={onUbah} />
+            <PreviewBlok blok={blok} onUbah={onUbah} sidebarMode={sidebarMode} docStyle={docStyle} />
         </div>
     );
 }
@@ -668,39 +761,163 @@ function TeksEditable({
     );
 }
 
-function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => void }) {
+function PreviewBlok({
+    blok,
+    onUbah,
+    sidebarMode = false,
+    docStyle,
+}: {
+    blok: CVBlock;
+    onUbah: (b: CVBlock) => void;
+    sidebarMode?: boolean;
+    docStyle?: { accentColor?: string; headerStyle?: "center" | "band" | "topbar" | "sidebar"; sectionStyle?: "rule" | "bar" };
+}) {
   const fontSize = blok.style?.fontSize ?? 16;
   const color = blok.style?.color ?? "#171717";
   const gap = 3;
+  const headerStyle = docStyle?.headerStyle ?? "center";
+  const sectionStyle = docStyle?.sectionStyle ?? "rule";
+  const accent = docStyle?.accentColor ?? "#3F6382";
+
+  // Heading section: "rule" = uppercase + garis tipis;
+  // "bar" = heading dalam bar abu-abu muda.
+  function headingSection(nilai: string, onUbahNama: (v: string) => void): React.ReactNode {
+    if (sectionStyle === "bar") {
+      return (
+        <TeksEditable
+          value={nilai}
+          onUbah={onUbahNama}
+          placeholder="Nama section"
+          className="mb-1.5 w-full bg-[#EEF0EE] px-2 py-1 font-semibold uppercase tracking-wide"
+        />
+      );
+    }
+    return (
+      <TeksEditable
+        value={nilai}
+        onUbah={onUbahNama}
+        placeholder="Nama section"
+        className={"mb-1 w-full border-b pb-0.5 font-semibold uppercase tracking-wide " + (sidebarMode ? "border-white/30" : "border-[#171717]/20")}
+      />
+    );
+  }
 
   if (blok.type === "header") {
+    // Header band: latar warna aksen penuh lebar, teks putih (Cobalt Edge).
+    if (headerStyle === "band") {
+      return (
+        <div style={{ fontSize: `${fontSize}px`, color: "#ffffff" }}>
+          <div className="-m-1.5 flex items-center gap-4 p-6" style={{ background: accent }}>
+            {blok.data.photo && (
+              <img src={blok.data.photo} alt="Foto profil" className="h-20 w-20 shrink-0 rounded-full border-2 border-white/60 object-cover" />
+            )}
+            <div className="min-w-0 flex-1">
+              <TeksEditable
+                value={blok.data.fullName}
+                onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, fullName: v } })}
+                placeholder="Nama Lengkap"
+                className="w-full font-bold"
+                style={{ fontSize: "1.9em" }}
+              />
+              <TeksEditable
+                value={blok.data.title}
+                onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, title: v } })}
+                placeholder="Judul / Posisi"
+                className="w-full"
+                style={{ fontSize: "1.2em" }}
+              />
+              <div className="flex items-baseline gap-3 opacity-70" style={{ fontSize: "0.85em" }}>
+                <TeksEditable
+                  value={blok.data.email}
+                  onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, email: v } })}
+                  placeholder="email@contoh.com"
+                  className="min-w-0 flex-1"
+                />
+                <span aria-hidden="true">·</span>
+                <TeksEditable
+                  value={blok.data.phone}
+                  onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, phone: v } })}
+                  placeholder="Telepon"
+                  className="min-w-0 flex-1"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Header topbar: bar abu-abu terang, foto kiri (Mercury Flow / Steady Form).
+    if (headerStyle === "topbar") {
+      return (
+        <div style={{ fontSize: `${fontSize}px`, color }}>
+          <div className="-m-1.5 mb-1.5 flex items-center gap-4 bg-[#EEF0EE] p-5">
+            {blok.data.photo && (
+              <img src={blok.data.photo} alt="Foto profil" className="h-16 w-16 shrink-0 rounded-full object-cover" />
+            )}
+            <div className="min-w-0 flex-1">
+              <TeksEditable
+                value={blok.data.fullName}
+                onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, fullName: v } })}
+                placeholder="Nama Lengkap"
+                className="w-full font-bold"
+                style={{ fontSize: "1.7em" }}
+              />
+              <TeksEditable
+                value={blok.data.title}
+                onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, title: v } })}
+                placeholder="Judul / Posisi"
+                className="w-full"
+                style={{ fontSize: "1.1em" }}
+              />
+              <div className="flex items-baseline gap-3 opacity-60" style={{ fontSize: "0.85em" }}>
+                <TeksEditable
+                  value={blok.data.email}
+                  onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, email: v } })}
+                  placeholder="email@contoh.com"
+                  className="min-w-0 flex-1"
+                />
+                <span aria-hidden="true">·</span>
+                <TeksEditable
+                  value={blok.data.phone}
+                  onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, phone: v } })}
+                  placeholder="Telepon"
+                  className="min-w-0 flex-1"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Header center (Classic Clear / Editorial) atau sidebar (Atlantic Blue).
+    // Di sidebar, teks mengikuti warna blok (putih dari template).
     return (
       <div style={{ fontSize: `${fontSize}px`, color }}>
-        <div className="flex items-center gap-4">
+        <div className={"flex items-center gap-4 " + (headerStyle === "center" && !sidebarMode ? "flex-col text-center" : "")}>
           {blok.data.photo && (
-            <img
-              src={blok.data.photo}
-              alt="Foto profil"
-              style={{ width: blok.data.photoSize ?? 80, height: blok.data.photoSize ?? 80 }}
-              className="shrink-0 rounded-full object-cover"
-            />
+            <img src={blok.data.photo} alt="Foto profil" className="h-20 w-20 shrink-0 rounded-full object-cover" />
           )}
           <div className="min-w-0 flex-1">
             <TeksEditable
               value={blok.data.fullName}
               onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, fullName: v } })}
               placeholder="Nama Lengkap"
-              className="w-full font-bold"
+              className={"w-full font-bold " + (headerStyle === "center" && !sidebarMode ? "text-center" : "")}
               style={{ fontSize: "1.9em" }}
             />
             <TeksEditable
               value={blok.data.title}
               onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, title: v } })}
               placeholder="Judul / Posisi"
-              className="w-full"
+              className={"w-full " + (headerStyle === "center" && !sidebarMode ? "text-center" : "")}
               style={{ fontSize: "1.2em" }}
             />
-            <div className="flex items-baseline gap-3 opacity-60" style={{ fontSize: "0.85em" }}>
+            <div
+              className={"flex items-baseline gap-3 opacity-60 " + (headerStyle === "center" && !sidebarMode ? "justify-center" : "")}
+              style={{ fontSize: "0.85em" }}
+            >
               <TeksEditable
                 value={blok.data.email}
                 onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, email: v } })}
@@ -724,12 +941,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
   if (blok.type === "experience") {
     return (
       <div style={{ fontSize: `${fontSize}px`, color }}>
-        <TeksEditable
-          value={blok.name ?? ""}
-          onUbah={(v) => onUbah({ ...blok, name: v })}
-          placeholder="Nama section"
-          className="mb-1 w-full border-b border-[#171717]/20 pb-0.5 font-semibold uppercase tracking-wide"
-        />
+        {headingSection(blok.name ?? "", (v) => onUbah({ ...blok, name: v }))}
         {blok.data.items.length === 0 ? (
           <p className="text-sm opacity-50">Belum ada item.</p>
         ) : (
@@ -792,12 +1004,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
   if (blok.type === "skills") {
     return (
       <div style={{ fontSize: `${fontSize}px`, color }}>
-        <TeksEditable
-          value={blok.name ?? ""}
-          onUbah={(v) => onUbah({ ...blok, name: v })}
-          placeholder="Nama section"
-          className="mb-1 w-full border-b border-[#171717]/20 pb-0.5 font-semibold uppercase tracking-wide"
-        />
+        {headingSection(blok.name ?? "", (v) => onUbah({ ...blok, name: v }))}
         {blok.data.skills.length === 0 ? (
           <p className="text-sm opacity-50">Belum ada skill.</p>
         ) : (
@@ -826,13 +1033,8 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
 
   return (
     <div style={{ fontSize: `${fontSize}px`, color }}>
-      <TeksEditable
-        value={blok.name ?? ""}
-        onUbah={(v) => onUbah({ ...blok, name: v })}
-        placeholder="Nama section"
-        className="mb-1 w-full border-b border-[#171717]/20 pb-0.5 font-semibold uppercase tracking-wide"
-        />
-        {blok.data.items.length === 0 ? (
+      {headingSection(blok.name ?? "", (v) => onUbah({ ...blok, name: v }))}
+      {blok.data.items.length === 0 ? (
         <p className="text-sm opacity-50">Belum ada item.</p>
         ) : (
         <ul>
@@ -974,14 +1176,10 @@ function EditorBlok({
 
 function FotoProfil({
   photo,
-  photoSize,
   onChange,
-  onUbahUkuran,
 }: {
   photo?: string;
-  photoSize?: number;
   onChange: (photo: string) => void;
-  onUbahUkuran: (ukuran: number) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -1057,20 +1255,6 @@ function FotoProfil({
         <iconify-icon icon={photo ? "mdi:image-edit-outline" : "mdi:cloud-upload-outline"} width="17" height="17" />
         {processing ? "Memproses foto…" : photo ? "Ganti foto" : "Upload foto"}
       </button>
-      {photo && (
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-[#6e6a5e]">Ukuran</span>
-          <input
-            type="range"
-            min={48}
-            max={160}
-            value={photoSize ?? 80}
-            onChange={(e) => onUbahUkuran(Number(e.target.value))}
-            className="flex-1 accent-[#3f6382]"
-          />
-          <span className="w-8 text-right text-[11px] text-[#6e6a5e]">{photoSize ?? 80}px</span>
-        </div>
-      )}
       <p className="mt-2 text-center text-[11px] text-[#8a8578]">JPG, PNG, atau WEBP · maksimal 200px</p>
       <input
         ref={inputRef}
@@ -1100,12 +1284,7 @@ function EditorHeader({
 
   return (
     <div className="flex flex-col gap-3">
-      <FotoProfil
-        photo={blok.data.photo}
-        photoSize={blok.data.photoSize}
-        onChange={(photo) => ubah("photo", photo)}
-        onUbahUkuran={(ukuran) => ubah("photoSize", String(ukuran))}
-      />
+      <FotoProfil photo={blok.data.photo} onChange={(photo) => ubah("photo", photo)} />
       <LabelInput label="Nama" value={blok.data.fullName} onUbah={(v) => ubah("fullName", v)} />
       <LabelInput label="Judul" value={blok.data.title} onUbah={(v) => ubah("title", v)} />
       <LabelInput label="Email" value={blok.data.email} onUbah={(v) => ubah("email", v)} />
