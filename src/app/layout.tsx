@@ -23,6 +23,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Icon dari CDN (Iconify) */}
+        <script
+          src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"
+          defer
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

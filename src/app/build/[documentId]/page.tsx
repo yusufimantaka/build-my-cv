@@ -233,19 +233,19 @@ export default function BuildPage() {
 
   if (notFound) {
     return (
-      <main className="min-h-screen bg-[#151515] p-8 font-sans text-[#f5f2ea]">
-        <Link href="/" className="text-sm text-[#c8ff3d] hover:underline">
+      <main className="min-h-screen bg-[#f6f3ed] p-8 font-sans text-[#171717]">
+        <Link href="/" className="text-sm text-[#3f6382] hover:underline">
           ← Kembali ke Dashboard
         </Link>
-        <p className="mt-8 text-[#a7a39a]">CV tidak ditemukan.</p>
+        <p className="mt-8 text-[#6e6a5e]">CV tidak ditemukan.</p>
       </main>
     );
   }
 
   if (!doc) {
     return (
-      <main className="min-h-screen bg-[#151515] p-8 font-sans text-[#f5f2ea]">
-        <p className="text-[#a7a39a]">Memuat…</p>
+      <main className="min-h-screen bg-[#f6f3ed] p-8 font-sans text-[#171717]">
+        <p className="text-[#6e6a5e]">Memuat…</p>
       </main>
     );
   }
@@ -266,21 +266,22 @@ export default function BuildPage() {
   }
 
   return (
-    <main className="flex h-screen flex-col bg-[#151515] font-sans text-[#f5f2ea]">
+    <main className="flex h-screen flex-col bg-[#f6f3ed] font-sans text-[#171717]">
       {/* Header app (sticky di atas, sembunyi saat print) */}
-      <div className="no-print flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3 lg:px-8">
+      <div className="no-print flex shrink-0 items-center justify-between border-b border-[#171717]/10 px-4 py-3 lg:px-8">
         <div className="flex items-center gap-4">
-          <Link href="/" className="text-sm text-[#c8ff3d] hover:underline">
+          <Link href="/" className="text-sm text-[#3f6382] hover:underline">
             ← Dashboard
           </Link>
           <h1 className="text-xl font-semibold">{doc.title}</h1>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-[#a7a39a]">Tersimpan lokal</span>
+          <span className="text-xs text-[#6e6a5e]">Tersimpan lokal</span>
           <button
             onClick={() => window.print()}
-            className="rounded-md bg-[#c8ff3d] px-4 py-2 text-sm font-medium text-[#151515]"
+            className="flex items-center gap-2 rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white hover:bg-[#355573]"
           >
+            <iconify-icon icon="mdi:file-pdf-box" width="16" height="16" />
             Export PDF
           </button>
         </div>
@@ -288,26 +289,29 @@ export default function BuildPage() {
 
       <div className="flex min-h-0 flex-1">
         {/* Panel kiri: daftar blok (sticky, scroll sendiri jika panjang) */}
-        <aside className="no-print no-scrollbar flex w-52 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-[#1d1d1d] p-4">
-          <h2 className="text-sm font-medium">Tambah blok</h2>
+        <aside className="no-print no-scrollbar flex w-52 shrink-0 flex-col overflow-y-auto border-r border-[#171717]/10 bg-white p-4">
+          <h2 className="flex items-center gap-2 border-b border-[#171717]/10 pb-3 text-sm font-semibold text-[#3f6382]">
+            <iconify-icon icon="mdi:view-grid-plus" width="16" height="16" />
+            Tambah blok
+          </h2>
           <div className="mt-3 flex flex-col gap-2">
-            <button onClick={() => tambahBlok("header")} className="rounded-md bg-white/5 px-3 py-2 text-left text-sm hover:bg-white/10">
+            <button onClick={() => tambahBlok("header")} className="rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm hover:bg-[#e8e3d8]">
               Header
             </button>
-            <button onClick={() => tambahBlok("experience")} className="rounded-md bg-white/5 px-3 py-2 text-left text-sm hover:bg-white/10">
+            <button onClick={() => tambahBlok("experience")} className="rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm hover:bg-[#e8e3d8]">
               Experience
             </button>
-            <button onClick={() => tambahBlok("skills")} className="rounded-md bg-white/5 px-3 py-2 text-left text-sm hover:bg-white/10">
+            <button onClick={() => tambahBlok("skills")} className="rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm hover:bg-[#e8e3d8]">
               Skills
             </button>
-            <button onClick={() => tambahBlok("custom")} className="rounded-md bg-white/5 px-3 py-2 text-left text-sm hover:bg-white/10">
+            <button onClick={() => tambahBlok("custom")} className="rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm hover:bg-[#e8e3d8]">
               Section
             </button>
           </div>
         </aside>
 
         {/* Tengah: kertas A4 — satu-satunya area yang scroll */}
-        <section className="print-area no-scrollbar min-w-0 flex-1 overflow-y-auto bg-[#1d1d1d] p-6">
+        <section className="print-area no-scrollbar min-w-0 flex-1 overflow-y-auto bg-[#f6f3ed] p-6">
           {Array.from({ length: jumlahHalaman }, (_, page) => (
             <div
               key={page}
@@ -319,25 +323,26 @@ export default function BuildPage() {
                 if (draggedId) seretBlokKeHalaman(draggedId, page);
               }}
               className={
-                "paper-sheet mx-auto mb-6 w-[210mm] min-h-[297mm] bg-[#f6f3ed] p-12 text-[#171717] shadow-xl transition-shadow print:ring-0 " +
-                (selectedPage === page ? "ring-2 ring-[#c8ff3d]" : "")
+                "paper-sheet animate-fade-up mx-auto mb-6 w-[210mm] min-h-[297mm] bg-white p-12 text-[#171717] shadow-xl transition-shadow print:ring-0 " +
+                (selectedPage === page ? "ring-2 ring-[#7895b2]" : "")
               }
             >
               <div className="no-print mb-4 flex items-center justify-between">
-                <span className="text-xs font-medium text-[#8a8578]">Halaman {page + 1}</span>
+                <span className="text-xs font-medium text-[#6e6a5e]">Halaman {page + 1}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     hapusHalaman(page);
                   }}
                   disabled={jumlahHalaman <= 1}
-                  className="rounded bg-[#ff746c] px-2 py-0.5 text-xs text-[#171717] disabled:opacity-30"
+                  title="Hapus halaman"
+                  className="flex h-7 w-7 items-center justify-center rounded bg-[#ff746c] text-white transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
                 >
-                  Hapus halaman
+                  <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
                 </button>
               </div>
               {blokDiHalaman(doc, page).length === 0 ? (
-                <p className="no-print mt-4 text-center text-sm text-[#8a8578]">
+                <p className="no-print mt-4 text-center text-sm text-[#6e6a5e]">
                   Halaman kosong. Seret blok ke sini.
                 </p>
               ) : (
@@ -359,10 +364,10 @@ export default function BuildPage() {
                     onClick={() => setSelectedId(blok.id)}
                     style={{ marginBottom: blok.style?.spacing ?? 24 }}
                     className={
-                      "cursor-grab rounded border p-4 active:cursor-grabbing print:border-transparent " +
+                      "animate-fade-in cursor-grab rounded border p-4 active:cursor-grabbing print:border-transparent " +
                       (selectedId === blok.id
-                        ? "border-[#c8ff3d]"
-                        : "border-transparent hover:border-white/30")
+                        ? "border-[#7895b2]"
+                        : "border-transparent hover:border-[#171717]/30")
                     }
                   >
                     <div className="no-print mb-2 flex items-center justify-end gap-2">
@@ -372,9 +377,10 @@ export default function BuildPage() {
                           pindahBlok(blok.id, -1);
                         }}
                         disabled={index === 0}
-                        className="rounded bg-[#171717] px-2 py-0.5 text-xs text-[#f6f3ed] disabled:opacity-30"
+                        title="Naik"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
                       >
-                        ↑
+                        <iconify-icon icon="mdi:chevron-up" width="16" height="16" />
                       </button>
                       <button
                         onClick={(e) => {
@@ -382,18 +388,20 @@ export default function BuildPage() {
                           pindahBlok(blok.id, 1);
                         }}
                         disabled={index === blokDiHalaman(doc, page).length - 1}
-                        className="rounded bg-[#171717] px-2 py-0.5 text-xs text-[#f6f3ed] disabled:opacity-30"
+                        title="Turun"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
                       >
-                        ↓
+                        <iconify-icon icon="mdi:chevron-down" width="16" height="16" />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           hapusBlok(blok.id);
                         }}
-                        className="rounded bg-[#ff746c] px-2 py-0.5 text-xs text-[#171717]"
+                        title="Hapus blok"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-[#ff746c] text-white transition-transform hover:scale-110 active:scale-95"
                       >
-                        Hapus
+                        <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
                       </button>
                     </div>
                     <PreviewBlok blok={blok} />
@@ -406,7 +414,7 @@ export default function BuildPage() {
           <div className="no-print mt-2 text-center">
             <button
               onClick={tambahHalaman}
-              className="rounded-md border border-white/15 px-4 py-2 text-sm text-[#f5f2ea] hover:bg-white/10"
+              className="rounded-md border border-[#171717]/15 px-4 py-2 text-sm text-[#171717] hover:bg-[#e8e3d8]"
             >
               + Tambah halaman
             </button>
@@ -414,12 +422,15 @@ export default function BuildPage() {
         </section>
 
         {/* Panel kanan: properti blok (sticky, scroll sendiri jika panjang) */}
-        <aside className="no-print no-scrollbar flex w-80 shrink-0 flex-col overflow-y-auto border-l border-white/10 bg-[#1d1d1d] p-4">
-          <h2 className="text-sm font-medium">Properti</h2>
+        <aside className="no-print no-scrollbar flex w-80 shrink-0 flex-col overflow-y-auto border-l border-[#171717]/10 bg-white p-4">
+          <h2 className="flex items-center gap-2 border-b border-[#171717]/10 pb-3 text-sm font-semibold text-[#3f6382]">
+            <iconify-icon icon="mdi:tune-variant" width="16" height="16" />
+            Properti
+          </h2>
           {blokTerpilih ? (
             <EditorBlok blok={blokTerpilih} onChange={perbaruiBlok} />
           ) : (
-            <p className="mt-3 text-sm text-[#a7a39a]">Klik blok untuk mengedit.</p>
+            <p className="mt-3 text-sm text-[#6e6a5e]">Klik blok untuk mengedit.</p>
           )}
         </aside>
       </div>
@@ -540,8 +551,8 @@ function EditorBlok({ blok, onChange }: { blok: CVBlock; onChange: (b: CVBlock) 
     <div className="mt-3 flex flex-col gap-3">
       <LabelInput label="Nama blok" value={blok.name ?? ""} onUbah={ubahNama} />
 
-      <div className="rounded border border-white/10 p-3">
-        <p className="text-xs text-[#a7a39a]">Ukuran & warna</p>
+      <div className="rounded border border-[#171717]/10 p-3">
+        <p className="text-xs text-[#6e6a5e]">Ukuran & warna</p>
         <div className="mt-2 flex items-center gap-3">
           <label className="flex items-center gap-2 text-xs">
             Font
@@ -551,7 +562,7 @@ function EditorBlok({ blok, onChange }: { blok: CVBlock; onChange: (b: CVBlock) 
               max={48}
               value={style.fontSize}
               onChange={(e) => ubahStyle({ fontSize: Number(e.target.value) })}
-              className="w-16 rounded bg-white/5 px-2 py-1 text-sm outline-none focus:bg-white/10"
+              className="w-16 rounded bg-[#f0ece3] px-2 py-1 text-sm outline-none focus:bg-[#e8e3d8]"
             />
           </label>
           <label className="flex items-center gap-2 text-xs">
@@ -560,7 +571,7 @@ function EditorBlok({ blok, onChange }: { blok: CVBlock; onChange: (b: CVBlock) 
               type="color"
               value={style.color}
               onChange={(e) => ubahStyle({ color: e.target.value })}
-              className="h-8 w-10 cursor-pointer rounded border border-white/20 bg-transparent"
+              className="h-8 w-10 cursor-pointer rounded border border-[#171717]/20 bg-transparent"
             />
           </label>
         </div>
@@ -629,8 +640,9 @@ function EditorExperience({
 
   return (
     <div className="flex flex-col gap-4">
-      <button onClick={tambahItem} className="rounded-md bg-[#c8ff3d] px-3 py-1.5 text-sm font-medium text-[#151515]">
-        + Tambah item
+      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#355573]">
+        <iconify-icon icon="mdi:plus" width="14" height="14" />
+        Tambah item
       </button>
       {blok.data.items.map((item, i) => (
         <div
@@ -641,7 +653,7 @@ function EditorExperience({
             const dari = Number(e.dataTransfer.getData("text/plain"));
             if (!Number.isNaN(dari) && dari !== i) pindahkanItem(dari, i);
           }}
-          className="flex flex-col gap-2 rounded border border-white/10 p-3"
+          className="flex flex-col gap-2 rounded border border-[#171717]/10 p-3"
         >
           <div className="flex items-center justify-between">
             <span
@@ -650,25 +662,25 @@ function EditorExperience({
                 e.dataTransfer.setData("text/plain", String(i));
                 e.dataTransfer.effectAllowed = "move";
               }}
-              className="cursor-grab text-[#a7a39a] active:cursor-grabbing"
+              className="cursor-grab text-[#6e6a5e] active:cursor-grabbing"
               title="Seret untuk mengurutkan"
             >
               ⠿
             </span>
-            <button onClick={() => hapusItem(i)} className="text-xs text-[#ff746c] hover:underline">
-              Hapus item
+            <button onClick={() => hapusItem(i)} title="Hapus item" className="flex h-7 w-7 items-center justify-center rounded text-[#ff746c] transition-transform hover:scale-110 hover:bg-[#ff746c]/10 active:scale-95">
+              <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
             </button>
           </div>
           <LabelInput label="Posisi" value={item.title} onUbah={(v) => ubahItem(i, "title", v)} />
           <LabelInput label="Perusahaan" value={item.company} onUbah={(v) => ubahItem(i, "company", v)} />
           <LabelInput label="Periode" value={item.period} onUbah={(v) => ubahItem(i, "period", v)} />
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-[#a7a39a]">Deskripsi</label>
+            <label className="text-xs text-[#6e6a5e]">Deskripsi</label>
             <textarea
               value={item.description}
               onChange={(e) => ubahItem(i, "description", e.target.value)}
               rows={3}
-              className="rounded bg-white/5 px-2 py-1.5 text-sm outline-none focus:bg-white/10"
+              className="rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
             />
           </div>
         </div>
@@ -708,8 +720,9 @@ function EditorSkills({
 
   return (
     <div className="flex flex-col gap-3">
-      <button onClick={tambahSkill} className="rounded-md bg-[#c8ff3d] px-3 py-1.5 text-sm font-medium text-[#151515]">
-        + Tambah skill
+      <button onClick={tambahSkill} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#355573]">
+        <iconify-icon icon="mdi:plus" width="14" height="14" />
+        Tambah skill
       </button>
       {blok.data.skills.map((skill, i) => (
         <div
@@ -728,7 +741,7 @@ function EditorSkills({
               e.dataTransfer.setData("text/plain", String(i));
               e.dataTransfer.effectAllowed = "move";
             }}
-            className="cursor-grab text-[#a7a39a] active:cursor-grabbing"
+            className="cursor-grab text-[#6e6a5e] active:cursor-grabbing"
             title="Seret untuk mengurutkan"
           >
             ⠿
@@ -737,10 +750,10 @@ function EditorSkills({
             value={skill}
             onChange={(e) => ubahSkill(i, e.target.value)}
             placeholder="Skill"
-            className="flex-1 rounded bg-white/5 px-2 py-1.5 text-sm outline-none focus:bg-white/10"
+            className="flex-1 rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
           />
-          <button onClick={() => hapusSkill(i)} className="text-xs text-[#ff746c] hover:underline">
-            Hapus
+          <button onClick={() => hapusSkill(i)} title="Hapus skill" className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-[#ff746c] transition-transform hover:scale-110 hover:bg-[#ff746c]/10 active:scale-95">
+            <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
           </button>
         </div>
       ))}
@@ -781,8 +794,9 @@ function EditorCustom({
 
   return (
     <div className="flex flex-col gap-4">
-      <button onClick={tambahItem} className="rounded-md bg-[#c8ff3d] px-3 py-1.5 text-sm font-medium text-[#151515]">
-        + Tambah item
+      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#355573]">
+        <iconify-icon icon="mdi:plus" width="14" height="14" />
+        Tambah item
       </button>
       {blok.data.items.map((item, i) => (
         <div
@@ -793,7 +807,7 @@ function EditorCustom({
             const dari = Number(e.dataTransfer.getData("text/plain"));
             if (!Number.isNaN(dari) && dari !== i) pindahkanItem(dari, i);
           }}
-          className="flex flex-col gap-2 rounded border border-white/10 p-3"
+          className="flex flex-col gap-2 rounded border border-[#171717]/10 p-3"
         >
           <div className="flex items-center justify-between">
             <span
@@ -802,13 +816,13 @@ function EditorCustom({
                 e.dataTransfer.setData("text/plain", String(i));
                 e.dataTransfer.effectAllowed = "move";
               }}
-              className="cursor-grab text-[#a7a39a] active:cursor-grabbing"
+              className="cursor-grab text-[#6e6a5e] active:cursor-grabbing"
               title="Seret untuk mengurutkan"
             >
               ⠿
             </span>
-            <button onClick={() => hapusItem(i)} className="text-xs text-[#ff746c] hover:underline">
-              Hapus item
+            <button onClick={() => hapusItem(i)} title="Hapus item" className="flex h-7 w-7 items-center justify-center rounded text-[#ff746c] transition-transform hover:scale-110 hover:bg-[#ff746c]/10 active:scale-95">
+              <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
             </button>
           </div>
           <LabelInput label="Label" value={item.label} onUbah={(v) => ubahItem(i, "label", v)} />
@@ -832,11 +846,11 @@ function LabelInput({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs text-[#a7a39a]">{label}</label>
+      <label className="text-xs text-[#6e6a5e]">{label}</label>
       <input
         value={value}
         onChange={(e) => onUbah(e.target.value)}
-        className="rounded bg-white/5 px-2 py-1.5 text-sm outline-none focus:bg-white/10"
+        className="rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
       />
     </div>
   );

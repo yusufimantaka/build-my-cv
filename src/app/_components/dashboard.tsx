@@ -8,12 +8,15 @@ import type { CVDocument } from "@/domain/cv";
 
 const repo = new IndexedDBRepository();
 
+type ModalMode = "buat" | "rename";
+
 export default function Dashboard() {
   const router = useRouter();
   const [documents, setDocuments] = useState<CVDocument[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [judulBaru, setJudulBaru] = useState("");
+  const [modalMode, setModalMode] = useState<ModalMode | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [judul, setJudul] = useState("");
 
   async function muatUlang(): Promise<void> {
     const docs = await repo.loadDocuments();
@@ -28,18 +31,50 @@ export default function Dashboard() {
     });
   }, []);
 
-  async function buatCV(): Promise<void> {
-    const judul = judulBaru.trim() === "" ? "CV Baru" : judulBaru.trim();
-    const baru: CVDocument = {
-      id: crypto.randomUUID(),
-      title: judul,
-      blocks: [],
-      updatedAt: Date.now(),
-    };
-    await repo.saveDocument(baru);
-    setShowModal(false);
-    setJudulBaru("");
-    router.push(`/build/${baru.id}`);
+  function bukaModalBuat(): void {
+    setModalMode("buat");
+    setEditId(null);
+    setJudul("");
+  }
+
+  function bukaModalRename(cv: CVDocument): void {
+    setModalMode("rename");
+    setEditId(cv.id);
+    setJudul(cv.title);
+  }
+
+  async function simpanModal(): Promise<void> {
+    const judulFinal = judul.trim() === "" ? "CV Baru" : judul.trim();
+
+    if (modalMode === "buat") {
+      const baru: CVDocument = {
+        id: crypto.randomUUID(),
+        title: judulFinal,
+        blocks: [],
+        updatedAt: Date.now(),
+      };
+      await repo.saveDocument(baru);
+      setModalMode(null);
+      router.push(`/build/${baru.id}`);
+      return;
+    }
+
+    if (modalMode === "rename" && editId) {
+      const docs = await repo.loadDocuments();
+      let target: CVDocument | null = null;
+      for (let i = 0; i < docs.length; i++) {
+        if (docs[i].id === editId) {
+          target = docs[i];
+          break;
+        }
+      }
+      if (target) {
+        const baru = { ...target, title: judulFinal, updatedAt: Date.now() };
+        await repo.saveDocument(baru);
+      }
+      setModalMode(null);
+      await muatUlang();
+    }
   }
 
   async function hapusCV(id: string): Promise<void> {
@@ -48,66 +83,109 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-[#151515] p-8 font-sans text-[#f5f2ea]">
+    <main className="min-h-screen bg-[#f6f3ed] p-8 font-sans text-[#171717]">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
         <button
-          onClick={() => setShowModal(true)}
-          className="rounded-md bg-[#c8ff3d] px-4 py-2 text-sm font-medium text-[#151515]"
+          onClick={bukaModalBuat}
+          className="flex items-center gap-2 rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white hover:bg-[#355573]"
         >
+          <iconify-icon icon="mdi:plus" width="16" height="16" />
           Tambah CV
         </button>
       </div>
 
       {loading ? (
-        <p className="mt-8 text-[#a7a39a]">Memuat…</p>
+        <p className="mt-8 text-[#6e6a5e]">Memuat…</p>
       ) : documents.length === 0 ? (
-        <p className="mt-8 text-[#a7a39a]">Belum ada CV.</p>
+        <div className="mt-16 flex flex-col items-center gap-4 text-[#6e6a5e]">
+          <iconify-icon icon="mdi:file-document-outline" width="48" height="48" />
+          <p>Belum ada CV.</p>
+          <button
+            onClick={bukaModalBuat}
+            className="rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white hover:bg-[#355573]"
+          >
+            Buat CV pertama
+          </button>
+        </div>
       ) : (
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-          {documents.map((cv) => (
-            <li key={cv.id} className="rounded-md border border-white/10 bg-[#1d1d1d] p-4">
-              <Link href={`/build/${cv.id}`}>
-                <p className="font-medium">{cv.title}</p>
-                <p className="mt-1 text-sm text-[#a7a39a]">{cv.id}</p>
-              </Link>
-              <button
-                onClick={() => hapusCV(cv.id)}
-                className="mt-3 text-sm text-[#ff746c] hover:underline"
-              >
-                Hapus
-              </button>
+        <ul className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {documents.map((cv, idx) => (
+            <li
+              key={cv.id}
+              className="group animate-fade-up"
+              style={{ animationDelay: `${Math.min(idx * 40, 400)}ms` }}
+            >
+              <div className="rounded-md border border-[#171717]/15 bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
+                <Link href={`/build/${cv.id}`} className="block">
+                  {/* Miniatur kertas A4 */}
+                  <div className="aspect-[210/297] w-full overflow-hidden rounded-sm border border-[#171717]/10 bg-white p-3">
+                    <div className="h-3 w-2/3 rounded-sm bg-[#d9d2c3]" />
+                    <div className="mt-2 h-2 w-1/3 rounded-sm bg-[#e4ddcd]" />
+                    <div className="mt-4 h-2 w-full rounded-sm bg-[#e4ddcd]" />
+                    <div className="mt-1.5 h-2 w-5/6 rounded-sm bg-[#e4ddcd]" />
+                    <div className="mt-4 h-2 w-3/4 rounded-sm bg-[#e4ddcd]" />
+                    <div className="mt-1.5 h-2 w-2/3 rounded-sm bg-[#e4ddcd]" />
+                  </div>
+                </Link>
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <Link
+                    href={`/build/${cv.id}`}
+                    className="min-w-0 flex-1 truncate text-sm font-medium hover:underline"
+                  >
+                    {cv.title}
+                  </Link>
+                  <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                    <button
+                      onClick={() => bukaModalRename(cv)}
+                      title="Ubah judul"
+                      className="rounded p-1 text-[#6e6a5e] hover:bg-[#e8e3d8] hover:text-[#171717]"
+                    >
+                      <iconify-icon icon="mdi:pencil-outline" width="15" height="15" />
+                    </button>
+                    <button
+                      onClick={() => hapusCV(cv.id)}
+                      title="Hapus"
+                      className="rounded p-1 text-[#ff746c] hover:bg-[#ff746c]/10"
+                    >
+                      <iconify-icon icon="mdi:trash-can-outline" width="15" height="15" />
+                    </button>
+                  </div>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
       )}
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-full max-w-sm rounded-md bg-[#1d1d1d] p-6">
-            <h2 className="text-lg font-semibold">Judul CV</h2>
+      {modalMode && (
+        <div className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/40">
+          <div className="w-full max-w-sm animate-pop rounded-md bg-white p-6 shadow-xl">
+            <h2 className="text-lg font-semibold">
+              {modalMode === "buat" ? "Judul CV" : "Ubah judul"}
+            </h2>
             <input
               autoFocus
-              value={judulBaru}
-              onChange={(e) => setJudulBaru(e.target.value)}
+              value={judul}
+              onChange={(e) => setJudul(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") buatCV();
+                if (e.key === "Enter") simpanModal();
               }}
               placeholder="Contoh: Software Engineer CV"
-              className="mt-4 w-full rounded bg-white/5 px-3 py-2 text-sm outline-none focus:bg-white/10"
+              className="mt-4 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
             />
             <div className="mt-5 flex justify-end gap-3">
               <button
-                onClick={() => setShowModal(false)}
-                className="rounded-md px-4 py-2 text-sm text-[#a7a39a] hover:text-[#f5f2ea]"
+                onClick={() => setModalMode(null)}
+                className="rounded-md px-4 py-2 text-sm text-[#6e6a5e] hover:text-[#171717]"
               >
                 Batal
               </button>
               <button
-                onClick={buatCV}
-                className="rounded-md bg-[#c8ff3d] px-4 py-2 text-sm font-medium text-[#151515]"
+                onClick={simpanModal}
+                className="rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white hover:bg-[#355573]"
               >
-                Buat
+                {modalMode === "buat" ? "Buat" : "Simpan"}
               </button>
             </div>
           </div>
