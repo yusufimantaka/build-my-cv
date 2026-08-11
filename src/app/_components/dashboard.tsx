@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IndexedDBRepository } from "@/domain/indexed-db-repository";
 import type { CVDocument } from "@/domain/cv";
+import TopNav from "@/app/_components/topnav";
 
 const repo = new IndexedDBRepository();
 
@@ -199,9 +200,11 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="flex min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
+    <main className="min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
+      <TopNav />
+      <div className="flex">
       {/* Sidebar kategori */}
-      <aside className="no-scrollbar flex w-56 shrink-0 flex-col overflow-y-auto border-r border-[#171717]/10 bg-white p-4">
+      <aside className="flex w-56 shrink-0 flex-col border-r border-[#171717]/10 bg-white p-4">
         <h2 className="flex items-center gap-2 border-b border-[#171717]/10 pb-3 text-sm font-semibold text-[#3f6382]">
           <iconify-icon icon="mdi:folder-multiple-outline" width="16" height="16" />
           Kategori
@@ -553,6 +556,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </main>
   );

@@ -1,4 +1,4 @@
-# Build My CV
+# BuildMyCV
 
 Local-first open source CV builder.
 

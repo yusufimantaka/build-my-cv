@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Build My CV",
+  title: "BuildMyCV",
   description: "Local-first open source CV builder",
 };
 
