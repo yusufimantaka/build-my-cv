@@ -32,27 +32,28 @@ npm run build   # production build (wajib sukses sebelum commit)
 
 UI → Repository → IndexedDB. UI tidak pernah menyentuh IndexedDB langsung.
 
-- `src/domain/cv.ts` — model data: `CVDocument`, `CVBlock` (discriminated union: header | experience | skills | custom), `BlockStyle` (fontSize, color, spacing)
+- `src/domain/cv.ts` — model data: `CVDocument`, `CVBlock` (discriminated union: header | experience | skills | custom | paragraph), `BlockStyle` (fontSize, color), `HeaderData.photo`, gaya template (layout, sidebarColor, headerStyle, sectionStyle)
 - `src/domain/repository.ts` — interface `WorkspaceRepository` (loadDocuments / saveDocument / deleteDocument)
 - `src/domain/in-memory-repository.ts` — implementasi memori (tes)
 - `src/domain/indexed-db-repository.ts` — implementasi IndexedDB
-- `src/domain/templates.ts` — 12 template CV dalam 6 kategori (simple, modern, creative, photo, compact, first-job) + `templateKeDokumen()`
-- `src/domain/examples.ts` — contoh CV per industri (untuk halaman Explore)
+- `src/domain/templates.ts` — 19 template: `templatesContoh` (11 "CV ..." untuk Library) + `templatesDesain` (8 bernama untuk Explore) + `templateKeDokumen()`
+- `src/domain/examples.ts` — contoh CV per industri (tidak lagi dipakai halaman; kandidat hapus)
 - `src/app/_components/dashboard.tsx` — dashboard: kategori, search, sort, zoom grid, backup/restore JSON
-- `src/app/_components/template-thumb.tsx` — thumbnail SVG template
-- `src/app/_components/landscape-bg.tsx` — latar lanskap fixed untuk halaman app
-- `src/app/_components/topnav.tsx` — TopNav sticky (bukan floating), brand, AI Chat "Segera" modal, CTA GitHub
-- `src/app/library/page.tsx` — galeri template dengan filter kategori
-- `src/app/explore/page.tsx` — contoh CV per industri + tombol mulai dari template
-- `src/app/build/[documentId]/page.tsx` — editor blok (floating pill panels, resize, drag reorder, multi-halaman, export PDF via print CSS)
+- `src/app/_components/template-thumb.tsx` — thumbnail kertas template (akui band/sidebar/bar)
+- `src/app/_components/landscape-bg.tsx` — mengembalikan null (latar polos ala Notion)
+- `src/app/_components/topnav.tsx` — TopNav sticky, dark mode toggle, AI Chat "Segera" modal, CTA GitHub
+- `src/app/library/page.tsx` — contoh CV siap pakai (templatesContoh) dengan filter kategori
+- `src/app/explore/page.tsx` — katalog template desain (templatesDesain) dengan filter kategori
+- `src/app/build/[documentId]/page.tsx` — editor blok (panel Layers, rich text contentEditable, floating controls, multi-halaman, export PDF via print CSS)
 
 ## Halaman
 
 | Rute | Status |
 |---|---|
-| `/` | Dashboard lengkap |
-| `/library` | Template UGM |
-| `/explore` | Contoh CV per industri |
+| `/` | Landing |
+| `/app` | Dashboard lengkap |
+| `/library` | Contoh CV siap pakai (templatesContoh) |
+| `/explore` | Katalog template desain (templatesDesain) |
 | `/ai-chat` | Tidak ada halaman — AI Chat adalah modal di TopNav (coming soon) |
 | `/build/[documentId]` | Editor |
 
@@ -72,10 +73,12 @@ UI → Repository → IndexedDB. UI tidak pernah menyentuh IndexedDB langsung.
 
 ## Tema
 
-- Background app: broken white `#f6f3ed`
-- Kertas dokumen: putih murni `#ffffff`
-- Aksen: dusty blue `#3f6382` (primary), `#7895b2` (ring seleksi), hover `#355573`
+- Background app: broken white `#f7f7f5` (var `--app-bg`), dark mode `#191919` (class `.dark` di `<html>`)
+- Kertas dokumen: putih murni `#ffffff` — tetap putih di dark mode
+- Ink: `#37352f` (var `--ink`, terang `#f0f0f0` di dark), muted `#787774`, border `--hair`
+- Aksen interaksi: `#2383E2` (ring fokus) — badge kategori memakai `ink`, bukan warna aksen template
 - Danger: `#ff746c`
+- Sudut: semua sharp (`rounded-none`) — kontrol native select/color diratakan via CSS
 - Tombol icon: fixed-size `h-7 w-7` flex-center, `hover:scale-110 active:scale-95`
 
 ## Status & Keputusan Produk
@@ -92,3 +95,7 @@ UI → Repository → IndexedDB. UI tidak pernah menyentuh IndexedDB langsung.
 - `.paper-sheet:last-child` tidak pernah cocok (ada elemen setelah kertas) → pakai `break-before` pada kertas kedua, bukan `break-after` pada semua
 - `search_files` gagal di path `/c/...` (MSYS) → pakai `cd` dulu lalu relative path, atau path Windows
 - Scrollbar: `.no-scrollbar` class di globals.css (webkit + firefox)
+- Print: `height:auto !important` pada textarea di print = textarea kolaps ke rows=1 + scrollbar di PDF → JANGAN timpa tinggi inline auto-resize; hanya `resize:none`
+- Rich text: className lebar (`w-1/3`, `flex-1`) harus di WRAPPER luar `TeksRich`, bukan inner div — kalau di inner, `w-1/3` jadi 1/3 dari wrapper sempit → kata pecah baris
+- Toolbar B/I/U hanya muncul saat ada seleksi teks (gaya Notion) — cek `window.getSelection().isCollapsed`
+- Dark mode: baca `localStorage` di lazy initializer useState dengan guard `typeof document`, bukan useEffect (lint React 19)
