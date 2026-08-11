@@ -1,15 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IndexedDBRepository } from "@/domain/indexed-db-repository";
 import { templates, templateKeDokumen } from "@/domain/templates";
+import type { TemplateCategory } from "@/domain/cv";
+import { NAMA_KATEGORI } from "@/domain/cv";
 import TopNav from "@/app/_components/topnav";
 import LandscapeBg from "@/app/_components/landscape-bg";
+import TemplateThumb from "@/app/_components/template-thumb";
 
 const repo = new IndexedDBRepository();
 
+const SEMUA: "semua" | TemplateCategory = "semua";
+const KATEGORI: ("semua" | TemplateCategory)[] = ["semua", "simple", "modern", "creative", "photo", "compact", "first-job"];
+
 export default function LibraryPage() {
     const router = useRouter();
+    const [filter, setFilter] = useState<"semua" | TemplateCategory>(SEMUA);
 
     async function pakaiTemplate(templateId: string): Promise<void> {
         let target = null;
@@ -25,6 +33,8 @@ export default function LibraryPage() {
         router.push(`/build/${dokumen.id}`);
     }
 
+    const tampil = filter === SEMUA ? templates : templates.filter((t) => t.category === filter);
+
     return (
         <main className="isolate min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
             {/* Latar lanskap: fixed, tidak memengaruhi layout */}
@@ -36,26 +46,46 @@ export default function LibraryPage() {
                     Mulai dari template siap pakai. Semua data bisa kamu ubah nanti.
                 </p>
 
-                <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {templates.map((t) => (
+                {/* Filter kategori */}
+                <div className="mt-6 flex flex-wrap gap-2">
+                    {KATEGORI.map((k) => {
+                        const aktif = filter === k;
+                        return (
+                            <button
+                                key={k}
+                                onClick={() => setFilter(k)}
+                                className={
+                                    "rounded-full px-4 py-1.5 text-sm transition-colors " +
+                                    (aktif
+                                        ? "bg-[#3f6382] font-medium text-white"
+                                        : "border border-[#171717]/15 bg-white text-[#171717] hover:bg-[#f0ece3]")
+                                }
+                            >
+                                {k === SEMUA ? "Semua" : NAMA_KATEGORI[k as TemplateCategory]}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {tampil.map((t, idx) => (
                         <li
                             key={t.id}
-                            className="flex animate-fade-up flex-col rounded-md border border-[#171717]/15 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                            className="flex animate-fade-up flex-col rounded-md border border-[#171717]/15 bg-white p-4 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
+                            style={{ animationDelay: `${Math.min(idx * 50, 400)}ms` }}
                         >
-                            {/* Miniatur blok template */}
-                            <div className="rounded-sm border border-[#171717]/10 bg-[#f6f3ed] p-4">
-                                <div className="h-4 w-1/2 rounded-sm bg-[#d9d2c3]" />
-                                <div className="mt-3 space-y-2">
-                                    {t.blocks.map((b, i) => (
-                                        <div key={i} className="flex items-center gap-2">
-                                            <div className="h-2 w-4 rounded-sm bg-[#3f6382]/50" />
-                                            <div className="h-2 flex-1 rounded-sm bg-[#e4ddcd]" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                            {/* Thumbnail template */}
+                            <TemplateThumb accent={t.accent} twoColumn={t.category === "modern" || t.category === "compact"} />
 
-                            <h2 className="mt-4 font-semibold">{t.name}</h2>
+                            <div className="mt-4 flex items-start justify-between gap-2">
+                                <h2 className="font-semibold leading-tight">{t.name}</h2>
+                                <span
+                                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium"
+                                    style={{ background: `${t.accent}1A`, color: t.accent }}
+                                >
+                                    {NAMA_KATEGORI[t.category]}
+                                </span>
+                            </div>
                             <p className="mt-1 flex-1 text-sm text-[#6e6a5e]">{t.description}</p>
 
                             <button

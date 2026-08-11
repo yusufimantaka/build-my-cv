@@ -47,5 +47,25 @@ export interface CVDocument {
     blocks: CVBlock[];
     category?: string;
     pageCount?: number;
+    templateId?: string;
+    templateCategory?: TemplateCategory;
+    layout?: DocumentLayout;
+    accentColor?: string;
+    font?: DocumentFont;
     updatedAt: number;
 }
+
+export type TemplateCategory = "simple" | "modern" | "creative" | "photo" | "compact" | "first-job";
+
+export type DocumentLayout = "single" | "two-column";
+
+export type DocumentFont = "sans" | "serif" | "mono";
+
+export const NAMA_KATEGORI: Record<TemplateCategory, string> = {
+    simple: "Simple",
+    modern: "Modern",
+    creative: "Creative",
+    photo: "Photo",
+    compact: "Compact",
+    "first-job": "First Job",
+};
