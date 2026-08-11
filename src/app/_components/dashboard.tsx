@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IndexedDBRepository } from "@/domain/indexed-db-repository";
 import type { CVDocument } from "@/domain/cv";
@@ -8,8 +9,11 @@ import type { CVDocument } from "@/domain/cv";
 const repo = new IndexedDBRepository();
 
 export default function Dashboard() {
+  const router = useRouter();
   const [documents, setDocuments] = useState<CVDocument[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [judulBaru, setJudulBaru] = useState("");
 
   async function muatUlang(): Promise<void> {
     const docs = await repo.loadDocuments();
@@ -24,15 +28,18 @@ export default function Dashboard() {
     });
   }, []);
 
-  async function tambahCV(): Promise<void> {
+  async function buatCV(): Promise<void> {
+    const judul = judulBaru.trim() === "" ? "CV Baru" : judulBaru.trim();
     const baru: CVDocument = {
       id: crypto.randomUUID(),
-      title: "CV Baru",
+      title: judul,
       blocks: [],
       updatedAt: Date.now(),
     };
     await repo.saveDocument(baru);
-    await muatUlang();
+    setShowModal(false);
+    setJudulBaru("");
+    router.push(`/build/${baru.id}`);
   }
 
   async function hapusCV(id: string): Promise<void> {
@@ -45,7 +52,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
         <button
-          onClick={tambahCV}
+          onClick={() => setShowModal(true)}
           className="rounded-md bg-[#c8ff3d] px-4 py-2 text-sm font-medium text-[#151515]"
         >
           Tambah CV
@@ -73,6 +80,38 @@ export default function Dashboard() {
             </li>
           ))}
         </ul>
+      )}
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="w-full max-w-sm rounded-md bg-[#1d1d1d] p-6">
+            <h2 className="text-lg font-semibold">Judul CV</h2>
+            <input
+              autoFocus
+              value={judulBaru}
+              onChange={(e) => setJudulBaru(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") buatCV();
+              }}
+              placeholder="Contoh: Software Engineer CV"
+              className="mt-4 w-full rounded bg-white/5 px-3 py-2 text-sm outline-none focus:bg-white/10"
+            />
+            <div className="mt-5 flex justify-end gap-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="rounded-md px-4 py-2 text-sm text-[#a7a39a] hover:text-[#f5f2ea]"
+              >
+                Batal
+              </button>
+              <button
+                onClick={buatCV}
+                className="rounded-md bg-[#c8ff3d] px-4 py-2 text-sm font-medium text-[#151515]"
+              >
+                Buat
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
