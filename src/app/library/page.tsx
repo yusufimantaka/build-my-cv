@@ -36,13 +36,13 @@ export default function LibraryPage() {
     const tampil = filter === SEMUA ? templatesContoh : templatesContoh.filter((t) => t.category === filter);
 
     return (
-        <main className="isolate min-h-screen bg-[#f7f7f5] font-sans text-[#171717]">
+        <main className="isolate min-h-screen bg-app font-sans text-ink">
             {/* Latar lanskap: fixed, tidak memengaruhi layout */}
             <LandscapeBg />
             <TopNav />
             <div className="p-8">
                 <h1 className="text-2xl font-semibold">Library</h1>
-                <p className="mt-1 text-sm text-[#787774]">
+                <p className="mt-1 text-sm text-muted">
                     Contoh CV siap pakai per profesi dan kegiatan. Semua data bisa kamu ubah nanti.
                 </p>
 
@@ -58,7 +58,7 @@ export default function LibraryPage() {
                                     "rounded-none px-4 py-1.5 text-sm transition-colors " +
                                     (aktif
                                         ? "bg-[#37352F] font-medium text-white"
-                                        : "border border-[#171717]/15 bg-white text-[#171717] hover:bg-[#efefef]")
+                                        : "border border-hair bg-panel text-ink hover:bg-panel2")
                                 }
                             >
                                 {k === SEMUA ? "Semua" : NAMA_KATEGORI[k as TemplateCategory]}
@@ -71,7 +71,7 @@ export default function LibraryPage() {
                     {tampil.map((t, idx) => (
                         <li
                             key={t.id}
-                            className="flex animate-fade-up flex-col rounded-none border border-[#171717]/15 bg-white p-4 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
+                            className="flex animate-fade-up flex-col rounded-none border border-hair bg-panel p-4 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
                             style={{ animationDelay: `${Math.min(idx * 50, 400)}ms` }}
                         >
                             {/* Thumbnail template */}
@@ -79,18 +79,15 @@ export default function LibraryPage() {
 
                             <div className="mt-4 flex items-start justify-between gap-2">
                                 <h2 className="font-semibold leading-tight">{t.name}</h2>
-                                <span
-                                    className="shrink-0 rounded-none px-2 py-0.5 text-[10px] font-medium"
-                                    style={{ background: `${t.accent}1A`, color: t.accent }}
-                                >
+                                <span className="shrink-0 rounded-none bg-ink/10 px-2 py-0.5 text-[10px] font-medium text-ink">
                                     {NAMA_KATEGORI[t.category]}
                                 </span>
                             </div>
-                            <p className="mt-1 flex-1 text-sm text-[#787774]">{t.description}</p>
+                            <p className="mt-1 flex-1 text-sm text-muted">{t.description}</p>
 
                             <button
                                 onClick={() => pakaiTemplate(t.id)}
-                                className="mt-4 flex items-center justify-center gap-2 rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#2f2b26] hover:scale-[1.02] active:scale-95"
+                                className="mt-4 flex items-center justify-center gap-2 rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-ink/85 hover:scale-[1.02] active:scale-95"
                             >
                                 <iconify-icon icon="mdi:plus" width="15" height="15" />
                                 Pakai template

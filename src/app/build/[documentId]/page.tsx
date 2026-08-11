@@ -311,19 +311,19 @@ export default function BuildPage() {
 
   if (notFound) {
     return (
-      <main className="min-h-screen bg-[#f7f7f5] p-8 font-sans text-[#171717]">
-        <Link href="/app" className="text-sm text-[#37352F] hover:underline">
+      <main className="min-h-screen bg-app p-8 font-sans text-ink">
+        <Link href="/app" className="text-sm text-ink hover:underline">
           ← Kembali ke Dashboard
         </Link>
-        <p className="mt-8 text-[#787774]">CV tidak ditemukan.</p>
+        <p className="mt-8 text-muted">CV tidak ditemukan.</p>
       </main>
     );
   }
 
   if (!doc) {
     return (
-      <main className="min-h-screen bg-[#f7f7f5] p-8 font-sans text-[#171717]">
-        <p className="text-[#787774]">Memuat…</p>
+      <main className="min-h-screen bg-app p-8 font-sans text-ink">
+        <p className="text-muted">Memuat…</p>
       </main>
     );
   }
@@ -344,25 +344,25 @@ export default function BuildPage() {
   }
 
   return (
-    <main className="flex h-screen flex-col bg-[#f7f7f5] font-sans text-[#171717]">
+    <main className="flex h-screen flex-col bg-app font-sans text-ink">
       {/* Header app (sama tinggi dengan TopNav, sembunyi saat print) */}
-      <div className="no-print sticky top-0 z-50 flex shrink-0 items-center justify-between border-b border-[#171717]/10 bg-white/95 px-6 py-2 backdrop-blur">
+      <div className="no-print sticky top-0 z-50 flex shrink-0 items-center justify-between border-b border-hair bg-panel/95 px-6 py-2 backdrop-blur">
         <div className="flex items-center gap-4">
-          <Link href="/app" className="text-sm text-[#37352F] hover:underline">
+          <Link href="/app" className="text-sm text-ink hover:underline">
             ← Dashboard
           </Link>
           <input
             value={doc.title}
             onChange={(e) => ubahJudul(e.target.value)}
             placeholder="Judul CV"
-            className="w-64 rounded-none border border-transparent bg-transparent px-2 py-1 text-base font-semibold outline-none transition-colors hover:border-[#171717]/15 focus:border-[#37352F] focus:bg-white"
+            className="w-64 rounded-none border border-transparent bg-transparent px-2 py-1 text-base font-semibold outline-none transition-colors hover:border-hair focus:border-ink focus:bg-panel"
           />
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-[#787774]">Tersimpan lokal</span>
+          <span className="text-xs text-muted">Tersimpan lokal</span>
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-2 rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
+            className="flex items-center gap-2 rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-ink/85"
           >
             <iconify-icon icon="mdi:file-pdf-box" width="16" height="16" />
             Export PDF
@@ -373,49 +373,49 @@ export default function BuildPage() {
       <div className="min-h-0 flex-1">
         {/* Panel kiri: daftar blok (floating pill kiri, bisa di-resize) */}
         <aside
-          className="no-print no-scrollbar fixed left-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col gap-1 overflow-y-auto rounded-none border border-[#171717]/10 bg-white p-2 shadow-lg lg:flex"
+          className="no-print no-scrollbar fixed left-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col gap-1 overflow-y-auto rounded-none border border-hair bg-panel p-2 shadow-lg lg:flex"
           style={{ width: leftWidth }}
         >
-          <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#37352F]">
+          <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-ink">
             <iconify-icon icon="mdi:view-grid-plus" width="14" height="14" />
             Tambah blok
           </h2>
-          <button onClick={() => tambahBlok("header")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
-            <iconify-icon icon="mdi:account-circle-outline" width="16" height="16" className="text-[#37352F]" />
+          <button onClick={() => tambahBlok("header")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-panel2">
+            <iconify-icon icon="mdi:account-circle-outline" width="16" height="16" className="text-ink" />
             Header
           </button>
-          <button onClick={() => tambahBlok("experience")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
-            <iconify-icon icon="mdi:briefcase-outline" width="16" height="16" className="text-[#37352F]" />
+          <button onClick={() => tambahBlok("experience")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-panel2">
+            <iconify-icon icon="mdi:briefcase-outline" width="16" height="16" className="text-ink" />
             Experience
           </button>
-          <button onClick={() => tambahBlok("skills")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
-            <iconify-icon icon="mdi:lightbulb-on-outline" width="16" height="16" className="text-[#37352F]" />
+          <button onClick={() => tambahBlok("skills")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-panel2">
+            <iconify-icon icon="mdi:lightbulb-on-outline" width="16" height="16" className="text-ink" />
             Skills
           </button>
-          <button onClick={() => tambahBlok("custom")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
-            <iconify-icon icon="mdi:text-box-outline" width="16" height="16" className="text-[#37352F]" />
+          <button onClick={() => tambahBlok("custom")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-panel2">
+            <iconify-icon icon="mdi:text-box-outline" width="16" height="16" className="text-ink" />
             Section
           </button>
-          <button onClick={() => tambahBlok("paragraph")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-[#efefef]">
-            <iconify-icon icon="mdi:format-paragraph" width="16" height="16" className="text-[#37352F]" />
+          <button onClick={() => tambahBlok("paragraph")} className="flex items-center gap-2 rounded-none px-3 py-2 text-left text-sm transition-colors hover:bg-panel2">
+            <iconify-icon icon="mdi:format-paragraph" width="16" height="16" className="text-ink" />
             Paragraf
           </button>
 
           {/* Panel Layers: daftar blok per halaman. Klik untuk memilih,
               panah untuk mengurutkan — sama seperti kontrol di dokumen. */}
-          <div className="mt-2 border-t border-[#171717]/10 pt-2">
-            <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#37352F]">
+          <div className="mt-2 border-t border-hair pt-2">
+            <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-ink">
               <iconify-icon icon="mdi:layers-outline" width="14" height="14" />
               Layers
             </h2>
             <div className="no-scrollbar max-h-[calc(100vh-26rem)] overflow-y-auto pr-0.5">
               {Array.from({ length: jumlahHalaman }, (_, page) => (
                 <div key={page} className="mb-2">
-                  <p className="px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-[#9b9a97]">
+                  <p className="px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted">
                     Halaman {page + 1}
                   </p>
                   {blokDiHalaman(doc, page).length === 0 ? (
-                    <p className="px-3 pb-1 text-[11px] text-[#9b9a97]">Kosong</p>
+                    <p className="px-3 pb-1 text-[11px] text-muted">Kosong</p>
                   ) : (
                     blokDiHalaman(doc, page).map((blok, index) => (
                       <div
@@ -426,14 +426,14 @@ export default function BuildPage() {
                         }}
                         className={
                           "flex cursor-pointer items-center gap-1.5 rounded-none px-2.5 py-1.5 transition-colors " +
-                          (selectedId === blok.id ? "bg-[#37352F] text-white" : "hover:bg-[#efefef]")
+                          (selectedId === blok.id ? "bg-ink text-panel" : "hover:bg-panel2")
                         }
                       >
                         <iconify-icon
                           icon={ikonTipeBlok(blok.type)}
                           width="14"
                           height="14"
-                          className={selectedId === blok.id ? "shrink-0" : "shrink-0 text-[#37352F]"}
+                          className={selectedId === blok.id ? "shrink-0" : "shrink-0 text-ink"}
                         />
                         <span className="min-w-0 flex-1 truncate text-xs">{blok.name ?? "Tanpa nama"}</span>
                         <button
@@ -483,13 +483,13 @@ export default function BuildPage() {
           <div
             onMouseDown={mulaiDragKiri}
             title="Seret untuk ubah lebar"
-            className="absolute -right-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-none bg-[#171717]/10 transition-colors hover:bg-[#37352F]"
+            className="absolute -right-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-none bg-ink/10 transition-colors hover:bg-[#37352F]"
           />
         </aside>
 
         {/* Tengah: kertas A4 — satu-satunya area yang scroll */}
         <section
-          className="print-area no-scrollbar h-full overflow-y-auto bg-[#f7f7f5] p-6 lg:pl-[var(--left-pad)] lg:pr-[var(--right-pad)]"
+          className="print-area no-scrollbar h-full overflow-y-auto bg-app p-6 lg:pl-[var(--left-pad)] lg:pr-[var(--right-pad)]"
           style={
             {
               "--left-pad": `${leftWidth + 48}px`,
@@ -514,7 +514,7 @@ export default function BuildPage() {
               }
             >
               <div className="no-print mb-4 flex items-center justify-between">
-                <span className="text-xs font-medium text-[#787774]">Halaman {page + 1}</span>
+                <span className="text-xs font-medium text-muted">Halaman {page + 1}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -528,7 +528,7 @@ export default function BuildPage() {
                 </button>
               </div>
               {blokDiHalaman(doc, page).length === 0 ? (
-                <p className="no-print mt-4 text-center text-sm text-[#787774]">
+                <p className="no-print mt-4 text-center text-sm text-muted">
                   Halaman kosong. Seret blok ke sini.
                 </p>
               ) : doc.layout === "sidebar" ? (
@@ -614,7 +614,7 @@ export default function BuildPage() {
           <div className="no-print mt-2 text-center">
             <button
               onClick={tambahHalaman}
-              className="rounded-none border border-[#171717]/15 px-4 py-2 text-sm text-[#171717] hover:bg-[#e8e8e6]"
+              className="rounded-none border border-hair px-4 py-2 text-sm text-ink hover:bg-panel2"
             >
               + Tambah halaman
             </button>
@@ -623,18 +623,18 @@ export default function BuildPage() {
 
         {/* Panel kanan: properti blok (floating pill kanan, bisa di-resize) */}
         <aside
-          className="no-print no-scrollbar fixed right-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col overflow-y-auto rounded-none border border-[#171717]/10 bg-white shadow-lg lg:flex"
+          className="no-print no-scrollbar fixed right-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col overflow-y-auto rounded-none border border-hair bg-panel shadow-lg lg:flex"
           style={{ width: rightWidth }}
         >
           {/* Handle resize panel kanan */}
           <div
             onMouseDown={mulaiDragKanan}
             title="Seret untuk ubah lebar"
-            className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-none bg-[#171717]/10 transition-colors hover:bg-[#37352F]"
+            className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-none bg-ink/10 transition-colors hover:bg-[#37352F]"
           />
           {/* Header menempel penuh ke tepi atas panel (tanpa padding panel
               di atasnya), jadi blur menutup seluruh lebar saat scroll. */}
-          <h2 className="sticky top-0 z-10 flex items-center gap-2 border-b border-[#171717]/10 bg-white/95 px-4 pb-3 pt-4 text-sm font-semibold text-[#37352F] backdrop-blur-lg">
+          <h2 className="sticky top-0 z-10 flex items-center gap-2 border-b border-hair bg-panel/95 px-4 pb-3 pt-4 text-sm font-semibold text-ink backdrop-blur-lg">
             <iconify-icon icon="mdi:tune-variant" width="16" height="16" />
             Properti
           </h2>
@@ -684,7 +684,7 @@ function BlokEditor({
             style={{ marginBottom: 4 }}
             className={
                 "group relative animate-fade-in cursor-pointer rounded border p-1.5 print:border-transparent " +
-                (terpilih ? "border-[#2383E2] bg-[#2383E2]/5" : "border-transparent hover:border-[#171717]/30")
+                (terpilih ? "border-[#2383E2] bg-[#2383E2]/5" : "border-transparent hover:border-hair")
             }
         >
             {/* Kontrol blok: absolute di luar aliran supaya tidak menambah
@@ -883,15 +883,15 @@ function TeksRich({
     }
 
     return (
-        <div className="relative">
+        <div className={"relative " + (className ?? "")}>
             {fokus && adaSeleksi && (
-                <div className="absolute -top-7 left-0 z-10 flex items-center gap-0.5 rounded-none border border-[#171717]/10 bg-white px-1 py-0.5 shadow-md">
+                <div className="absolute -top-7 left-0 z-10 flex items-center gap-0.5 rounded-none border border-hair bg-panel px-1 py-0.5 shadow-md">
                     <button
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => format("bold")}
                         title="Tebal"
-                        className="flex h-5 w-6 items-center justify-center rounded text-xs font-bold text-[#171717] hover:bg-[#efefef]"
+                        className="flex h-5 w-6 items-center justify-center rounded text-xs font-bold text-ink hover:bg-panel2"
                     >
                         B
                     </button>
@@ -900,7 +900,7 @@ function TeksRich({
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => format("italic")}
                         title="Miring"
-                        className="flex h-5 w-6 items-center justify-center rounded text-xs italic text-[#171717] hover:bg-[#efefef]"
+                        className="flex h-5 w-6 items-center justify-center rounded text-xs italic text-ink hover:bg-panel2"
                     >
                         I
                     </button>
@@ -909,7 +909,7 @@ function TeksRich({
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => format("underline")}
                         title="Garis bawah"
-                        className="flex h-5 w-6 items-center justify-center rounded text-xs underline text-[#171717] hover:bg-[#efefef]"
+                        className="flex h-5 w-6 items-center justify-center rounded text-xs underline text-ink hover:bg-panel2"
                     >
                         U
                     </button>
@@ -933,8 +933,7 @@ function TeksRich({
                 }}
                 data-placeholder={placeholder}
                 className={
-                    "rich-teks min-w-0 outline-none transition-shadow focus:ring-1 focus:ring-[#2383E2]/60 " +
-                    (className ?? "")
+                    "rich-teks min-w-0 w-full outline-none transition-shadow focus:ring-1 focus:ring-[#2383E2]/60"
                 }
                 style={style}
             />
@@ -978,7 +977,7 @@ function PreviewBlok({
         value={nilai}
         onUbah={onUbahNama}
         placeholder="Nama section"
-        className={"mb-1 w-full border-b pb-0.5 font-semibold uppercase tracking-wide " + (sidebarMode ? "border-white/30" : "border-[#171717]/20")}
+        className={"mb-1 w-full border-b pb-0.5 font-semibold uppercase tracking-wide " + (sidebarMode ? "border-white/30" : "border-hair")}
       />
     );
   }
@@ -1282,27 +1281,27 @@ function EditorDokumen({
 
     return (
         <div className="mt-3 flex flex-col gap-3">
-            <p className="text-sm text-[#787774]">Pengaturan dokumen</p>
+            <p className="text-sm text-muted">Pengaturan dokumen</p>
 
-            <div className="rounded border border-[#171717]/10 p-3">
-                <p className="text-xs text-[#787774]">Warna aksen</p>
+            <div className="rounded border border-hair p-3">
+                <p className="text-xs text-muted">Warna aksen</p>
                 <label className="mt-2 flex items-center gap-2 text-sm">
                     <input
                         type="color"
                         value={accent}
                         onChange={(e) => onChange({ accentColor: e.target.value })}
-                        className="h-8 w-10 cursor-pointer rounded border border-[#171717]/20 bg-transparent"
+                        className="h-8 w-10 cursor-pointer rounded border border-hair bg-transparent"
                     />
-                    <span className="font-mono text-xs text-[#787774]">{accent}</span>
+                    <span className="font-mono text-xs text-muted">{accent}</span>
                 </label>
             </div>
 
-            <div className="rounded border border-[#171717]/10 p-3">
-                <p className="text-xs text-[#787774]">Font</p>
+            <div className="rounded border border-hair p-3">
+                <p className="text-xs text-muted">Font</p>
                 <select
                     value={font}
                     onChange={(e) => onChange({ font: e.target.value as CVDocument["font"] })}
-                    className="mt-2 w-full rounded bg-[#efefef] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e8e6]"
+                    className="mt-2 w-full rounded bg-panel2 px-2 py-1.5 text-sm outline-none focus:bg-ink/10"
                 >
                     <option value="sans">Sans (Arial)</option>
                     <option value="serif">Serif (Times)</option>
@@ -1335,8 +1334,8 @@ function EditorBlok({
     <div className="mt-3 flex flex-col gap-3">
       <LabelInput label="Nama blok" value={blok.name ?? ""} onUbah={ubahNama} />
 
-      <div className="rounded border border-[#171717]/10 p-3">
-        <p className="text-xs text-[#787774]">Ukuran & warna</p>
+      <div className="rounded border border-hair p-3">
+        <p className="text-xs text-muted">Ukuran & warna</p>
         <div className="mt-2 flex items-center gap-3">
           <label className="flex items-center gap-2 text-xs">
             Font
@@ -1346,7 +1345,7 @@ function EditorBlok({
               max={48}
               value={style.fontSize}
               onChange={(e) => ubahStyle({ fontSize: Number(e.target.value) })}
-              className="w-16 rounded bg-[#efefef] px-2 py-1 text-sm outline-none focus:bg-[#e8e8e6]"
+              className="w-16 rounded bg-panel2 px-2 py-1 text-sm outline-none focus:bg-ink/10"
             />
           </label>
           <label className="flex items-center gap-2 text-xs">
@@ -1355,7 +1354,7 @@ function EditorBlok({
               type="color"
               value={style.color}
               onChange={(e) => ubahStyle({ color: e.target.value })}
-              className="h-8 w-10 cursor-pointer rounded border border-[#171717]/20 bg-transparent"
+              className="h-8 w-10 cursor-pointer rounded border border-hair bg-transparent"
             />
           </label>
         </div>
@@ -1399,9 +1398,9 @@ function FotoProfil({
   }
 
   return (
-    <div className="rounded-none border border-[#171717]/10 bg-[#f7f7f5] p-4">
+    <div className="rounded-none border border-hair bg-app p-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-none border border-[#2383E2]/40 bg-white text-[#2383E2]">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-none border border-[#2383E2]/40 bg-panel text-[#2383E2]">
           {photo ? (
             <img src={photo} alt="Foto profil" className="h-full w-full object-cover" />
           ) : (
@@ -1410,7 +1409,7 @@ function FotoProfil({
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold">Foto profil</p>
-          <p className="mt-0.5 text-xs text-[#787774]">
+          <p className="mt-0.5 text-xs text-muted">
             {photo ? "Foto tersimpan di perangkat ini" : "Tambahkan foto agar header lebih personal"}
           </p>
         </div>
@@ -1444,14 +1443,14 @@ function FotoProfil({
         className={
           "mt-3 flex w-full items-center justify-center gap-2 rounded-none border border-dashed px-3 py-2 text-xs transition-colors " +
           (dragging
-            ? "border-[#37352F] bg-[#37352F]/10 text-[#37352F]"
-            : "border-[#171717]/20 bg-white text-[#787774] hover:border-[#37352F] hover:bg-white")
+            ? "border-ink bg-ink/10 text-ink"
+            : "border-hair bg-panel text-muted hover:border-ink hover:bg-panel")
         }
       >
         <iconify-icon icon={photo ? "mdi:image-edit-outline" : "mdi:cloud-upload-outline"} width="17" height="17" />
         {processing ? "Memproses foto…" : photo ? "Ganti foto" : "Upload foto"}
       </button>
-      <p className="mt-2 text-center text-[11px] text-[#9b9a97]">JPG, PNG, atau WEBP · maksimal 200px</p>
+      <p className="mt-2 text-center text-[11px] text-muted">JPG, PNG, atau WEBP · maksimal 200px</p>
       <input
         ref={inputRef}
         type="file"
@@ -1523,7 +1522,7 @@ function EditorExperience({
 
   return (
     <div className="flex flex-col gap-2">
-      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
+      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-ink/85">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah item
       </button>
@@ -1536,7 +1535,7 @@ function EditorExperience({
             const dari = Number(e.dataTransfer.getData("text/plain"));
             if (!Number.isNaN(dari) && dari !== i) pindahkanItem(dari, i);
           }}
-          className="flex flex-col gap-1.5 rounded border border-[#171717]/10 p-2.5"
+          className="flex flex-col gap-1.5 rounded border border-hair p-2.5"
         >
           <div className="flex items-center justify-between">
             <span
@@ -1545,7 +1544,7 @@ function EditorExperience({
                 e.dataTransfer.setData("text/plain", String(i));
                 e.dataTransfer.effectAllowed = "move";
               }}
-              className="cursor-grab text-[#787774] active:cursor-grabbing"
+              className="cursor-grab text-muted active:cursor-grabbing"
               title="Seret untuk mengurutkan"
             >
             <iconify-icon icon="mdi:drag-vertical" width="16" height="16" />
@@ -1558,12 +1557,12 @@ function EditorExperience({
           <LabelInput label="Perusahaan" value={item.company} onUbah={(v) => ubahItem(i, "company", v)} />
           <LabelInput label="Periode" value={item.period} onUbah={(v) => ubahItem(i, "period", v)} />
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-[#787774]">Deskripsi</label>
+            <label className="text-xs text-muted">Deskripsi</label>
             <textarea
               value={item.description}
               onChange={(e) => ubahItem(i, "description", e.target.value)}
               rows={3}
-              className="rounded bg-[#efefef] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e8e6]"
+              className="rounded bg-panel2 px-2 py-1.5 text-sm outline-none focus:bg-ink/10"
             />
           </div>
         </div>
@@ -1603,7 +1602,7 @@ function EditorSkills({
 
   return (
     <div className="flex flex-col gap-2">
-      <button onClick={tambahSkill} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
+      <button onClick={tambahSkill} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-ink/85">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah skill
       </button>
@@ -1624,7 +1623,7 @@ function EditorSkills({
               e.dataTransfer.setData("text/plain", String(i));
               e.dataTransfer.effectAllowed = "move";
             }}
-            className="cursor-grab text-[#9b9a97] active:cursor-grabbing"
+            className="cursor-grab text-muted active:cursor-grabbing"
             title="Seret untuk mengurutkan"
           >
             <iconify-icon icon="mdi:drag-vertical" width="16" height="16" />
@@ -1633,7 +1632,7 @@ function EditorSkills({
             value={skill}
             onChange={(e) => ubahSkill(i, e.target.value)}
             placeholder="Skill"
-            className="flex-1 rounded bg-[#efefef] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e8e6]"
+            className="flex-1 rounded bg-panel2 px-2 py-1.5 text-sm outline-none focus:bg-ink/10"
           />
           <button onClick={() => hapusSkill(i)} title="Hapus skill" className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-[#ff746c] transition-transform hover:scale-110 hover:bg-[#ff746c]/10 active:scale-95">
             <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
@@ -1677,7 +1676,7 @@ function EditorCustom({
 
   return (
     <div className="flex flex-col gap-2">
-      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-[#2f2b26]">
+      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-none bg-[#37352F] px-3 py-1 text-sm font-medium text-white hover:bg-ink/85">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah item
       </button>
@@ -1690,7 +1689,7 @@ function EditorCustom({
             const dari = Number(e.dataTransfer.getData("text/plain"));
             if (!Number.isNaN(dari) && dari !== i) pindahkanItem(dari, i);
           }}
-          className="flex flex-col gap-1.5 rounded border border-[#171717]/10 p-2.5"
+          className="flex flex-col gap-1.5 rounded border border-hair p-2.5"
         >
           <div className="flex items-center justify-between">
             <span
@@ -1699,7 +1698,7 @@ function EditorCustom({
                 e.dataTransfer.setData("text/plain", String(i));
                 e.dataTransfer.effectAllowed = "move";
               }}
-              className="cursor-grab text-[#787774] active:cursor-grabbing"
+              className="cursor-grab text-muted active:cursor-grabbing"
               title="Seret untuk mengurutkan"
             >
             <iconify-icon icon="mdi:drag-vertical" width="16" height="16" />
@@ -1726,13 +1725,13 @@ function EditorParagraph({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-[11px] text-[#787774]">Paragraf</label>
+      <label className="text-[11px] text-muted">Paragraf</label>
       <textarea
         value={blok.data.text}
         onChange={(e) => onChange({ ...blok, data: { text: e.target.value } })}
         placeholder="Tulis paragraf di sini…"
         rows={6}
-        className="rounded bg-[#efefef] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e8e6]"
+        className="rounded bg-panel2 px-2 py-1.5 text-sm outline-none focus:bg-ink/10"
       />
     </div>
   );
@@ -1780,11 +1779,11 @@ function LabelInput({
 }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <label className="text-[11px] text-[#787774]">{label}</label>
+      <label className="text-[11px] text-muted">{label}</label>
       <input
         value={value}
         onChange={(e) => onUbah(e.target.value)}
-        className="rounded bg-[#efefef] px-2 py-1 text-sm outline-none focus:bg-[#e8e8e6]"
+        className="rounded bg-panel2 px-2 py-1 text-sm outline-none focus:bg-ink/10"
       />
     </div>
   );

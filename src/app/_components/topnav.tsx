@@ -14,6 +14,8 @@ export default function TopNav() {
     const pathname = usePathname();
     const [showAiChat, setShowAiChat] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    // Inisialisasi dari class .dark di <html> (di-set script di <head>)
+    const [dark, setDark] = useState(() => typeof document !== "undefined" && document.documentElement.classList.contains("dark"));
 
     useEffect(() => {
         function onScroll(): void {
@@ -24,17 +26,28 @@ export default function TopNav() {
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
+    function toggleTema(): void {
+        const next = !dark;
+        setDark(next);
+        document.documentElement.classList.toggle("dark", next);
+        try {
+            localStorage.setItem("theme", next ? "dark" : "light");
+        } catch {
+            // penyimpanan lokal tidak tersedia — abaikan
+        }
+    }
+
     return (
         <>
             <nav
                 className={
                     "sticky top-0 z-50 flex items-center gap-1 px-6 py-2 transition-all duration-300 " +
                     (scrolled
-                        ? "border-b border-[#171717]/10 bg-white/95 backdrop-blur"
+                        ? "border-b border-hair bg-panel/95 backdrop-blur"
                         : "border-b border-transparent bg-transparent")
                 }
             >
-                <Link href="/" className="mr-4 text-sm font-semibold text-[#37352F] hover:underline">
+                <Link href="/" className="mr-4 text-sm font-semibold text-ink hover:underline">
                     BuildMyCV
                 </Link>
                 {items.map((item) => {
@@ -46,8 +59,8 @@ export default function TopNav() {
                             className={
                                 "flex items-center gap-2 rounded-none px-3 py-1.5 text-sm transition-colors " +
                                 (aktif
-                                    ? "bg-[#37352F] text-white"
-                                    : "text-[#171717] hover:bg-[#efefef]")
+                                    ? "bg-ink text-panel"
+                                    : "text-ink hover:bg-panel2")
                             }
                         >
                             <iconify-icon icon={item.icon} width="15" height="15" />
@@ -56,12 +69,19 @@ export default function TopNav() {
                     );
                 })}
                 <button
-                    onClick={() => setShowAiChat(true)}
-                    className="ml-auto flex items-center gap-2 rounded-none px-3 py-1.5 text-sm text-[#171717] transition-colors hover:bg-[#efefef]"
+                    onClick={toggleTema}
+                    title={dark ? "Mode terang" : "Mode gelap"}
+                    className="ml-auto flex h-8 w-8 items-center justify-center rounded-none text-ink transition-colors hover:bg-panel2"
                 >
-                    <iconify-icon icon="mdi:robot-outline" width="15" height="15" className="text-[#37352F]" />
+                    <iconify-icon icon={dark ? "mdi:white-balance-sunny" : "mdi:weather-night"} width="16" height="16" />
+                </button>
+                <button
+                    onClick={() => setShowAiChat(true)}
+                    className="flex items-center gap-2 rounded-none px-3 py-1.5 text-sm text-ink transition-colors hover:bg-panel2"
+                >
+                    <iconify-icon icon="mdi:robot-outline" width="15" height="15" className="text-ink" />
                     AI Chat
-                    <span className="rounded-none bg-[#37352F]/10 px-2 py-0.5 text-[10px] font-medium text-[#37352F]">
+                    <span className="rounded-none bg-ink/10 px-2 py-0.5 text-[10px] font-medium text-ink">
                         Segera
                     </span>
                 </button>
@@ -78,19 +98,19 @@ export default function TopNav() {
 
             {showAiChat && (
                 <div className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/40">
-                    <div className="w-full max-w-sm animate-pop rounded-none bg-white p-6 text-center shadow-xl">
-                        <iconify-icon icon="mdi:robot-outline" width="48" height="48" className="text-[#37352F]" />
+                    <div className="w-full max-w-sm animate-pop rounded-none bg-panel p-6 text-center shadow-xl">
+                        <iconify-icon icon="mdi:robot-outline" width="48" height="48" className="text-ink" />
                         <h2 className="mt-3 text-lg font-semibold">AI Chat</h2>
-                        <p className="mt-2 text-sm text-[#787774]">
+                        <p className="mt-2 text-sm text-muted">
                             Bantu tulis dan perbaiki CV dengan AI. Segera hadir.
                         </p>
-                        <span className="mt-3 inline-block rounded-none bg-[#37352F]/10 px-3 py-1 text-xs font-medium text-[#37352F]">
+                        <span className="mt-3 inline-block rounded-none bg-ink/10 px-3 py-1 text-xs font-medium text-ink">
                             Coming soon
                         </span>
                         <div className="mt-5 flex justify-center">
                             <button
                                 onClick={() => setShowAiChat(false)}
-                                className="rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
+                                className="rounded-none bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-ink/85"
                             >
                                 Tutup
                             </button>

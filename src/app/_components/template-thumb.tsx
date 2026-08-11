@@ -12,7 +12,7 @@ export default function TemplateThumb({ template }: { template: CVTemplate }) {
     const bar = template.sectionStyle === "bar";
 
     return (
-        <div className="relative mx-auto aspect-[210/297] h-44 w-auto overflow-hidden rounded-none border border-[#171717]/10 bg-white">
+        <div className="relative mx-auto aspect-[210/297] h-44 w-auto overflow-hidden rounded-none border border-hair bg-white">
             {/* Jalur sidebar kiri */}
             {sidebarLayout && (
                 <div className="absolute inset-y-0 left-0 w-1/4" style={{ background: template.sidebarColor ?? accent }} />
