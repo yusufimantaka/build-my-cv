@@ -26,9 +26,9 @@ export interface CVTemplate {
     blocks: TemplateBlok[];
 }
 
-const styleHeader: BlockStyle = { fontSize: 24, color: "#171717", spacing: 8 };
-const styleJudul: BlockStyle = { fontSize: 16, color: "#171717", spacing: 8 };
-const styleIsi: BlockStyle = { fontSize: 14, color: "#171717", spacing: 8 };
+const styleHeader: BlockStyle = { fontSize: 24, color: "#171717", spacing: 4 };
+const styleJudul: BlockStyle = { fontSize: 16, color: "#171717", spacing: 4 };
+const styleIsi: BlockStyle = { fontSize: 14, color: "#171717", spacing: 4 };
 
 function header(
     name: string,

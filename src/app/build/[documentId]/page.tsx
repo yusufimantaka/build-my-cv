@@ -11,7 +11,7 @@ const repo = new IndexedDBRepository();
 // Membuat blok baru dengan data kosong, sesuai jenisnya
 function blokBaru(type: CVBlock["type"], page: number): CVBlock {
   const id = crypto.randomUUID();
-  const style: BlockStyle = { fontSize: 16, color: "#171717", spacing: 8 };
+  const style: BlockStyle = { fontSize: 16, color: "#171717", spacing: 4 };
   const name = type === "header" ? "Header" : type === "experience" ? "Pengalaman" : type === "skills" ? "Keahlian" : "Section";
   if (type === "header") {
     return { id, type, order: 0, visible: true, name, page, style, data: { fullName: "", title: "", email: "", phone: "" } };
@@ -416,7 +416,7 @@ export default function BuildPage() {
                 if (draggedId) seretBlokKeHalaman(draggedId, page);
               }}
               className={
-                "paper-sheet animate-fade-up mx-auto mb-6 w-[210mm] min-h-[297mm] bg-white p-12 text-[#171717] shadow-xl transition-shadow print:ring-0 " +
+                "paper-sheet animate-fade-up mx-auto mb-6 w-[210mm] min-h-[297mm] bg-white p-9 text-[#171717] shadow-xl transition-shadow print:ring-0 " +
                 (doc.font === "serif" ? "font-serif " : doc.font === "mono" ? "font-mono " : "font-sans ") +
                 (selectedPage === page ? "ring-2 ring-[#7895b2]" : "")
               }
@@ -534,9 +534,9 @@ function BlokEditor({
                 if (draggedId && draggedId !== blok.id) onSeretKeBlok(draggedId);
             }}
             onClick={onPilih}
-            style={{ marginBottom: blok.style?.spacing ?? 8 }}
+            style={{ marginBottom: blok.style?.spacing ?? 4 }}
             className={
-                "animate-fade-in cursor-grab rounded border p-4 active:cursor-grabbing print:border-transparent " +
+                "animate-fade-in cursor-grab rounded border p-3 active:cursor-grabbing print:border-transparent " +
                 (terpilih ? "border-[#7895b2]" : "border-transparent hover:border-[#171717]/30")
             }
         >
@@ -707,13 +707,13 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
           value={blok.name ?? ""}
           onUbah={(v) => onUbah({ ...blok, name: v })}
           placeholder="Nama section"
-          className="mb-2 w-full border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
+          className="mb-1 w-full border-b border-[#171717]/20 pb-0.5 font-semibold uppercase tracking-wide"
         />
         {blok.data.items.length === 0 ? (
           <p className="text-sm opacity-50">Belum ada item.</p>
         ) : (
           blok.data.items.map((item, i) => (
-            <div key={i} className="mb-3">
+            <div key={i} className="mb-2">
               <div className="flex items-baseline gap-3">
                 <TeksEditable
                   value={item.title}
@@ -775,7 +775,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
           value={blok.name ?? ""}
           onUbah={(v) => onUbah({ ...blok, name: v })}
           placeholder="Nama section"
-          className="mb-2 w-full border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
+          className="mb-1 w-full border-b border-[#171717]/20 pb-0.5 font-semibold uppercase tracking-wide"
         />
         {blok.data.skills.length === 0 ? (
           <p className="text-sm opacity-50">Belum ada skill.</p>
@@ -809,14 +809,14 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
         value={blok.name ?? ""}
         onUbah={(v) => onUbah({ ...blok, name: v })}
         placeholder="Nama section"
-        className="mb-2 w-full border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
-      />
-      {blok.data.items.length === 0 ? (
+        className="mb-1 w-full border-b border-[#171717]/20 pb-0.5 font-semibold uppercase tracking-wide"
+        />
+        {blok.data.items.length === 0 ? (
         <p className="text-sm opacity-50">Belum ada item.</p>
-      ) : (
+        ) : (
         <ul>
           {blok.data.items.map((item, i) => (
-            <li key={i} className="mb-1 flex items-baseline gap-2">
+            <li key={i} className="mb-0.5 flex items-baseline gap-2">
               <TeksEditable
                 value={item.label}
                 onUbah={(v) =>
@@ -947,11 +947,11 @@ function EditorBlok({
             type="range"
             min={0}
             max={64}
-            value={style.spacing ?? 8}
+            value={style.spacing ?? 4}
             onChange={(e) => ubahStyle({ spacing: Number(e.target.value) })}
             className="flex-1 accent-[#3f6382]"
           />
-          <span className="w-8 text-right text-xs text-[#6e6a5e]">{style.spacing ?? 8}px</span>
+          <span className="w-8 text-right text-xs text-[#6e6a5e]">{style.spacing ?? 4}px</span>
         </div>
       </div>
 
@@ -1115,8 +1115,8 @@ function EditorExperience({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#355573]">
+    <div className="flex flex-col gap-2">
+      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1 text-sm font-medium text-white hover:bg-[#355573]">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah item
       </button>
@@ -1129,7 +1129,7 @@ function EditorExperience({
             const dari = Number(e.dataTransfer.getData("text/plain"));
             if (!Number.isNaN(dari) && dari !== i) pindahkanItem(dari, i);
           }}
-          className="flex flex-col gap-2 rounded border border-[#171717]/10 p-3"
+          className="flex flex-col gap-1.5 rounded border border-[#171717]/10 p-2.5"
         >
           <div className="flex items-center justify-between">
             <span
@@ -1141,7 +1141,7 @@ function EditorExperience({
               className="cursor-grab text-[#6e6a5e] active:cursor-grabbing"
               title="Seret untuk mengurutkan"
             >
-              ⠿
+            <iconify-icon icon="mdi:drag-vertical" width="16" height="16" />
             </span>
             <button onClick={() => hapusItem(i)} title="Hapus item" className="flex h-7 w-7 items-center justify-center rounded text-[#ff746c] transition-transform hover:scale-110 hover:bg-[#ff746c]/10 active:scale-95">
               <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
@@ -1195,8 +1195,8 @@ function EditorSkills({
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <button onClick={tambahSkill} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#355573]">
+    <div className="flex flex-col gap-2">
+      <button onClick={tambahSkill} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1 text-sm font-medium text-white hover:bg-[#355573]">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah skill
       </button>
@@ -1217,10 +1217,10 @@ function EditorSkills({
               e.dataTransfer.setData("text/plain", String(i));
               e.dataTransfer.effectAllowed = "move";
             }}
-            className="cursor-grab text-[#6e6a5e] active:cursor-grabbing"
+            className="cursor-grab text-[#8a8578] active:cursor-grabbing"
             title="Seret untuk mengurutkan"
           >
-            ⠿
+            <iconify-icon icon="mdi:drag-vertical" width="16" height="16" />
           </span>
           <input
             value={skill}
@@ -1269,8 +1269,8 @@ function EditorCustom({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#355573]">
+    <div className="flex flex-col gap-2">
+      <button onClick={tambahItem} className="flex items-center justify-center gap-1.5 rounded-md bg-[#3f6382] px-3 py-1 text-sm font-medium text-white hover:bg-[#355573]">
         <iconify-icon icon="mdi:plus" width="14" height="14" />
         Tambah item
       </button>
@@ -1283,7 +1283,7 @@ function EditorCustom({
             const dari = Number(e.dataTransfer.getData("text/plain"));
             if (!Number.isNaN(dari) && dari !== i) pindahkanItem(dari, i);
           }}
-          className="flex flex-col gap-2 rounded border border-[#171717]/10 p-3"
+          className="flex flex-col gap-1.5 rounded border border-[#171717]/10 p-2.5"
         >
           <div className="flex items-center justify-between">
             <span
@@ -1295,7 +1295,7 @@ function EditorCustom({
               className="cursor-grab text-[#6e6a5e] active:cursor-grabbing"
               title="Seret untuk mengurutkan"
             >
-              ⠿
+            <iconify-icon icon="mdi:drag-vertical" width="16" height="16" />
             </span>
             <button onClick={() => hapusItem(i)} title="Hapus item" className="flex h-7 w-7 items-center justify-center rounded text-[#ff746c] transition-transform hover:scale-110 hover:bg-[#ff746c]/10 active:scale-95">
               <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
@@ -1350,12 +1350,12 @@ function LabelInput({
   onUbah: (nilai: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="text-xs text-[#6e6a5e]">{label}</label>
+    <div className="flex flex-col gap-0.5">
+      <label className="text-[11px] text-[#6e6a5e]">{label}</label>
       <input
         value={value}
         onChange={(e) => onUbah(e.target.value)}
-        className="rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
+        className="rounded bg-[#f0ece3] px-2 py-1 text-sm outline-none focus:bg-[#e8e3d8]"
       />
     </div>
   );
