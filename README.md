@@ -7,6 +7,10 @@ Buat CV dari blok-blok. Simpan di perangkatmu. Tidak perlu akun. Tidak perlu ser
 ## Fitur
 
 - **Blok CV** — tambah Header, Experience, Skills, atau Section. Susun ulang dengan drag. Ubah urutan dengan tombol.
+- **12 template dalam 6 kategori** — Simple, Modern, Creative, Photo, Compact, First Job. Khusus konteks mahasiswa UGM (kepanitiaan, organisasi, magang, fresh graduate).
+- **Explore** — contoh CV per industri (Software Engineer, Data Analyst, UI/UX, dll) dengan tips dari sisi recruiter.
+- **Layout dokumen** — pilih satu kolom atau dua kolom, warna aksen, dan font (sans/serif/mono).
+- **Foto profil** — upload foto di header, otomatis dikecilkan dan disimpan lokal.
 - **Rename blok** — ubah nama blok sesuai kebutuhan.
 - **Gaya per blok** — ubah ukuran font dan warna teks.
 - **Multi halaman** — tambah dan hapus halaman A4.

@@ -36,11 +36,14 @@ UI → Repository → IndexedDB. UI tidak pernah menyentuh IndexedDB langsung.
 - `src/domain/repository.ts` — interface `WorkspaceRepository` (loadDocuments / saveDocument / deleteDocument)
 - `src/domain/in-memory-repository.ts` — implementasi memori (tes)
 - `src/domain/indexed-db-repository.ts` — implementasi IndexedDB
-- `src/domain/templates.ts` — template CV (kepanitiaan, organisasi, magang) + `templateKeDokumen()`
+- `src/domain/templates.ts` — 12 template CV dalam 6 kategori (simple, modern, creative, photo, compact, first-job) + `templateKeDokumen()`
+- `src/domain/examples.ts` — contoh CV per industri (untuk halaman Explore)
 - `src/app/_components/dashboard.tsx` — dashboard: kategori, search, sort, zoom grid, backup/restore JSON
+- `src/app/_components/template-thumb.tsx` — thumbnail SVG template
+- `src/app/_components/landscape-bg.tsx` — latar lanskap fixed untuk halaman app
 - `src/app/_components/topnav.tsx` — TopNav sticky (bukan floating), brand, AI Chat "Segera" modal, CTA GitHub
-- `src/app/library/page.tsx` — template library
-- `src/app/explore/page.tsx` — placeholder "Coming soon"
+- `src/app/library/page.tsx` — galeri template dengan filter kategori
+- `src/app/explore/page.tsx` — contoh CV per industri + tombol mulai dari template
 - `src/app/build/[documentId]/page.tsx` — editor blok (floating pill panels, resize, drag reorder, multi-halaman, export PDF via print CSS)
 
 ## Halaman
@@ -49,7 +52,7 @@ UI → Repository → IndexedDB. UI tidak pernah menyentuh IndexedDB langsung.
 |---|---|
 | `/` | Dashboard lengkap |
 | `/library` | Template UGM |
-| `/explore` | Coming soon |
+| `/explore` | Contoh CV per industri |
 | `/ai-chat` | Tidak ada halaman — AI Chat adalah modal di TopNav (coming soon) |
 | `/build/[documentId]` | Editor |
 
