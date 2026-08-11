@@ -600,7 +600,7 @@ function TeksEditable({
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     const selectionRef = useRef<{ start: number; end: number } | null>(null);
     const kelas =
-        "w-full resize-none rounded-sm border-none bg-transparent p-0 outline-none transition-shadow focus:ring-1 focus:ring-[#7895b2]/60 " +
+        "resize-none rounded-sm border-none bg-transparent p-0 outline-none transition-shadow focus:ring-1 focus:ring-[#7895b2]/60 " +
         className;
     // Input/textarea tidak mewarisi font dari parent secara default,
     // jadi font-size dan warna di-set ke inherit (bisa ditimpa via style).
@@ -669,26 +669,29 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
               value={blok.data.fullName}
               onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, fullName: v } })}
               placeholder="Nama Lengkap"
-              className="font-bold"
+              className="w-full font-bold"
               style={{ fontSize: "1.9em" }}
             />
             <TeksEditable
               value={blok.data.title}
               onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, title: v } })}
               placeholder="Judul / Posisi"
+              className="w-full"
               style={{ fontSize: "1.2em" }}
             />
-            <div className="flex gap-3 opacity-60" style={{ fontSize: "0.85em" }}>
+            <div className="flex items-baseline gap-3 opacity-60" style={{ fontSize: "0.85em" }}>
               <TeksEditable
                 value={blok.data.email}
                 onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, email: v } })}
                 placeholder="email@contoh.com"
+                className="min-w-0 flex-1"
               />
               <span aria-hidden="true">·</span>
               <TeksEditable
                 value={blok.data.phone}
                 onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, phone: v } })}
                 placeholder="Telepon"
+                className="min-w-0 flex-1"
               />
             </div>
           </div>
@@ -704,7 +707,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
           value={blok.name ?? ""}
           onUbah={(v) => onUbah({ ...blok, name: v })}
           placeholder="Nama section"
-          className="mb-2 border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
+          className="mb-2 w-full border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
         />
         {blok.data.items.length === 0 ? (
           <p className="text-sm opacity-50">Belum ada item.</p>
@@ -721,7 +724,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
                     })
                   }
                   placeholder="Posisi"
-                  className="font-semibold"
+                  className="min-w-0 flex-1 font-semibold"
                 />
                 <TeksEditable
                   value={item.period}
@@ -744,6 +747,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
                   })
                 }
                 placeholder="Perusahaan"
+                className="w-full"
               />
               <TeksEditable
                 value={item.description}
@@ -755,7 +759,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
                 }
                 placeholder="Deskripsi"
                 multiline
-                className="opacity-70"
+                className="w-full opacity-70"
               />
             </div>
           ))
@@ -771,14 +775,15 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
           value={blok.name ?? ""}
           onUbah={(v) => onUbah({ ...blok, name: v })}
           placeholder="Nama section"
-          className="mb-2 border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
+          className="mb-2 w-full border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
         />
         {blok.data.skills.length === 0 ? (
           <p className="text-sm opacity-50">Belum ada skill.</p>
         ) : (
-          <ul className="list-inside list-disc">
+          <ul>
             {blok.data.skills.map((skill, i) => (
-              <li key={i}>
+              <li key={i} className="flex items-baseline gap-2">
+                <span aria-hidden="true" className="shrink-0">•</span>
                 <TeksEditable
                   value={skill}
                   onUbah={(v) =>
@@ -788,7 +793,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
                     })
                   }
                   placeholder="Skill"
-                  className="ml-0 inline-block w-5/6 align-baseline"
+                  className="min-w-0 flex-1"
                 />
               </li>
             ))}
@@ -804,14 +809,14 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
         value={blok.name ?? ""}
         onUbah={(v) => onUbah({ ...blok, name: v })}
         placeholder="Nama section"
-        className="mb-2 border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
+        className="mb-2 w-full border-b border-[#171717]/20 pb-1 font-semibold uppercase tracking-wide"
       />
       {blok.data.items.length === 0 ? (
         <p className="text-sm opacity-50">Belum ada item.</p>
       ) : (
-        <ul className="list-inside">
+        <ul>
           {blok.data.items.map((item, i) => (
-            <li key={i} className="mb-1">
+            <li key={i} className="mb-1 flex items-baseline gap-2">
               <TeksEditable
                 value={item.label}
                 onUbah={(v) =>
@@ -821,9 +826,9 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
                   })
                 }
                 placeholder="Label"
-                className="inline-block w-1/3 align-baseline font-semibold"
+                className="w-1/3 shrink-0 font-semibold"
               />
-              <span aria-hidden="true">: </span>
+              <span aria-hidden="true" className="shrink-0">: </span>
               <TeksEditable
                 value={item.value}
                 onUbah={(v) =>
@@ -833,7 +838,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
                   })
                 }
                 placeholder="Isi"
-                className="inline-block w-3/5 align-baseline"
+                className="min-w-0 flex-1"
               />
             </li>
           ))}
