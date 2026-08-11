@@ -45,6 +45,8 @@ export default function Dashboard() {
   const [kategoriAktif, setKategoriAktif] = useState<string | null>(null);
   const [kategoriModalId, setKategoriModalId] = useState<string | null>(null);
   const [kategoriInput, setKategoriInput] = useState("");
+  const [kategoriPilihan, setKategoriPilihan] = useState("");
+  const [kategoriBuatBaru, setKategoriBuatBaru] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function muatUlang(): Promise<void> {
@@ -89,7 +91,9 @@ export default function Dashboard() {
     setModalMode("buat");
     setEditId(null);
     setJudul("");
+    setKategoriPilihan(kategoriAktif ?? "");
     setKategoriInput(kategoriAktif ?? "");
+    setKategoriBuatBaru(false);
   }
 
   function bukaModalRename(cv: CVDocument): void {
@@ -374,7 +378,9 @@ export default function Dashboard() {
                       <button
                         onClick={() => {
                           setKategoriModalId(cv.id);
+                          setKategoriPilihan(cv.category ?? "");
                           setKategoriInput(cv.category ?? "");
+                          setKategoriBuatBaru(false);
                         }}
                         title="Atur kategori"
                         className="rounded p-1 text-[#6e6a5e] transition-transform hover:scale-110 hover:bg-[#e8e3d8] hover:text-[#171717] active:scale-95"
@@ -429,29 +435,37 @@ export default function Dashboard() {
               {modalMode === "buat" && (
                 <div className="mt-4">
                   <label className="text-xs text-[#6e6a5e]">Kategori (opsional)</label>
-                  <input
-                    value={kategoriInput}
-                    onChange={(e) => setKategoriInput(e.target.value)}
-                    placeholder="Contoh: Apply Job"
+                  <select
+                    value={kategoriBuatBaru ? "__baru__" : kategoriPilihan}
+                    onChange={(e) => {
+                      const nilai = e.target.value;
+                      if (nilai === "__baru__") {
+                        setKategoriBuatBaru(true);
+                        setKategoriPilihan("");
+                      } else {
+                        setKategoriBuatBaru(false);
+                        setKategoriPilihan(nilai);
+                        setKategoriInput(nilai);
+                      }
+                    }}
                     className="mt-1 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
-                  />
-                  {daftarKategori.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {daftarKategori.map((k) => (
-                        <button
-                          key={k.nama}
-                          onClick={() => setKategoriInput(k.nama)}
-                          className={
-                            "rounded-full border px-3 py-1 text-xs transition-colors " +
-                            (kategoriInput === k.nama
-                              ? "border-[#3f6382] bg-[#3f6382] text-white"
-                              : "border-[#171717]/15 text-[#171717] hover:bg-[#f0ece3]")
-                          }
-                        >
-                          {k.nama}
-                        </button>
-                      ))}
-                    </div>
+                  >
+                    <option value="">Tanpa kategori</option>
+                    {daftarKategori.map((k) => (
+                      <option key={k.nama} value={k.nama}>
+                        {k.nama}
+                      </option>
+                    ))}
+                    <option value="__baru__">+ Buat kategori baru…</option>
+                  </select>
+                  {kategoriBuatBaru && (
+                    <input
+                      autoFocus
+                      value={kategoriInput}
+                      onChange={(e) => setKategoriInput(e.target.value)}
+                      placeholder="Nama kategori baru"
+                      className="mt-2 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
+                    />
                   )}
                 </div>
               )}
@@ -477,33 +491,39 @@ export default function Dashboard() {
           <div className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/40">
             <div className="w-full max-w-sm animate-pop rounded-md bg-white p-6 shadow-xl">
               <h2 className="text-lg font-semibold">Atur kategori</h2>
-              <input
+              <label className="mt-4 block text-xs text-[#6e6a5e]">Kategori</label>
+              <select
                 autoFocus
-                value={kategoriInput}
-                onChange={(e) => setKategoriInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") simpanKategori();
+                value={kategoriBuatBaru ? "__baru__" : kategoriPilihan}
+                onChange={(e) => {
+                  const nilai = e.target.value;
+                  if (nilai === "__baru__") {
+                    setKategoriBuatBaru(true);
+                    setKategoriPilihan("");
+                  } else {
+                    setKategoriBuatBaru(false);
+                    setKategoriPilihan(nilai);
+                    setKategoriInput(nilai);
+                  }
                 }}
-                placeholder="Contoh: Apply Job"
-                className="mt-4 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
-              />
-              {daftarKategori.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {daftarKategori.map((k) => (
-                    <button
-                      key={k.nama}
-                      onClick={() => setKategoriInput(k.nama)}
-                      className={
-                        "rounded-full border px-3 py-1 text-xs transition-colors " +
-                        (kategoriInput === k.nama
-                          ? "border-[#3f6382] bg-[#3f6382] text-white"
-                          : "border-[#171717]/15 text-[#171717] hover:bg-[#f0ece3]")
-                      }
-                    >
-                      {k.nama}
-                    </button>
-                  ))}
-                </div>
+                className="mt-1 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
+              >
+                <option value="">Tanpa kategori</option>
+                {daftarKategori.map((k) => (
+                  <option key={k.nama} value={k.nama}>
+                    {k.nama}
+                  </option>
+                ))}
+                <option value="__baru__">+ Buat kategori baru…</option>
+              </select>
+              {kategoriBuatBaru && (
+                <input
+                  autoFocus
+                  value={kategoriInput}
+                  onChange={(e) => setKategoriInput(e.target.value)}
+                  placeholder="Nama kategori baru"
+                  className="mt-2 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
+                />
               )}
               <div className="mt-5 flex justify-end gap-3">
                 <button
@@ -515,6 +535,8 @@ export default function Dashboard() {
                 <button
                   onClick={() => {
                     setKategoriInput("");
+                    setKategoriPilihan("");
+                    setKategoriBuatBaru(false);
                     simpanKategori();
                   }}
                   className="rounded-md px-4 py-2 text-sm text-[#ff746c] hover:bg-[#ff746c]/10"
