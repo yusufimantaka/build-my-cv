@@ -35,11 +35,16 @@ export interface BlockStyle {
     color: string;
 }
 
+export interface ParagraphData {
+    text: string;
+}
+
 export type CVBlock =
 | {id: string; type: 'header'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: HeaderData}
 | {id: string; type: 'experience'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: ExperienceData}
 | {id: string; type: 'skills'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: SkillsData}
 | {id: string; type: 'custom'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: CustomData}
+| {id: string; type: 'paragraph'; order: number; visible: boolean; name?: string; page?: number; sidebar?: boolean; style?: BlockStyle; data: ParagraphData}
 
 export interface CVDocument {
     id: string;

@@ -705,9 +705,16 @@ const templateV2: CVTemplate[] = [
     },
 ];
 
-// Semua template: yang lama (dasar, Bahasa Indonesia) + template v2
-// (gaya dari referensi). Library menampilkan keduanya.
-export const templates: CVTemplate[] = [...templatesDasar, ...templateV2];
+// Template lama ("CV ...") — contoh CV berdasarkan profesi/kegiatan.
+// Ditampilkan di halaman Library sebagai contoh-contoh CV.
+export const templatesContoh: CVTemplate[] = templatesDasar;
+
+// Template v2 (bernama desain: Classic Clear, True Blue, dst.)
+// Ditampilkan di halaman Explore sebagai katalog template.
+export const templatesDesain: CVTemplate[] = templateV2;
+
+// Semua template (untuk kompatibilitas / keperluan lain).
+export const templates: CVTemplate[] = [...templatesContoh, ...templatesDesain];
 
 // Mengubah template menjadi dokumen CV baru.
 // Setiap blok mendapat id baru agar tidak bentrok dengan dokumen lain.

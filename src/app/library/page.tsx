@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IndexedDBRepository } from "@/domain/indexed-db-repository";
-import { templates, templateKeDokumen } from "@/domain/templates";
+import { templatesContoh, templateKeDokumen } from "@/domain/templates";
 import type { TemplateCategory } from "@/domain/cv";
 import { NAMA_KATEGORI } from "@/domain/cv";
 import TopNav from "@/app/_components/topnav";
@@ -21,9 +21,9 @@ export default function LibraryPage() {
 
     async function pakaiTemplate(templateId: string): Promise<void> {
         let target = null;
-        for (let i = 0; i < templates.length; i++) {
-            if (templates[i].id === templateId) {
-                target = templates[i];
+        for (let i = 0; i < templatesContoh.length; i++) {
+            if (templatesContoh[i].id === templateId) {
+                target = templatesContoh[i];
                 break;
             }
         }
@@ -33,7 +33,7 @@ export default function LibraryPage() {
         router.push(`/build/${dokumen.id}`);
     }
 
-    const tampil = filter === SEMUA ? templates : templates.filter((t) => t.category === filter);
+    const tampil = filter === SEMUA ? templatesContoh : templatesContoh.filter((t) => t.category === filter);
 
     return (
         <main className="isolate min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
@@ -43,7 +43,7 @@ export default function LibraryPage() {
             <div className="p-8">
                 <h1 className="text-2xl font-semibold">Library</h1>
                 <p className="mt-1 text-sm text-[#6e6a5e]">
-                    Mulai dari template siap pakai. Semua data bisa kamu ubah nanti.
+                    Contoh CV siap pakai per profesi dan kegiatan. Semua data bisa kamu ubah nanti.
                 </p>
 
                 {/* Filter kategori */}

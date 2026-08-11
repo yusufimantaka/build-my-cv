@@ -69,6 +69,16 @@ body {
   display: none;
 }
 
+/* Field teks kaya (gaya Notion): placeholder abu-abu saat kosong */
+.rich-teks:empty::before {
+  content: attr(data-placeholder);
+  color: #8a8578;
+  pointer-events: none;
+}
+.rich-teks:focus:empty::before {
+  color: #a8a294;
+}
+
 /* Export PDF: hanya kertas yang tampil saat print */
 @media print {
   @page {
@@ -123,6 +133,11 @@ body {
   .paper-sheet input {
     overflow: visible !important;
     resize: none !important;
+  }
+
+  /* Placeholder field kaya tidak ikut tercetak */
+  .paper-sheet .rich-teks:empty::before {
+    content: none !important;
   }
 
   /* Kertas kedua dan seterusnya mulai di halaman baru.

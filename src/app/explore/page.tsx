@@ -1,47 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IndexedDBRepository } from "@/domain/indexed-db-repository";
-import { templates, templateKeDokumen } from "@/domain/templates";
-import { examples } from "@/domain/examples";
-import { NAMA_KATEGORI } from "@/domain/cv";
+import { templatesDesain, templateKeDokumen } from "@/domain/templates";
 import type { TemplateCategory } from "@/domain/cv";
+import { NAMA_KATEGORI } from "@/domain/cv";
 import TopNav from "@/app/_components/topnav";
 import LandscapeBg from "@/app/_components/landscape-bg";
+import TemplateThumb from "@/app/_components/template-thumb";
 
 const repo = new IndexedDBRepository();
 
-// Pilih template yang paling cocok dengan industri contoh.
-// Jatuh ke template pertama kalau tidak ada yang cocok.
-function templateUntukIndustri(exampleId: string) {
-    const mapping: Record<string, string> = {
-        "software-engineer": "software-engineer",
-        "data-analyst": "data-analyst",
-        "ui-ux-designer": "desain-kreatif",
-        kepanitiaan: "kepanitiaan-kampus",
-        organisasi: "organisasi-kampus",
-        "fresh-graduate": "fresh-graduate",
-    };
-    const id = mapping[exampleId];
-    let target = null;
-    for (let i = 0; i < templates.length; i++) {
-        if (templates[i].id === id) {
-            target = templates[i];
-            break;
-        }
-    }
-    return target ?? templates[0];
-}
+const SEMUA: "semua" | TemplateCategory = "semua";
+const KATEGORI: ("semua" | TemplateCategory)[] = ["semua", "simple", "modern", "creative", "photo", "compact", "first-job"];
 
 export default function ExplorePage() {
     const router = useRouter();
+    const [filter, setFilter] = useState<"semua" | TemplateCategory>(SEMUA);
 
-    async function pakaiContoh(exampleId: string): Promise<void> {
-        const template = templateUntukIndustri(exampleId);
-        const dokumen = templateKeDokumen(template, template.name);
+    async function pakaiTemplate(templateId: string): Promise<void> {
+        let target = null;
+        for (let i = 0; i < templatesDesain.length; i++) {
+            if (templatesDesain[i].id === templateId) {
+                target = templatesDesain[i];
+                break;
+            }
+        }
+        if (!target) return;
+        const dokumen = templateKeDokumen(target, target.name);
         await repo.saveDocument(dokumen);
         router.push(`/build/${dokumen.id}`);
     }
+
+    const tampil = filter === SEMUA ? templatesDesain : templatesDesain.filter((t) => t.category === filter);
 
     return (
         <main className="isolate min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
@@ -51,44 +43,57 @@ export default function ExplorePage() {
             <div className="p-8">
                 <h1 className="text-2xl font-semibold">Explore</h1>
                 <p className="mt-1 text-sm text-[#6e6a5e]">
-                    Contoh CV per bidang. Lihat apa yang dicari recruiter, lalu mulai dari template terkait.
+                    Jelajahi template siap pakai. Semua data bisa kamu ubah nanti.
                 </p>
 
-                <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {examples.map((ex, idx) => (
+                {/* Filter kategori */}
+                <div className="mt-6 flex flex-wrap gap-2">
+                    {KATEGORI.map((k) => {
+                        const aktif = filter === k;
+                        return (
+                            <button
+                                key={k}
+                                onClick={() => setFilter(k)}
+                                className={
+                                    "rounded-full px-4 py-1.5 text-sm transition-colors " +
+                                    (aktif
+                                        ? "bg-[#3f6382] font-medium text-white"
+                                        : "border border-[#171717]/15 bg-white text-[#171717] hover:bg-[#f0ece3]")
+                                }
+                            >
+                                {k === SEMUA ? "Semua" : NAMA_KATEGORI[k as TemplateCategory]}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {tampil.map((t, idx) => (
                         <li
-                            key={ex.id}
-                            className="flex animate-fade-up flex-col rounded-md border border-[#171717]/15 bg-white p-5 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
-                            style={{ animationDelay: `${Math.min(idx * 60, 400)}ms` }}
+                            key={t.id}
+                            className="flex animate-fade-up flex-col rounded-md border border-[#171717]/15 bg-white p-4 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
+                            style={{ animationDelay: `${Math.min(idx * 50, 400)}ms` }}
                         >
-                            <div className="flex items-start justify-between gap-2">
-                                <h2 className="font-semibold leading-tight">{ex.name}</h2>
-                                <span className="shrink-0 rounded-full bg-[#3f6382]/10 px-2 py-0.5 text-[10px] font-medium text-[#3f6382]">
-                                    {NAMA_KATEGORI[ex.category as TemplateCategory]}
+                            {/* Thumbnail template */}
+                            <TemplateThumb template={t} />
+
+                            <div className="mt-4 flex items-start justify-between gap-2">
+                                <h2 className="font-semibold leading-tight">{t.name}</h2>
+                                <span
+                                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium"
+                                    style={{ background: `${t.accent}1A`, color: t.accent }}
+                                >
+                                    {NAMA_KATEGORI[t.category]}
                                 </span>
                             </div>
-                            <p className="mt-2 text-sm text-[#6e6a5e]">{ex.description}</p>
-
-                            <ul className="mt-4 flex-1 space-y-2">
-                                {ex.highlights.map((h, i) => (
-                                    <li key={i} className="flex items-start gap-2 text-sm">
-                                        <iconify-icon
-                                            icon="mdi:check"
-                                            width="15"
-                                            height="15"
-                                            className="mt-0.5 shrink-0 text-[#3f6382]"
-                                        />
-                                        <span>{h}</span>
-                                    </li>
-                                ))}
-                            </ul>
+                            <p className="mt-1 flex-1 text-sm text-[#6e6a5e]">{t.description}</p>
 
                             <button
-                                onClick={() => pakaiContoh(ex.id)}
-                                className="mt-5 flex items-center justify-center gap-2 rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#355573] hover:scale-[1.02] active:scale-95"
+                                onClick={() => pakaiTemplate(t.id)}
+                                className="mt-4 flex items-center justify-center gap-2 rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#355573] hover:scale-[1.02] active:scale-95"
                             >
                                 <iconify-icon icon="mdi:plus" width="15" height="15" />
-                                Mulai dari template
+                                Pakai template
                             </button>
                         </li>
                     ))}

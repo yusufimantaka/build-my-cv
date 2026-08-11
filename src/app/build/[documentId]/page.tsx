@@ -12,7 +12,7 @@ const repo = new IndexedDBRepository();
 function blokBaru(type: CVBlock["type"], page: number): CVBlock {
   const id = crypto.randomUUID();
   const style: BlockStyle = { fontSize: 16, color: "#171717" };
-  const name = type === "header" ? "Header" : type === "experience" ? "Pengalaman" : type === "skills" ? "Keahlian" : "Section";
+  const name = type === "header" ? "Header" : type === "experience" ? "Pengalaman" : type === "skills" ? "Keahlian" : type === "paragraph" ? "Ringkasan" : "Section";
   if (type === "header") {
     return { id, type, order: 0, visible: true, name, page, style, data: { fullName: "", title: "", email: "", phone: "" } };
   }
@@ -21,6 +21,9 @@ function blokBaru(type: CVBlock["type"], page: number): CVBlock {
   }
   if (type === "skills") {
     return { id, type, order: 0, visible: true, name, page, style, data: { skills: [] } };
+  }
+  if (type === "paragraph") {
+    return { id, type, order: 0, visible: true, name, page, style, data: { text: "" } };
   }
   return { id, type, order: 0, visible: true, name, page, style, data: { items: [] } };
 }
@@ -71,36 +74,6 @@ function tukarDalamHalaman(daftar: CVBlock[], id: string, arah: number): CVBlock
   const temp = hasil[index];
   hasil[index] = hasil[target];
   hasil[target] = temp;
-  return hasil;
-}
-
-// Drag & drop: pindahkan blok ke posisi blok target (ikut halaman target)
-function pindahkanBlokKe(daftar: CVBlock[], draggedId: string, targetId: string): CVBlock[] {
-  let draggedIndex = -1;
-  let targetIndex = -1;
-  for (let i = 0; i < daftar.length; i++) {
-    if (daftar[i].id === draggedId) draggedIndex = i;
-    if (daftar[i].id === targetId) targetIndex = i;
-  }
-  if (draggedIndex === -1) return daftar;
-  if (targetIndex === -1 || draggedIndex === targetIndex) return daftar;
-
-  const dragged = { ...daftar[draggedIndex], page: daftar[targetIndex].page ?? 0 };
-
-  const sisa: CVBlock[] = [];
-  for (let i = 0; i < daftar.length; i++) {
-    if (i !== draggedIndex) sisa.push(daftar[i]);
-  }
-
-  let posisi = -1;
-  for (let i = 0; i < sisa.length; i++) {
-    if (sisa[i].id === targetId) {
-      posisi = i;
-      break;
-    }
-  }
-
-  const hasil = [...sisa.slice(0, posisi + 1), dragged, ...sisa.slice(posisi + 1)];
   return hasil;
 }
 
@@ -156,6 +129,22 @@ function dokumenBaru(doc: CVDocument, blocks: CVBlock[]): CVDocument {
 // Mengambil blok milik halaman tertentu
 function blokDiHalaman(dokumen: CVDocument, page: number): CVBlock[] {
   return dokumen.blocks.filter((b) => (b.page ?? 0) === page);
+}
+
+// Ikon Iconify untuk tiap jenis blok (dipakai panel Layers)
+function ikonTipeBlok(type: CVBlock["type"]): string {
+  switch (type) {
+    case "header":
+      return "mdi:account-circle-outline";
+    case "experience":
+      return "mdi:briefcase-outline";
+    case "skills":
+      return "mdi:lightbulb-on-outline";
+    case "paragraph":
+      return "mdi:format-paragraph";
+    default:
+      return "mdi:text-box-outline";
+  }
 }
 
 // Menghapus satu halaman: blok di halaman itu pindah ke halaman sebelumnya,
@@ -298,11 +287,6 @@ export default function BuildPage() {
     simpan(dokumenDenganJudul(doc, nilai));
   }
 
-  function seretBlokKeBlok(draggedId: string, targetId: string): void {
-    if (!doc) return;
-    simpan(dokumenBaru(doc, pindahkanBlokKe(doc.blocks, draggedId, targetId)));
-  }
-
   function seretBlokKeHalaman(draggedId: string, page: number): void {
     if (!doc) return;
     simpan(dokumenBaru(doc, pindahkanBlokKeHalaman(doc.blocks, draggedId, page)));
@@ -389,7 +373,7 @@ export default function BuildPage() {
       <div className="min-h-0 flex-1">
         {/* Panel kiri: daftar blok (floating pill kiri, bisa di-resize) */}
         <aside
-          className="no-print fixed left-4 top-20 z-40 hidden flex-col gap-1 rounded-2xl border border-[#171717]/10 bg-white p-2 shadow-lg lg:flex"
+          className="no-print no-scrollbar fixed left-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col gap-1 overflow-y-auto rounded-2xl border border-[#171717]/10 bg-white p-2 shadow-lg lg:flex"
           style={{ width: leftWidth }}
         >
           <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#3f6382]">
@@ -412,6 +396,89 @@ export default function BuildPage() {
             <iconify-icon icon="mdi:text-box-outline" width="16" height="16" className="text-[#3f6382]" />
             Section
           </button>
+          <button onClick={() => tambahBlok("paragraph")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#f0ece3]">
+            <iconify-icon icon="mdi:format-paragraph" width="16" height="16" className="text-[#3f6382]" />
+            Paragraf
+          </button>
+
+          {/* Panel Layers: daftar blok per halaman. Klik untuk memilih,
+              panah untuk mengurutkan — sama seperti kontrol di dokumen. */}
+          <div className="mt-2 border-t border-[#171717]/10 pt-2">
+            <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#3f6382]">
+              <iconify-icon icon="mdi:layers-outline" width="14" height="14" />
+              Layers
+            </h2>
+            <div className="no-scrollbar max-h-[calc(100vh-26rem)] overflow-y-auto pr-0.5">
+              {Array.from({ length: jumlahHalaman }, (_, page) => (
+                <div key={page} className="mb-2">
+                  <p className="px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-[#8a8578]">
+                    Halaman {page + 1}
+                  </p>
+                  {blokDiHalaman(doc, page).length === 0 ? (
+                    <p className="px-3 pb-1 text-[11px] text-[#8a8578]">Kosong</p>
+                  ) : (
+                    blokDiHalaman(doc, page).map((blok, index) => (
+                      <div
+                        key={blok.id}
+                        onClick={() => {
+                          setSelectedId(blok.id);
+                          setSelectedPage(page);
+                        }}
+                        className={
+                          "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 transition-colors " +
+                          (selectedId === blok.id ? "bg-[#3f6382] text-white" : "hover:bg-[#f0ece3]")
+                        }
+                      >
+                        <iconify-icon
+                          icon={ikonTipeBlok(blok.type)}
+                          width="14"
+                          height="14"
+                          className={selectedId === blok.id ? "shrink-0" : "shrink-0 text-[#3f6382]"}
+                        />
+                        <span className="min-w-0 flex-1 truncate text-xs">{blok.name ?? "Tanpa nama"}</span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            pindahBlok(blok.id, -1);
+                          }}
+                          disabled={index === 0}
+                          title="Naik"
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded hover:bg-black/10 disabled:opacity-25"
+                        >
+                          <iconify-icon icon="mdi:chevron-up" width="13" height="13" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            pindahBlok(blok.id, 1);
+                          }}
+                          disabled={index === blokDiHalaman(doc, page).length - 1}
+                          title="Turun"
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded hover:bg-black/10 disabled:opacity-25"
+                        >
+                          <iconify-icon icon="mdi:chevron-down" width="13" height="13" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            hapusBlok(blok.id);
+                          }}
+                          title="Hapus blok"
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-[#ff746c] hover:bg-[#ff746c]/15 disabled:opacity-25"
+                        >
+                          <iconify-icon icon="mdi:trash-can-outline" width="13" height="13" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Handle resize panel kiri */}
           <div
             onMouseDown={mulaiDragKiri}
@@ -490,7 +557,6 @@ export default function BuildPage() {
                           onPilih={() => setSelectedId(blok.id)}
                           onPindah={(arah) => pindahBlok(blok.id, arah)}
                           onHapus={() => hapusBlok(blok.id)}
-                          onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
                           onUbah={perbaruiBlok}
                           sidebarMode
                           docStyle={{ accentColor: doc.accentColor, headerStyle: doc.headerStyle, sectionStyle: doc.sectionStyle }}
@@ -520,7 +586,6 @@ export default function BuildPage() {
                           onPilih={() => setSelectedId(blok.id)}
                           onPindah={(arah) => pindahBlok(blok.id, arah)}
                           onHapus={() => hapusBlok(blok.id)}
-                          onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
                           onUbah={perbaruiBlok}
                           docStyle={{ accentColor: doc.accentColor, headerStyle: doc.headerStyle, sectionStyle: doc.sectionStyle }}
                         />
@@ -538,7 +603,6 @@ export default function BuildPage() {
                     onPilih={() => setSelectedId(blok.id)}
                     onPindah={(arah) => pindahBlok(blok.id, arah)}
                     onHapus={() => hapusBlok(blok.id)}
-                    onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
                     onUbah={perbaruiBlok}
                     docStyle={{ accentColor: doc.accentColor, headerStyle: doc.headerStyle, sectionStyle: doc.sectionStyle }}
                   />
@@ -599,7 +663,6 @@ function BlokEditor({
     onPilih,
     onPindah,
     onHapus,
-    onSeretKeBlok,
     onUbah,
     sidebarMode = false,
     docStyle,
@@ -611,30 +674,17 @@ function BlokEditor({
     onPilih: () => void;
     onPindah: (arah: number) => void;
     onHapus: () => void;
-    onSeretKeBlok: (draggedId: string) => void;
     onUbah: (b: CVBlock) => void;
     sidebarMode?: boolean;
     docStyle?: { accentColor?: string; headerStyle?: "center" | "band" | "topbar" | "sidebar"; sectionStyle?: "rule" | "bar" };
 }) {
     return (
         <div
-            draggable
-            onDragStart={(e) => {
-                e.dataTransfer.setData("text/plain", blok.id);
-                e.dataTransfer.effectAllowed = "move";
-            }}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const draggedId = e.dataTransfer.getData("text/plain");
-                if (draggedId && draggedId !== blok.id) onSeretKeBlok(draggedId);
-            }}
             onClick={onPilih}
             style={{ marginBottom: 4 }}
             className={
-                "group relative animate-fade-in cursor-grab rounded border p-1.5 active:cursor-grabbing print:border-transparent " +
-                (terpilih ? "border-[#7895b2]" : "border-transparent hover:border-[#171717]/30")
+                "group relative animate-fade-in cursor-pointer rounded border p-1.5 print:border-transparent " +
+                (terpilih ? "border-[#7895b2] bg-[#7895b2]/5" : "border-transparent hover:border-[#171717]/30")
             }
         >
             {/* Kontrol blok: absolute di luar aliran supaya tidak menambah
@@ -687,6 +737,8 @@ function BlokEditor({
 // Input/textarea yang tampil seperti teks biasa di kertas.
 // Tanpa border dan background; hanya ring tipis saat fokus.
 // Saat print, nilai tercetak seperti teks normal.
+// Mode rich (gaya Notion): contentEditable dengan toolbar B/I/U
+// saat fokus. Nilai disimpan sebagai HTML (bold/italic ikut tercetak).
 function TeksEditable({
     value,
     onUbah,
@@ -694,6 +746,7 @@ function TeksEditable({
     className = "",
     placeholder = "",
     style,
+    rich = false,
 }: {
     value: string;
     onUbah: (nilai: string) => void;
@@ -701,6 +754,7 @@ function TeksEditable({
     className?: string;
     placeholder?: string;
     style?: React.CSSProperties;
+    rich?: boolean;
 }) {
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     const selectionRef = useRef<{ start: number; end: number } | null>(null);
@@ -736,6 +790,10 @@ function TeksEditable({
         onUbah(event.target.value);
     }
 
+    if (rich) {
+        return <TeksRich value={value} onUbah={onUbah} className={className} placeholder={placeholder} style={gaya} />;
+    }
+
     if (multiline) {
         return (
             <textarea
@@ -758,6 +816,105 @@ function TeksEditable({
             style={gaya}
             className={kelas}
         />
+    );
+}
+
+// Field teks kaya (gaya Notion): contentEditable dengan toolbar B/I/U
+// yang muncul saat fokus. Nilai disimpan sebagai HTML, jadi bold/italic
+// tampil di kertas dan ikut tercetak di PDF.
+function TeksRich({
+    value,
+    onUbah,
+    className,
+    placeholder,
+    style,
+}: {
+    value: string;
+    onUbah: (nilai: string) => void;
+    className?: string;
+    placeholder?: string;
+    style?: React.CSSProperties;
+}) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [fokus, setFokus] = useState(false);
+
+    // Sinkronkan nilai dari luar (mis. setelah load dokumen) hanya jika
+    // konten DOM berbeda; jangan ganggu posisi kursor saat mengetik.
+    useLayoutEffect(() => {
+        const el = ref.current;
+        if (el && el.innerHTML !== value && document.activeElement !== el) {
+            el.innerHTML = value;
+        }
+    }, [value]);
+
+    function format(perintah: string): void {
+        const el = ref.current;
+        if (!el) return;
+        el.focus();
+        document.execCommand(perintah, false);
+        // execCommand tidak selalu memicu onInput; baca ulang hasilnya.
+        onUbah(el.innerHTML);
+    }
+
+    // Shortcut gaya Notion: Ctrl/Cmd+B = tebal, I = miring, U = garis bawah.
+    function shortcut(e: React.KeyboardEvent): void {
+        if (!(e.ctrlKey || e.metaKey)) return;
+        const kunci = e.key.toLowerCase();
+        const perintah = kunci === "b" ? "bold" : kunci === "i" ? "italic" : kunci === "u" ? "underline" : null;
+        if (!perintah) return;
+        e.preventDefault();
+        format(perintah);
+    }
+
+    return (
+        <div className="relative">
+            {fokus && (
+                <div className="absolute -top-7 left-0 z-10 flex items-center gap-0.5 rounded-md border border-[#171717]/10 bg-white px-1 py-0.5 shadow-md">
+                    <button
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => format("bold")}
+                        title="Tebal"
+                        className="flex h-5 w-6 items-center justify-center rounded text-xs font-bold text-[#171717] hover:bg-[#f0ece3]"
+                    >
+                        B
+                    </button>
+                    <button
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => format("italic")}
+                        title="Miring"
+                        className="flex h-5 w-6 items-center justify-center rounded text-xs italic text-[#171717] hover:bg-[#f0ece3]"
+                    >
+                        I
+                    </button>
+                    <button
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => format("underline")}
+                        title="Garis bawah"
+                        className="flex h-5 w-6 items-center justify-center rounded text-xs underline text-[#171717] hover:bg-[#f0ece3]"
+                    >
+                        U
+                    </button>
+                </div>
+            )}
+            <div
+                ref={ref}
+                contentEditable
+                suppressContentEditableWarning
+                onInput={(e) => onUbah(e.currentTarget.innerHTML)}
+                onKeyDown={shortcut}
+                onFocus={() => setFokus(true)}
+                onBlur={() => setFokus(false)}
+                data-placeholder={placeholder}
+                className={
+                    "rich-teks min-w-0 outline-none transition-shadow focus:ring-1 focus:ring-[#7895b2]/60 " +
+                    (className ?? "")
+                }
+                style={style}
+            />
+        </div>
     );
 }
 
@@ -826,19 +983,18 @@ function PreviewBlok({
                 className="w-full"
                 style={{ fontSize: "1.2em" }}
               />
-              <div className="flex items-baseline gap-3 opacity-70" style={{ fontSize: "0.85em" }}>
+              <div className="flex flex-col gap-0.5 opacity-70" style={{ fontSize: "0.85em" }}>
                 <TeksEditable
                   value={blok.data.email}
                   onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, email: v } })}
                   placeholder="email@contoh.com"
-                  className="min-w-0 flex-1"
+                  className="w-full"
                 />
-                <span aria-hidden="true">·</span>
                 <TeksEditable
                   value={blok.data.phone}
                   onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, phone: v } })}
                   placeholder="Telepon"
-                  className="min-w-0 flex-1"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -870,19 +1026,18 @@ function PreviewBlok({
                 className="w-full"
                 style={{ fontSize: "1.1em" }}
               />
-              <div className="flex items-baseline gap-3 opacity-60" style={{ fontSize: "0.85em" }}>
+              <div className="flex flex-col gap-0.5 opacity-60" style={{ fontSize: "0.85em" }}>
                 <TeksEditable
                   value={blok.data.email}
                   onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, email: v } })}
                   placeholder="email@contoh.com"
-                  className="min-w-0 flex-1"
+                  className="w-full"
                 />
-                <span aria-hidden="true">·</span>
                 <TeksEditable
                   value={blok.data.phone}
                   onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, phone: v } })}
                   placeholder="Telepon"
-                  className="min-w-0 flex-1"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -914,22 +1069,18 @@ function PreviewBlok({
               className={"w-full " + (headerStyle === "center" && !sidebarMode ? "text-center" : "")}
               style={{ fontSize: "1.2em" }}
             />
-            <div
-              className={"flex items-baseline gap-3 opacity-60 " + (headerStyle === "center" && !sidebarMode ? "justify-center" : "")}
-              style={{ fontSize: "0.85em" }}
-            >
+            <div className="flex flex-col items-center gap-0.5 opacity-60" style={{ fontSize: "0.85em" }}>
               <TeksEditable
                 value={blok.data.email}
                 onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, email: v } })}
                 placeholder="email@contoh.com"
-                className="min-w-0 flex-1"
+                className="w-full text-center"
               />
-              <span aria-hidden="true">·</span>
               <TeksEditable
                 value={blok.data.phone}
                 onUbah={(v) => onUbah({ ...blok, data: { ...blok.data, phone: v } })}
                 placeholder="Telepon"
-                className="min-w-0 flex-1"
+                className="w-full text-center"
               />
             </div>
           </div>
@@ -991,7 +1142,7 @@ function PreviewBlok({
                   })
                 }
                 placeholder="Deskripsi"
-                multiline
+                rich
                 className="w-full opacity-70"
               />
             </div>
@@ -1031,6 +1182,23 @@ function PreviewBlok({
     );
   }
 
+  // Blok paragraf: judul section (mis. "Ringkasan") + paragraf bebas.
+  // Cocok untuk "About me" / deskripsi bebas.
+  if (blok.type === "paragraph") {
+    return (
+      <div style={{ fontSize: `${fontSize}px`, color }}>
+        {headingSection(blok.name ?? "", (v) => onUbah({ ...blok, name: v }))}
+        <TeksEditable
+          value={blok.data.text}
+          onUbah={(v) => onUbah({ ...blok, data: { text: v } })}
+          placeholder="Tulis paragraf di sini… (misalnya ringkasan tentang kamu)"
+          rich
+          className="w-full"
+        />
+      </div>
+    );
+  }
+
   return (
     <div style={{ fontSize: `${fontSize}px`, color }}>
       {headingSection(blok.name ?? "", (v) => onUbah({ ...blok, name: v }))}
@@ -1061,6 +1229,7 @@ function PreviewBlok({
                   })
                 }
                 placeholder="Isi"
+                rich
                 className="min-w-0 flex-1"
               />
             </li>
@@ -1170,6 +1339,7 @@ function EditorBlok({
       {blok.type === "experience" && <EditorExperience blok={blok} onChange={onChange} />}
       {blok.type === "skills" && <EditorSkills blok={blok} onChange={onChange} />}
       {blok.type === "custom" && <EditorCustom blok={blok} onChange={onChange} />}
+      {blok.type === "paragraph" && <EditorParagraph blok={blok} onChange={onChange} />}
     </div>
   );
 }
@@ -1516,6 +1686,28 @@ function EditorCustom({
           <LabelInput label="Isi" value={item.value} onUbah={(v) => ubahItem(i, "value", v)} />
         </div>
       ))}
+    </div>
+  );
+}
+
+// Editor blok paragraf: hanya satu textarea besar, tanpa label.
+function EditorParagraph({
+  blok,
+  onChange,
+}: {
+  blok: Extract<CVBlock, { type: "paragraph" }>;
+  onChange: (b: CVBlock) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[11px] text-[#6e6a5e]">Paragraf</label>
+      <textarea
+        value={blok.data.text}
+        onChange={(e) => onChange({ ...blok, data: { text: e.target.value } })}
+        placeholder="Tulis paragraf di sini…"
+        rows={6}
+        className="rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
+      />
     </div>
   );
 }
