@@ -297,7 +297,7 @@ export default function BuildPage() {
   if (notFound) {
     return (
       <main className="min-h-screen bg-[#f6f3ed] p-8 font-sans text-[#171717]">
-        <Link href="/" className="text-sm text-[#3f6382] hover:underline">
+        <Link href="/app" className="text-sm text-[#3f6382] hover:underline">
           ← Kembali ke Dashboard
         </Link>
         <p className="mt-8 text-[#6e6a5e]">CV tidak ditemukan.</p>
@@ -333,7 +333,7 @@ export default function BuildPage() {
       {/* Header app (sama tinggi dengan TopNav, sembunyi saat print) */}
       <div className="no-print sticky top-0 z-50 flex shrink-0 items-center justify-between border-b border-[#171717]/10 bg-white/95 px-6 py-2 backdrop-blur">
         <div className="flex items-center gap-4">
-          <Link href="/" className="text-sm text-[#3f6382] hover:underline">
+          <Link href="/app" className="text-sm text-[#3f6382] hover:underline">
             ← Dashboard
           </Link>
           <input

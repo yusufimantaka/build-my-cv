@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-    { href: "/", label: "Dashboard", icon: "mdi:view-dashboard-outline" },
+    { href: "/app", label: "Dashboard", icon: "mdi:view-dashboard-outline" },
     { href: "/library", label: "Library", icon: "mdi:book-open-variant" },
     { href: "/explore", label: "Explore", icon: "mdi:compass-outline" },
 ];
@@ -13,13 +13,30 @@ const items = [
 export default function TopNav() {
     const pathname = usePathname();
     const [showAiChat, setShowAiChat] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        function onScroll(): void {
+            setScrolled(window.scrollY > 8);
+        }
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
 
     return (
         <>
-            <nav className="sticky top-0 z-50 flex items-center gap-1 border-b border-[#171717]/10 bg-white/95 px-6 py-2 backdrop-blur">
-                <span className="mr-4 text-sm font-semibold text-[#3f6382]">
+            <nav
+                className={
+                    "sticky top-0 z-50 flex items-center gap-1 px-6 py-2 transition-all duration-300 " +
+                    (scrolled
+                        ? "border-b border-[#171717]/10 bg-white/95 backdrop-blur"
+                        : "border-b border-transparent bg-transparent")
+                }
+            >
+                <Link href="/" className="mr-4 text-sm font-semibold text-[#3f6382] hover:underline">
                     BuildMyCV
-                </span>
+                </Link>
                 {items.map((item) => {
                     const aktif = pathname === item.href;
                     return (

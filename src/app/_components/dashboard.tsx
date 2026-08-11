@@ -6,6 +6,7 @@ import Link from "next/link";
 import { IndexedDBRepository } from "@/domain/indexed-db-repository";
 import type { CVDocument } from "@/domain/cv";
 import TopNav from "@/app/_components/topnav";
+import LandscapeBg from "@/app/_components/landscape-bg";
 
 const repo = new IndexedDBRepository();
 
@@ -229,7 +230,9 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
+    <main className="isolate min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
+      {/* Latar lanskap: fixed, tidak memengaruhi layout */}
+      <LandscapeBg />
       <TopNav />
 
       {/* Floating pill kategori (melayang di sisi kiri) */}

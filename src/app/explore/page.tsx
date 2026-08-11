@@ -1,8 +1,11 @@
 import TopNav from "@/app/_components/topnav";
+import LandscapeBg from "@/app/_components/landscape-bg";
 
 export default function ExplorePage() {
     return (
-        <main className="min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
+        <main className="isolate min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
+            {/* Latar lanskap: fixed, tidak memengaruhi layout */}
+            <LandscapeBg />
             <TopNav />
             <div className="flex flex-col items-center gap-4 p-16 text-center">
                 <iconify-icon icon="mdi:compass-outline" width="56" height="56" className="text-[#3f6382]" />
