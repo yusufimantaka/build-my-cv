@@ -45,6 +45,7 @@ export interface CVDocument {
     id: string;
     title: string;
     blocks: CVBlock[];
+    category?: string;
     pageCount?: number;
     updatedAt: number;
 }
