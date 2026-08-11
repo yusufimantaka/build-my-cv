@@ -82,19 +82,19 @@ export default function LandingPage() {
                 />
                 <div className="pointer-events-none absolute inset-x-0 -top-14 bottom-0 -z-10 bg-gradient-to-b from-[#f6f3ed]/95 via-[#f6f3ed]/72 to-[#f6f3ed]/15" />
                 <div className="relative mx-auto max-w-4xl">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-[#3f6382]/20 bg-white/75 px-3 py-1 text-xs font-medium tracking-[0.16em] text-[#3f6382] backdrop-blur">
+                    <span className="inline-flex animate-fade-up items-center gap-2 rounded-full border border-[#3f6382]/20 bg-white/75 px-3 py-1 text-xs font-medium tracking-[0.16em] text-[#3f6382] backdrop-blur">
                         <span className="h-2 w-2 rounded-full bg-[#7895b2]" />
                         LOCAL-FIRST · OPEN SOURCE
                     </span>
-                    <h1 className="mx-auto mt-4 max-w-4xl text-3xl font-bold leading-[0.98] tracking-[-0.06em] sm:text-5xl lg:text-6xl">
+                    <h1 className="mx-auto mt-4 max-w-4xl animate-fade-up text-3xl font-bold leading-[0.98] tracking-[-0.06em] sm:text-5xl lg:text-6xl" style={{ animationDelay: "80ms" }}>
                         CV yang terlihat seperti
                         <span className="block text-[#3f6382]">kamu yang terbaik.</span>
                     </h1>
-                    <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[#4c5963] sm:text-base">
+                    <p className="mx-auto mt-4 max-w-2xl animate-fade-up text-sm leading-6 text-[#4c5963] sm:text-base" style={{ animationDelay: "160ms" }}>
                         Buat CV dari blok yang bisa kamu susun sendiri. Simpan di browser,
                         pilih template, lalu export ke PDF tanpa membuat akun.
                     </p>
-                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                    <div className="mt-6 flex animate-fade-up flex-wrap items-center justify-center gap-3" style={{ animationDelay: "240ms" }}>
                         <Link
                             href="/app"
                             className="rounded-md bg-[#3f6382] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-transform hover:bg-[#355573] hover:scale-[1.03] active:scale-95"
@@ -114,7 +114,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Product screenshot mockup */}
-                <div className="relative mx-auto mt-10 max-w-6xl translate-y-1 overflow-hidden rounded-t-2xl border border-[#171717]/15 bg-white text-left shadow-[0_18px_60px_rgba(63,99,130,0.22)]">
+                <div className="relative mx-auto mt-10 max-w-6xl animate-fade-up translate-y-1 overflow-hidden rounded-t-2xl border border-[#171717]/15 bg-white text-left shadow-[0_18px_60px_rgba(63,99,130,0.22)]" style={{ animationDelay: "320ms" }}>
                     <div className="flex h-10 items-center gap-1.5 border-b border-[#171717]/10 bg-white px-4">
                         <span className="h-2.5 w-2.5 rounded-full bg-[#d9d2c3]" />
                         <span className="h-2.5 w-2.5 rounded-full bg-[#d9d2c3]" />
@@ -156,8 +156,8 @@ export default function LandingPage() {
             <section className="mx-auto mt-20 max-w-5xl px-6 pb-16 sm:mt-28">
                 <h2 className="text-center text-2xl font-semibold">Kenapa local-first</h2>
                 <div className="mt-8 grid gap-6 sm:grid-cols-3">
-                    {principles.map((p) => (
-                        <div key={p.title} className="rounded-md border border-[#171717]/15 bg-white p-5 shadow-sm">
+                    {principles.map((p, idx) => (
+                        <div key={p.title} className="animate-fade-up rounded-md border border-[#171717]/15 bg-white p-5 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md" style={{ animationDelay: `${idx * 90}ms` }}>
                             <iconify-icon icon={p.icon} width="24" height="24" className="text-[#3f6382]" />
                             <h3 className="mt-3 font-semibold">{p.title}</h3>
                             <p className="mt-1 text-sm text-[#6e6a5e]">{p.text}</p>
@@ -173,7 +173,7 @@ export default function LandingPage() {
                     UI tidak pernah menyentuh penyimpanan langsung. Semua lewat interface repository,
                     jadi backend bisa berubah tanpa menyentuh UI.
                 </p>
-                <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <div className="mt-8 flex animate-fade-up flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "120ms" }}>
                     {["UI (React)", "→", "WorkspaceRepository", "→", "IndexedDB"].map((step, i) => (
                         <span
                             key={i}
@@ -196,8 +196,8 @@ export default function LandingPage() {
             <section className="mx-auto max-w-5xl px-6 pb-16">
                 <h2 className="text-center text-2xl font-semibold">Roadmap</h2>
                 <div className="mt-8 grid gap-6 sm:grid-cols-3">
-                    {roadmap.map((r) => (
-                        <div key={r.title} className="rounded-md border border-[#171717]/15 bg-white p-5 shadow-sm">
+                    {roadmap.map((r, idx) => (
+                        <div key={r.title} className="animate-fade-up rounded-md border border-[#171717]/15 bg-white p-5 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md" style={{ animationDelay: `${idx * 90}ms` }}>
                             <iconify-icon icon={r.icon} width="24" height="24" className="text-[#3f6382]" />
                             <h3 className="mt-3 font-semibold">{r.title}</h3>
                             <p className="mt-1 text-sm text-[#6e6a5e]">{r.text}</p>
@@ -208,7 +208,7 @@ export default function LandingPage() {
 
             {/* Contribute */}
             <section className="border-t border-[#171717]/10 bg-white">
-                <div className="mx-auto max-w-3xl px-6 py-14 text-center">
+                <div className="mx-auto max-w-3xl animate-fade-up px-6 py-14 text-center">
                     <iconify-icon icon="mdi:code-tags" width="36" height="36" className="text-[#3f6382]" />
                     <h2 className="mt-3 text-2xl font-semibold">Berkontribusi</h2>
                     <p className="mx-auto mt-2 max-w-lg text-sm text-[#6e6a5e]">
