@@ -4,6 +4,8 @@ Local-first open source CV builder.
 
 Buat CV dari blok-blok. Simpan di perangkatmu. Tidak perlu akun. Tidak perlu server.
 
+![Contoh CV yang bisa digenerate](public/image.png)
+
 ## Fitur
 
 - **Blok CV** — tambah Header, Experience, Skills, Section, atau Paragraf. Susun ulang dari panel Layers atau tombol di dokumen.
