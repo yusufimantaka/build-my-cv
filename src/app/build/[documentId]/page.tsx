@@ -254,6 +254,11 @@ export default function BuildPage() {
     simpan(dokumenBaru(doc, gantiBlokDalamDaftar(doc.blocks, blokBaru)));
   }
 
+  function perbaruiDokumen(perubahan: Partial<CVDocument>): void {
+    if (!doc) return;
+    simpan({ ...doc, ...perubahan, updatedAt: Date.now() });
+  }
+
   function hapusBlok(id: string): void {
     if (!doc) return;
     simpan(dokumenBaru(doc, hapusBlokDariDaftar(doc.blocks, id)));
@@ -411,6 +416,7 @@ export default function BuildPage() {
               }}
               className={
                 "paper-sheet animate-fade-up mx-auto mb-6 w-[210mm] min-h-[297mm] bg-white p-12 text-[#171717] shadow-xl transition-shadow print:ring-0 " +
+                (doc.font === "serif" ? "font-serif " : doc.font === "mono" ? "font-mono " : "font-sans ") +
                 (selectedPage === page ? "ring-2 ring-[#7895b2]" : "")
               }
             >
@@ -432,67 +438,56 @@ export default function BuildPage() {
                 <p className="no-print mt-4 text-center text-sm text-[#6e6a5e]">
                   Halaman kosong. Seret blok ke sini.
                 </p>
+              ) : doc.layout === "two-column" ? (
+                <div className="grid grid-cols-[34%_1fr] gap-6">
+                  <div className="min-w-0">
+                    {blokDiHalaman(doc, page)
+                      .filter((b) => (b.column ?? "right") === "left")
+                      .map((blok, index) => (
+                        <BlokEditor
+                          key={blok.id}
+                          blok={blok}
+                          index={index}
+                          totalDiHalaman={blokDiHalaman(doc, page).filter((b) => (b.column ?? "right") === "left").length}
+                          terpilih={selectedId === blok.id}
+                          onPilih={() => setSelectedId(blok.id)}
+                          onPindah={(arah) => pindahBlok(blok.id, arah)}
+                          onHapus={() => hapusBlok(blok.id)}
+                          onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
+                        />
+                      ))}
+                  </div>
+                  <div className="min-w-0">
+                    {blokDiHalaman(doc, page)
+                      .filter((b) => (b.column ?? "right") === "right")
+                      .map((blok, index) => (
+                        <BlokEditor
+                          key={blok.id}
+                          blok={blok}
+                          index={index}
+                          totalDiHalaman={blokDiHalaman(doc, page).filter((b) => (b.column ?? "right") === "right").length}
+                          terpilih={selectedId === blok.id}
+                          onPilih={() => setSelectedId(blok.id)}
+                          onPindah={(arah) => pindahBlok(blok.id, arah)}
+                          onHapus={() => hapusBlok(blok.id)}
+                          onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
+                        />
+                      ))}
+                  </div>
+                </div>
               ) : (
                 blokDiHalaman(doc, page).map((blok, index) => (
-                  <div
+                  <BlokEditor
                     key={blok.id}
-                    draggable
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("text/plain", blok.id);
-                      e.dataTransfer.effectAllowed = "move";
-                    }}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      const draggedId = e.dataTransfer.getData("text/plain");
-                      if (draggedId && draggedId !== blok.id) seretBlokKeBlok(draggedId, blok.id);
-                    }}
-                    onClick={() => setSelectedId(blok.id)}
-                    style={{ marginBottom: blok.style?.spacing ?? 24 }}
-                    className={
-                      "animate-fade-in cursor-grab rounded border p-4 active:cursor-grabbing print:border-transparent " +
-                      (selectedId === blok.id
-                        ? "border-[#7895b2]"
-                        : "border-transparent hover:border-[#171717]/30")
-                    }
-                  >
-                    <div className="no-print mb-2 flex items-center justify-end gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          pindahBlok(blok.id, -1);
-                        }}
-                        disabled={index === 0}
-                        title="Naik"
-                        className="flex h-7 w-7 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
-                      >
-                        <iconify-icon icon="mdi:chevron-up" width="16" height="16" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          pindahBlok(blok.id, 1);
-                        }}
-                        disabled={index === blokDiHalaman(doc, page).length - 1}
-                        title="Turun"
-                        className="flex h-7 w-7 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
-                      >
-                        <iconify-icon icon="mdi:chevron-down" width="16" height="16" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          hapusBlok(blok.id);
-                        }}
-                        title="Hapus blok"
-                        className="flex h-7 w-7 items-center justify-center rounded bg-[#ff746c] text-white transition-transform hover:scale-110 active:scale-95"
-                      >
-                        <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
-                      </button>
-                    </div>
-                    <PreviewBlok blok={blok} />
-                  </div>
+                    blok={blok}
+                    index={index}
+                    totalDiHalaman={blokDiHalaman(doc, page).length}
+                    terpilih={selectedId === blok.id}
+                    onPilih={() => setSelectedId(blok.id)}
+                    onPindah={(arah) => pindahBlok(blok.id, arah)}
+                    onHapus={() => hapusBlok(blok.id)}
+                    onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
+                  />
                 ))
               )}
             </div>
@@ -524,9 +519,9 @@ export default function BuildPage() {
             Properti
           </h2>
           {blokTerpilih ? (
-            <EditorBlok blok={blokTerpilih} onChange={perbaruiBlok} />
+            <EditorBlok blok={blokTerpilih} onChange={perbaruiBlok} twoColumn={doc.layout === "two-column"} />
           ) : (
-            <p className="mt-3 text-sm text-[#6e6a5e]">Klik blok untuk mengedit.</p>
+            <EditorDokumen doc={doc} onChange={perbaruiDokumen} />
           )}
         </aside>
       </div>
@@ -536,6 +531,87 @@ export default function BuildPage() {
 
 // ===== Preview kertas =====
 
+// Satu blok editor di dalam kertas. Props eksplisit supaya bisa dipakai
+// di layout 1 kolom maupun 2 kolom tanpa menangkap state komponen induk.
+function BlokEditor({
+    blok,
+    index,
+    totalDiHalaman,
+    terpilih,
+    onPilih,
+    onPindah,
+    onHapus,
+    onSeretKeBlok,
+}: {
+    blok: CVBlock;
+    index: number;
+    totalDiHalaman: number;
+    terpilih: boolean;
+    onPilih: () => void;
+    onPindah: (arah: number) => void;
+    onHapus: () => void;
+    onSeretKeBlok: (draggedId: string) => void;
+}) {
+    return (
+        <div
+            draggable
+            onDragStart={(e) => {
+                e.dataTransfer.setData("text/plain", blok.id);
+                e.dataTransfer.effectAllowed = "move";
+            }}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const draggedId = e.dataTransfer.getData("text/plain");
+                if (draggedId && draggedId !== blok.id) onSeretKeBlok(draggedId);
+            }}
+            onClick={onPilih}
+            style={{ marginBottom: blok.style?.spacing ?? 24 }}
+            className={
+                "animate-fade-in cursor-grab rounded border p-4 active:cursor-grabbing print:border-transparent " +
+                (terpilih ? "border-[#7895b2]" : "border-transparent hover:border-[#171717]/30")
+            }
+        >
+            <div className="no-print mb-2 flex items-center justify-end gap-2">
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onPindah(-1);
+                    }}
+                    disabled={index === 0}
+                    title="Naik"
+                    className="flex h-7 w-7 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
+                >
+                    <iconify-icon icon="mdi:chevron-up" width="16" height="16" />
+                </button>
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onPindah(1);
+                    }}
+                    disabled={index === totalDiHalaman - 1}
+                    title="Turun"
+                    className="flex h-7 w-7 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
+                >
+                    <iconify-icon icon="mdi:chevron-down" width="16" height="16" />
+                </button>
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onHapus();
+                    }}
+                    title="Hapus blok"
+                    className="flex h-7 w-7 items-center justify-center rounded bg-[#ff746c] text-white transition-transform hover:scale-110 active:scale-95"
+                >
+                    <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
+                </button>
+            </div>
+            <PreviewBlok blok={blok} />
+        </div>
+    );
+}
+
 function PreviewBlok({ blok }: { blok: CVBlock }) {
   const fontSize = blok.style?.fontSize ?? 16;
   const color = blok.style?.color ?? "#171717";
@@ -543,13 +619,24 @@ function PreviewBlok({ blok }: { blok: CVBlock }) {
   if (blok.type === "header") {
     return (
       <div style={{ fontSize: `${fontSize}px`, color }}>
-        <h2 className="font-bold" style={{ fontSize: "1.9em" }}>
-          {blok.data.fullName || "Nama Lengkap"}
-        </h2>
-        <p style={{ fontSize: "1.2em" }}>{blok.data.title || "Judul / Posisi"}</p>
-        <p className="opacity-60" style={{ fontSize: "0.85em" }}>
-          {[blok.data.email, blok.data.phone].filter(Boolean).join(" · ")}
-        </p>
+        <div className="flex items-center gap-4">
+          {blok.data.photo && (
+            <img
+              src={blok.data.photo}
+              alt="Foto profil"
+              className="h-20 w-20 shrink-0 rounded-full object-cover"
+            />
+          )}
+          <div>
+            <h2 className="font-bold" style={{ fontSize: "1.9em" }}>
+              {blok.data.fullName || "Nama Lengkap"}
+            </h2>
+            <p style={{ fontSize: "1.2em" }}>{blok.data.title || "Judul / Posisi"}</p>
+            <p className="opacity-60" style={{ fontSize: "0.85em" }}>
+              {[blok.data.email, blok.data.phone].filter(Boolean).join(" · ")}
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -631,7 +718,73 @@ function PreviewBlok({ blok }: { blok: CVBlock }) {
 
 // ===== Editor properti per jenis blok =====
 
-function EditorBlok({ blok, onChange }: { blok: CVBlock; onChange: (b: CVBlock) => void }) {
+// Kontrol tema dokumen: layout, warna aksen, font.
+// Muncul di panel Properti saat tidak ada blok yang dipilih.
+function EditorDokumen({
+    doc,
+    onChange,
+}: {
+    doc: CVDocument;
+    onChange: (perubahan: Partial<CVDocument>) => void;
+}) {
+    const accent = doc.accentColor ?? "#3F6382";
+    const layout = doc.layout ?? "single";
+    const font = doc.font ?? "sans";
+
+    return (
+        <div className="mt-3 flex flex-col gap-3">
+            <p className="text-sm text-[#6e6a5e]">Pengaturan dokumen</p>
+
+            <div className="rounded border border-[#171717]/10 p-3">
+                <p className="text-xs text-[#6e6a5e]">Layout</p>
+                <select
+                    value={layout}
+                    onChange={(e) => onChange({ layout: e.target.value as CVDocument["layout"] })}
+                    className="mt-2 w-full rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
+                >
+                    <option value="single">Satu kolom</option>
+                    <option value="two-column">Dua kolom</option>
+                </select>
+            </div>
+
+            <div className="rounded border border-[#171717]/10 p-3">
+                <p className="text-xs text-[#6e6a5e]">Warna aksen</p>
+                <label className="mt-2 flex items-center gap-2 text-sm">
+                    <input
+                        type="color"
+                        value={accent}
+                        onChange={(e) => onChange({ accentColor: e.target.value })}
+                        className="h-8 w-10 cursor-pointer rounded border border-[#171717]/20 bg-transparent"
+                    />
+                    <span className="font-mono text-xs text-[#6e6a5e]">{accent}</span>
+                </label>
+            </div>
+
+            <div className="rounded border border-[#171717]/10 p-3">
+                <p className="text-xs text-[#6e6a5e]">Font</p>
+                <select
+                    value={font}
+                    onChange={(e) => onChange({ font: e.target.value as CVDocument["font"] })}
+                    className="mt-2 w-full rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
+                >
+                    <option value="sans">Sans (Arial)</option>
+                    <option value="serif">Serif (Times)</option>
+                    <option value="mono">Mono (Courier)</option>
+                </select>
+            </div>
+        </div>
+    );
+}
+
+function EditorBlok({
+    blok,
+    onChange,
+    twoColumn,
+}: {
+    blok: CVBlock;
+    onChange: (b: CVBlock) => void;
+    twoColumn: boolean;
+}) {
   // Kontrol gaya berlaku untuk semua jenis blok
   const style = blok.style ?? { fontSize: 16, color: "#171717" };
 
@@ -643,9 +796,27 @@ function EditorBlok({ blok, onChange }: { blok: CVBlock; onChange: (b: CVBlock) 
     onChange({ ...blok, name: nilai });
   }
 
+  function ubahKolom(nilai: "left" | "right"): void {
+    onChange({ ...blok, column: nilai });
+  }
+
   return (
     <div className="mt-3 flex flex-col gap-3">
       <LabelInput label="Nama blok" value={blok.name ?? ""} onUbah={ubahNama} />
+
+      {twoColumn && (
+        <div className="rounded border border-[#171717]/10 p-3">
+          <p className="text-xs text-[#6e6a5e]">Kolom</p>
+          <select
+            value={blok.column ?? "right"}
+            onChange={(e) => ubahKolom(e.target.value as "left" | "right")}
+            className="mt-2 w-full rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
+          >
+            <option value="right">Kanan (utama)</option>
+            <option value="left">Kiri (sidebar)</option>
+          </select>
+        </div>
+      )}
 
       <div className="rounded border border-[#171717]/10 p-3">
         <p className="text-xs text-[#6e6a5e]">Ukuran & warna</p>
@@ -694,6 +865,37 @@ function EditorHeader({
 
   return (
     <div className="flex flex-col gap-3">
+      {blok.data.photo && (
+        <div className="flex items-center justify-between">
+          <img
+            src={blok.data.photo}
+            alt="Foto profil"
+            className="h-14 w-14 rounded-full border border-[#171717]/15 object-cover"
+          />
+          <button
+            onClick={() => ubah("photo", "")}
+            title="Hapus foto"
+            className="flex h-7 w-7 items-center justify-center rounded text-[#ff746c] transition-transform hover:scale-110 hover:bg-[#ff746c]/10 active:scale-95"
+          >
+            <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
+          </button>
+        </div>
+      )}
+      <label className="flex flex-col gap-1">
+        <span className="text-xs text-[#6e6a5e]">Foto profil</span>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              resizeFoto(file).then((dataUrl) => ubah("photo", dataUrl));
+            }
+            e.target.value = "";
+          }}
+          className="text-sm"
+        />
+      </label>
       <LabelInput label="Nama" value={blok.data.fullName} onUbah={(v) => ubah("fullName", v)} />
       <LabelInput label="Judul" value={blok.data.title} onUbah={(v) => ubah("title", v)} />
       <LabelInput label="Email" value={blok.data.email} onUbah={(v) => ubah("email", v)} />
@@ -930,6 +1132,35 @@ function EditorCustom({
 }
 
 // ===== Input kecil dengan label =====
+
+// Membaca file gambar, mengecilkannya ke maksimal 200px, mengembalikan data URL.
+// Data URL kecil supaya tidak membebani IndexedDB.
+function resizeFoto(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 200;
+        const skala = Math.min(1, max / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * skala);
+        canvas.height = Math.round(img.height * skala);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas tidak tersedia"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
+      };
+      img.onerror = () => reject(new Error("Gambar tidak valid"));
+      img.src = String(reader.result);
+    };
+    reader.onerror = () => reject(new Error("File tidak terbaca"));
+    reader.readAsDataURL(file);
+  });
+}
 
 function LabelInput({
   label,

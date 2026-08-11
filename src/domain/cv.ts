@@ -3,6 +3,7 @@ export interface HeaderData {
     title: string;
     email: string;
     phone: string;
+    photo?: string; // data URL hasil upload
 }
 
 export interface ExperienceItem {
@@ -36,10 +37,10 @@ export interface BlockStyle {
 }
 
 export type CVBlock =
-| {id: string; type: 'header'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: HeaderData}
-| {id: string; type: 'experience'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: ExperienceData}
-| {id: string; type: 'skills'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: SkillsData}
-| {id: string; type: 'custom'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: CustomData}
+| {id: string; type: 'header'; order: number; visible: boolean; name?: string; page?: number; column?: 'left' | 'right'; style?: BlockStyle; data: HeaderData}
+| {id: string; type: 'experience'; order: number; visible: boolean; name?: string; page?: number; column?: 'left' | 'right'; style?: BlockStyle; data: ExperienceData}
+| {id: string; type: 'skills'; order: number; visible: boolean; name?: string; page?: number; column?: 'left' | 'right'; style?: BlockStyle; data: SkillsData}
+| {id: string; type: 'custom'; order: number; visible: boolean; name?: string; page?: number; column?: 'left' | 'right'; style?: BlockStyle; data: CustomData}
 
 export interface CVDocument {
     id: string;
