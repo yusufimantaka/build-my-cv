@@ -122,6 +122,11 @@ function pindahkanBlokKeHalaman(daftar: CVBlock[], draggedId: string, page: numb
   return [...sisa, dragged];
 }
 
+// Mengganti judul dokumen dengan waktu terbaru
+function dokumenDenganJudul(doc: CVDocument, judul: string): CVDocument {
+  return { ...doc, title: judul, updatedAt: Date.now() };
+}
+
 // Membuat dokumen baru dengan daftar blok baru dan waktu terbaru
 function dokumenBaru(doc: CVDocument, blocks: CVBlock[]): CVDocument {
   return { ...doc, blocks, updatedAt: Date.now() };
@@ -209,6 +214,11 @@ export default function BuildPage() {
     simpan(dokumenBaru(doc, tukarDalamHalaman(doc.blocks, id, arah)));
   }
 
+  function ubahJudul(nilai: string): void {
+    if (!doc) return;
+    simpan(dokumenDenganJudul(doc, nilai));
+  }
+
   function seretBlokKeBlok(draggedId: string, targetId: string): void {
     if (!doc) return;
     simpan(dokumenBaru(doc, pindahkanBlokKe(doc.blocks, draggedId, targetId)));
@@ -273,7 +283,12 @@ export default function BuildPage() {
           <Link href="/" className="text-sm text-[#3f6382] hover:underline">
             ← Dashboard
           </Link>
-          <h1 className="text-xl font-semibold">{doc.title}</h1>
+          <input
+            value={doc.title}
+            onChange={(e) => ubahJudul(e.target.value)}
+            placeholder="Judul CV"
+            className="w-64 rounded-md border border-transparent bg-transparent px-2 py-1 text-xl font-semibold outline-none transition-colors hover:border-[#171717]/15 focus:border-[#3f6382] focus:bg-white"
+          />
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-[#6e6a5e]">Tersimpan lokal</span>
