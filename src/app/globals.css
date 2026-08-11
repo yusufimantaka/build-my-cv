@@ -115,11 +115,13 @@ body {
     overflow: visible !important;
   }
 
-  /* Textarea di kertas: tanpa scrollbar internal, isi tercetak penuh */
+  /* Textarea di kertas: tanpa scrollbar internal, isi tercetak penuh.
+     Tinggi INLINE (dari auto-resize) TIDAK boleh ditimpa — kalau di-set
+     height:auto, textarea kembali ke rows=1 dan memunculkan scrollbar
+     di PDF. Biarkan tinggi inline berlaku; cukup lepas resize. */
   .paper-sheet textarea,
   .paper-sheet input {
     overflow: visible !important;
-    height: auto !important;
     resize: none !important;
   }
 
