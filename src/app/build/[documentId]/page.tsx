@@ -479,7 +479,7 @@ export default function BuildPage() {
             title="Seret untuk ubah lebar"
             className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-full bg-[#171717]/10 transition-colors hover:bg-[#3f6382]"
           />
-          <h2 className="sticky top-0 z-10 -mx-4 -mt-4 flex items-center gap-2 border-b border-[#171717]/10 bg-white/85 px-4 pb-3 pt-4 text-sm font-semibold text-[#3f6382] backdrop-blur-md">
+          <h2 className="sticky top-0 z-10 -mx-4 -mt-4 flex items-center gap-2 border-b border-[#171717]/10 bg-white/95 px-4 pb-3 pt-4 text-sm font-semibold text-[#3f6382] backdrop-blur-lg">
             <iconify-icon icon="mdi:tune-variant" width="16" height="16" />
             Properti
           </h2>
@@ -536,11 +536,19 @@ function BlokEditor({
             onClick={onPilih}
             style={{ marginBottom: 4 }}
             className={
-                "animate-fade-in cursor-grab rounded border p-1.5 active:cursor-grabbing print:border-transparent " +
+                "group relative animate-fade-in cursor-grab rounded border p-1.5 active:cursor-grabbing print:border-transparent " +
                 (terpilih ? "border-[#7895b2]" : "border-transparent hover:border-[#171717]/30")
             }
         >
-            <div className="no-print mb-2 flex items-center justify-end gap-2">
+            {/* Kontrol blok: absolute di luar aliran supaya tidak menambah
+                tinggi blok (tidak mengganggu spacing antar blok).
+                Muncul saat hover atau blok terpilih; no-print. */}
+            <div
+                className={
+                    "no-print absolute -top-8 right-0 z-10 flex items-center gap-1.5 transition-opacity " +
+                    (terpilih ? "opacity-100" : "opacity-0 group-hover:opacity-100")
+                }
+            >
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
@@ -548,9 +556,9 @@ function BlokEditor({
                     }}
                     disabled={index === 0}
                     title="Naik"
-                    className="flex h-7 w-7 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
+                    className="flex h-6 w-6 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] shadow-sm transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
                 >
-                    <iconify-icon icon="mdi:chevron-up" width="16" height="16" />
+                    <iconify-icon icon="mdi:chevron-up" width="14" height="14" />
                 </button>
                 <button
                     onClick={(e) => {
@@ -559,9 +567,9 @@ function BlokEditor({
                     }}
                     disabled={index === totalDiHalaman - 1}
                     title="Turun"
-                    className="flex h-7 w-7 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
+                    className="flex h-6 w-6 items-center justify-center rounded bg-[#171717] text-[#f6f3ed] shadow-sm transition-transform hover:scale-110 active:scale-95 disabled:opacity-30"
                 >
-                    <iconify-icon icon="mdi:chevron-down" width="16" height="16" />
+                    <iconify-icon icon="mdi:chevron-down" width="14" height="14" />
                 </button>
                 <button
                     onClick={(e) => {
@@ -569,9 +577,9 @@ function BlokEditor({
                         onHapus();
                     }}
                     title="Hapus blok"
-                    className="flex h-7 w-7 items-center justify-center rounded bg-[#ff746c] text-white transition-transform hover:scale-110 active:scale-95"
+                    className="flex h-6 w-6 items-center justify-center rounded bg-[#ff746c] text-white shadow-sm transition-transform hover:scale-110 active:scale-95"
                 >
-                    <iconify-icon icon="mdi:trash-can-outline" width="16" height="16" />
+                    <iconify-icon icon="mdi:trash-can-outline" width="14" height="14" />
                 </button>
             </div>
             <PreviewBlok blok={blok} onUbah={onUbah} />
