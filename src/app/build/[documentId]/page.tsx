@@ -470,7 +470,7 @@ export default function BuildPage() {
 
         {/* Panel kanan: properti blok (floating pill kanan, bisa di-resize) */}
         <aside
-          className="no-print no-scrollbar fixed right-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col overflow-y-auto rounded-2xl border border-[#171717]/10 bg-white p-4 shadow-lg lg:flex"
+          className="no-print no-scrollbar fixed right-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col overflow-y-auto rounded-2xl border border-[#171717]/10 bg-white shadow-lg lg:flex"
           style={{ width: rightWidth }}
         >
           {/* Handle resize panel kanan */}
@@ -479,15 +479,19 @@ export default function BuildPage() {
             title="Seret untuk ubah lebar"
             className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-full bg-[#171717]/10 transition-colors hover:bg-[#3f6382]"
           />
-          <h2 className="sticky top-0 z-10 -mx-4 -mt-4 flex items-center gap-2 border-b border-[#171717]/10 bg-white/95 px-4 pb-3 pt-4 text-sm font-semibold text-[#3f6382] backdrop-blur-lg">
+          {/* Header menempel penuh ke tepi atas panel (tanpa padding panel
+              di atasnya), jadi blur menutup seluruh lebar saat scroll. */}
+          <h2 className="sticky top-0 z-10 flex items-center gap-2 border-b border-[#171717]/10 bg-white/95 px-4 pb-3 pt-4 text-sm font-semibold text-[#3f6382] backdrop-blur-lg">
             <iconify-icon icon="mdi:tune-variant" width="16" height="16" />
             Properti
           </h2>
-          {blokTerpilih ? (
-            <EditorBlok blok={blokTerpilih} onChange={perbaruiBlok} />
-          ) : (
-            <EditorDokumen doc={doc} onChange={perbaruiDokumen} />
-          )}
+          <div className="p-4">
+            {blokTerpilih ? (
+              <EditorBlok blok={blokTerpilih} onChange={perbaruiBlok} />
+            ) : (
+              <EditorDokumen doc={doc} onChange={perbaruiDokumen} />
+            )}
+          </div>
         </aside>
       </div>
     </main>
@@ -660,6 +664,7 @@ function TeksEditable({
 function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => void }) {
   const fontSize = blok.style?.fontSize ?? 16;
   const color = blok.style?.color ?? "#171717";
+  const gap = 6;
 
   if (blok.type === "header") {
     return (
@@ -721,7 +726,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
           <p className="text-sm opacity-50">Belum ada item.</p>
         ) : (
           blok.data.items.map((item, i) => (
-            <div key={i} className="mb-2">
+            <div key={i} style={{ marginBottom: gap }}>
               <div className="flex items-baseline gap-3">
                 <TeksEditable
                   value={item.title}
@@ -790,7 +795,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
         ) : (
           <ul>
             {blok.data.skills.map((skill, i) => (
-              <li key={i} className="flex items-baseline gap-2">
+              <li key={i} className="flex items-baseline gap-2" style={{ marginBottom: i === blok.data.skills.length - 1 ? 0 : gap }}>
                 <span aria-hidden="true" className="shrink-0">•</span>
                 <TeksEditable
                   value={skill}
@@ -824,7 +829,7 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
         ) : (
         <ul>
           {blok.data.items.map((item, i) => (
-            <li key={i} className="mb-0.5 flex items-baseline gap-2">
+            <li key={i} className="flex items-baseline gap-2" style={{ marginBottom: i === blok.data.items.length - 1 ? 0 : gap }}>
               <TeksEditable
                 value={item.label}
                 onUbah={(v) =>
