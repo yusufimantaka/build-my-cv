@@ -164,6 +164,59 @@ export default function BuildPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedPage, setSelectedPage] = useState(0);
   const [notFound, setNotFound] = useState(false);
+  // Baca lebar panel dari localStorage saat init (lazy initializer)
+  const [leftWidth, setLeftWidth] = useState(() => {
+    if (typeof window === "undefined") return 176;
+    const kiri = localStorage.getItem("buildLeftWidth");
+    if (kiri) return Number(kiri);
+    return 176;
+  });
+  const [rightWidth, setRightWidth] = useState(() => {
+    if (typeof window === "undefined") return 320;
+    const kanan = localStorage.getItem("buildRightWidth");
+    if (kanan) return Number(kanan);
+    return 320;
+  });
+
+  // Simpan lebar panel
+  useEffect(() => {
+    localStorage.setItem("buildLeftWidth", String(leftWidth));
+  }, [leftWidth]);
+  useEffect(() => {
+    localStorage.setItem("buildRightWidth", String(rightWidth));
+  }, [rightWidth]);
+
+  // Mulai drag resize panel kiri (seret dari tepi kanan pill)
+  function mulaiDragKiri(e: React.MouseEvent): void {
+    e.preventDefault();
+    const mulaiX = e.clientX;
+    const mulaiW = leftWidth;
+    function onMove(ev: MouseEvent): void {
+      setLeftWidth(Math.min(Math.max(mulaiW + (ev.clientX - mulaiX), 120), 320));
+    }
+    function onUp(): void {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    }
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
+
+  // Mulai drag resize panel kanan (seret dari tepi kiri pill)
+  function mulaiDragKanan(e: React.MouseEvent): void {
+    e.preventDefault();
+    const mulaiX = e.clientX;
+    const mulaiW = rightWidth;
+    function onMove(ev: MouseEvent): void {
+      setRightWidth(Math.min(Math.max(mulaiW + (mulaiX - ev.clientX), 240), 480));
+    }
+    function onUp(): void {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    }
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
 
   useEffect(() => {
     async function muat(): Promise<void> {
@@ -277,8 +330,8 @@ export default function BuildPage() {
 
   return (
     <main className="flex h-screen flex-col bg-[#f6f3ed] font-sans text-[#171717]">
-      {/* Header app (sticky di atas, sembunyi saat print) */}
-      <div className="no-print flex shrink-0 items-center justify-between border-b border-[#171717]/10 px-4 py-3 lg:px-8">
+      {/* Header app (sama tinggi dengan TopNav, sembunyi saat print) */}
+      <div className="no-print sticky top-0 z-50 flex shrink-0 items-center justify-between border-b border-[#171717]/10 bg-white/95 px-6 py-2 backdrop-blur">
         <div className="flex items-center gap-4">
           <Link href="/" className="text-sm text-[#3f6382] hover:underline">
             ← Dashboard
@@ -287,7 +340,7 @@ export default function BuildPage() {
             value={doc.title}
             onChange={(e) => ubahJudul(e.target.value)}
             placeholder="Judul CV"
-            className="w-64 rounded-md border border-transparent bg-transparent px-2 py-1 text-xl font-semibold outline-none transition-colors hover:border-[#171717]/15 focus:border-[#3f6382] focus:bg-white"
+            className="w-64 rounded-md border border-transparent bg-transparent px-2 py-1 text-base font-semibold outline-none transition-colors hover:border-[#171717]/15 focus:border-[#3f6382] focus:bg-white"
           />
         </div>
         <div className="flex items-center gap-3">
@@ -302,35 +355,50 @@ export default function BuildPage() {
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1">
-        {/* Panel kiri: daftar blok (sticky, scroll sendiri jika panjang) */}
-        <aside className="no-print no-scrollbar flex w-52 shrink-0 flex-col overflow-y-auto border-r border-[#171717]/10 bg-white p-4">
-          <h2 className="flex items-center gap-2 border-b border-[#171717]/10 pb-3 text-sm font-semibold text-[#3f6382]">
-            <iconify-icon icon="mdi:view-grid-plus" width="16" height="16" />
+      <div className="min-h-0 flex-1">
+        {/* Panel kiri: daftar blok (floating pill kiri, bisa di-resize) */}
+        <aside
+          className="no-print fixed left-4 top-20 z-40 hidden flex-col gap-1 rounded-2xl border border-[#171717]/10 bg-white p-2 shadow-lg lg:flex"
+          style={{ width: leftWidth }}
+        >
+          <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#3f6382]">
+            <iconify-icon icon="mdi:view-grid-plus" width="14" height="14" />
             Tambah blok
           </h2>
-          <div className="mt-3 flex flex-col gap-2">
-            <button onClick={() => tambahBlok("header")} className="flex items-center gap-2 rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm transition-transform hover:bg-[#e8e3d8] hover:scale-[1.02] active:scale-95">
-              <iconify-icon icon="mdi:account-circle-outline" width="16" height="16" className="text-[#3f6382]" />
-              Header
-            </button>
-            <button onClick={() => tambahBlok("experience")} className="flex items-center gap-2 rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm transition-transform hover:bg-[#e8e3d8] hover:scale-[1.02] active:scale-95">
-              <iconify-icon icon="mdi:briefcase-outline" width="16" height="16" className="text-[#3f6382]" />
-              Experience
-            </button>
-            <button onClick={() => tambahBlok("skills")} className="flex items-center gap-2 rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm transition-transform hover:bg-[#e8e3d8] hover:scale-[1.02] active:scale-95">
-              <iconify-icon icon="mdi:lightbulb-on-outline" width="16" height="16" className="text-[#3f6382]" />
-              Skills
-            </button>
-            <button onClick={() => tambahBlok("custom")} className="flex items-center gap-2 rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm transition-transform hover:bg-[#e8e3d8] hover:scale-[1.02] active:scale-95">
-              <iconify-icon icon="mdi:text-box-outline" width="16" height="16" className="text-[#3f6382]" />
-              Section
-            </button>
-          </div>
+          <button onClick={() => tambahBlok("header")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#f0ece3]">
+            <iconify-icon icon="mdi:account-circle-outline" width="16" height="16" className="text-[#3f6382]" />
+            Header
+          </button>
+          <button onClick={() => tambahBlok("experience")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#f0ece3]">
+            <iconify-icon icon="mdi:briefcase-outline" width="16" height="16" className="text-[#3f6382]" />
+            Experience
+          </button>
+          <button onClick={() => tambahBlok("skills")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#f0ece3]">
+            <iconify-icon icon="mdi:lightbulb-on-outline" width="16" height="16" className="text-[#3f6382]" />
+            Skills
+          </button>
+          <button onClick={() => tambahBlok("custom")} className="flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors hover:bg-[#f0ece3]">
+            <iconify-icon icon="mdi:text-box-outline" width="16" height="16" className="text-[#3f6382]" />
+            Section
+          </button>
+          {/* Handle resize panel kiri */}
+          <div
+            onMouseDown={mulaiDragKiri}
+            title="Seret untuk ubah lebar"
+            className="absolute -right-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-full bg-[#171717]/10 transition-colors hover:bg-[#3f6382]"
+          />
         </aside>
 
         {/* Tengah: kertas A4 — satu-satunya area yang scroll */}
-        <section className="print-area no-scrollbar min-w-0 flex-1 overflow-y-auto bg-[#f6f3ed] p-6">
+        <section
+          className="print-area no-scrollbar h-full overflow-y-auto bg-[#f6f3ed] p-6 lg:pl-[var(--left-pad)] lg:pr-[var(--right-pad)]"
+          style={
+            {
+              "--left-pad": `${leftWidth + 48}px`,
+              "--right-pad": `${rightWidth + 48}px`,
+            } as React.CSSProperties
+          }
+        >
           {Array.from({ length: jumlahHalaman }, (_, page) => (
             <div
               key={page}
@@ -440,8 +508,17 @@ export default function BuildPage() {
           </div>
         </section>
 
-        {/* Panel kanan: properti blok (sticky, scroll sendiri jika panjang) */}
-        <aside className="no-print no-scrollbar flex w-80 shrink-0 flex-col overflow-y-auto border-l border-[#171717]/10 bg-white p-4">
+        {/* Panel kanan: properti blok (floating pill kanan, bisa di-resize) */}
+        <aside
+          className="no-print no-scrollbar fixed right-4 top-20 z-40 hidden max-h-[calc(100vh-6rem)] flex-col overflow-y-auto rounded-2xl border border-[#171717]/10 bg-white p-4 shadow-lg lg:flex"
+          style={{ width: rightWidth }}
+        >
+          {/* Handle resize panel kanan */}
+          <div
+            onMouseDown={mulaiDragKanan}
+            title="Seret untuk ubah lebar"
+            className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-full bg-[#171717]/10 transition-colors hover:bg-[#3f6382]"
+          />
           <h2 className="flex items-center gap-2 border-b border-[#171717]/10 pb-3 text-sm font-semibold text-[#3f6382]">
             <iconify-icon icon="mdi:tune-variant" width="16" height="16" />
             Properti

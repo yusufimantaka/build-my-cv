@@ -48,7 +48,36 @@ export default function Dashboard() {
   const [kategoriInput, setKategoriInput] = useState("");
   const [kategoriPilihan, setKategoriPilihan] = useState("");
   const [kategoriBuatBaru, setKategoriBuatBaru] = useState(false);
+  // Baca zoom grid dari localStorage saat init (lazy initializer)
+  const [gridZoom, setGridZoom] = useState<"kecil" | "sedang" | "besar">(() => {
+    if (typeof window === "undefined") return "sedang";
+    const tersimpan = localStorage.getItem("gridZoom");
+    if (tersimpan === "kecil" || tersimpan === "besar") return tersimpan;
+    return "sedang";
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Simpan zoom grid agar tidak hilang saat pindah halaman
+  useEffect(() => {
+    localStorage.setItem("gridZoom", gridZoom);
+  }, [gridZoom]);
+
+  // Jumlah kolom eksplisit per level agar layout stabil
+  const gridClasses =
+    gridZoom === "kecil"
+      ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+      : gridZoom === "besar"
+        ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
+
+  const zoomPersen = gridZoom === "kecil" ? 66 : gridZoom === "besar" ? 133 : 100;
+
+  function zoomKe(arah: -1 | 1): void {
+    const urutan: Array<"kecil" | "sedang" | "besar"> = ["kecil", "sedang", "besar"];
+    const index = urutan.indexOf(gridZoom);
+    const baru = urutan[Math.min(Math.max(index + arah, 0), 2)];
+    setGridZoom(baru);
+  }
 
   async function muatUlang(): Promise<void> {
     const docs = await repo.loadDocuments();
@@ -202,57 +231,55 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
       <TopNav />
-      <div className="flex">
-      {/* Sidebar kategori */}
-      <aside className="flex w-56 shrink-0 flex-col border-r border-[#171717]/10 bg-white p-4">
-        <h2 className="flex items-center gap-2 border-b border-[#171717]/10 pb-3 text-sm font-semibold text-[#3f6382]">
-          <iconify-icon icon="mdi:folder-multiple-outline" width="16" height="16" />
+
+      {/* Floating pill kategori (melayang di sisi kiri) */}
+      <aside className="fixed left-4 top-20 z-40 flex w-44 flex-col gap-1 rounded-2xl border border-[#171717]/10 bg-white p-2 shadow-lg">
+        <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#3f6382]">
+          <iconify-icon icon="mdi:folder-multiple-outline" width="14" height="14" />
           Kategori
         </h2>
-        <nav className="mt-3 flex flex-col gap-1">
+        <button
+          onClick={() => setKategoriAktif(null)}
+          className={
+            "flex items-center justify-between rounded-full px-3 py-2 text-left text-sm transition-colors " +
+            (kategoriAktif === null
+              ? "bg-[#3f6382] text-white"
+              : "text-[#171717] hover:bg-[#f0ece3]")
+          }
+        >
+          <span className="flex items-center gap-2">
+            <iconify-icon icon="mdi:folder-outline" width="15" height="15" />
+            Semua
+          </span>
+          <span className="text-xs opacity-70">{documents.length}</span>
+        </button>
+        {daftarKategori.map((k) => (
           <button
-            onClick={() => setKategoriAktif(null)}
+            key={k.nama}
+            onClick={() => setKategoriAktif(k.nama)}
             className={
-              "flex items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors " +
-              (kategoriAktif === null
+              "flex items-center justify-between rounded-full px-3 py-2 text-left text-sm transition-colors " +
+              (kategoriAktif === k.nama
                 ? "bg-[#3f6382] text-white"
                 : "text-[#171717] hover:bg-[#f0ece3]")
             }
           >
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2 truncate">
               <iconify-icon icon="mdi:folder-outline" width="15" height="15" />
-              Semua
+              {k.nama}
             </span>
-            <span className="text-xs opacity-70">{documents.length}</span>
+            <span className="text-xs opacity-70">{k.jumlah}</span>
           </button>
-          {daftarKategori.map((k) => (
-            <button
-              key={k.nama}
-              onClick={() => setKategoriAktif(k.nama)}
-              className={
-                "flex items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors " +
-                (kategoriAktif === k.nama
-                  ? "bg-[#3f6382] text-white"
-                  : "text-[#171717] hover:bg-[#f0ece3]")
-              }
-            >
-              <span className="flex items-center gap-2 truncate">
-                <iconify-icon icon="mdi:folder-outline" width="15" height="15" />
-                {k.nama}
-              </span>
-              <span className="text-xs opacity-70">{k.jumlah}</span>
-            </button>
-          ))}
-          {daftarKategori.length === 0 && (
-            <p className="px-3 py-2 text-xs text-[#6e6a5e]">
-              Buat kategori lewat tombol folder di kartu CV.
-            </p>
-          )}
-        </nav>
+        ))}
+        {daftarKategori.length === 0 && (
+          <p className="px-3 py-2 text-xs text-[#6e6a5e]">
+            Buat kategori lewat tombol folder di kartu CV.
+          </p>
+        )}
       </aside>
 
-      {/* Konten utama */}
-      <div className="min-w-0 flex-1 p-8">
+      {/* Konten utama (ruang kiri untuk pill kategori) */}
+      <div className="min-w-0 p-8 pl-56">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">
             {kategoriAktif === null ? "Dashboard" : kategoriAktif}
@@ -317,6 +344,25 @@ export default function Dashboard() {
               <option value="terbaru">Terbaru</option>
               <option value="az">A–Z</option>
             </select>
+            <div className="ml-2 flex items-center gap-1 rounded-md border border-[#171717]/15 bg-white p-1">
+              <button
+                onClick={() => zoomKe(-1)}
+                disabled={gridZoom === "kecil"}
+                title="Perkecil"
+                className="flex h-7 w-7 items-center justify-center rounded text-[#171717] transition-colors hover:bg-[#f0ece3] disabled:opacity-30"
+              >
+                <iconify-icon icon="mdi:magnify-minus" width="16" height="16" />
+              </button>
+              <span className="w-10 text-center text-xs text-[#6e6a5e]">{zoomPersen}%</span>
+              <button
+                onClick={() => zoomKe(1)}
+                disabled={gridZoom === "besar"}
+                title="Perbesar"
+                className="flex h-7 w-7 items-center justify-center rounded text-[#171717] transition-colors hover:bg-[#f0ece3] disabled:opacity-30"
+              >
+                <iconify-icon icon="mdi:magnify-plus" width="16" height="16" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -336,7 +382,7 @@ export default function Dashboard() {
         ) : hasil.length === 0 ? (
           <p className="mt-8 text-[#6e6a5e]">Tidak ada CV di kategori ini.</p>
         ) : (
-          <ul className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <ul className={"mt-8 grid gap-6 " + gridClasses}>
             {hasil.map((cv, idx) => (
               <li
                 key={cv.id}
@@ -556,7 +602,6 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-      </div>
       </div>
     </main>
   );

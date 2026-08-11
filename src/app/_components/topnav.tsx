@@ -48,6 +48,15 @@ export default function TopNav() {
                         Segera
                     </span>
                 </button>
+                <a
+                    href="https://github.com/yusufimantaka/build-my-cv"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 flex items-center gap-2 rounded-md bg-[#171717] px-3 py-1.5 text-sm font-medium text-white transition-transform hover:scale-[1.03] active:scale-95"
+                >
+                    <iconify-icon icon="mdi:github" width="15" height="15" />
+                    GitHub
+                </a>
             </nav>
 
             {showAiChat && (
