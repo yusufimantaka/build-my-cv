@@ -230,14 +230,14 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="isolate min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
+    <main className="isolate min-h-screen bg-[#f7f7f5] font-sans text-[#171717]">
       {/* Latar lanskap: fixed, tidak memengaruhi layout */}
       <LandscapeBg />
       <TopNav />
 
       {/* Floating pill kategori (melayang di sisi kiri) */}
       <aside className="fixed left-4 top-20 z-40 flex w-44 flex-col gap-1 rounded-2xl border border-[#171717]/10 bg-white p-2 shadow-lg">
-        <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#3f6382]">
+        <h2 className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#37352F]">
           <iconify-icon icon="mdi:folder-multiple-outline" width="14" height="14" />
           Kategori
         </h2>
@@ -246,8 +246,8 @@ export default function Dashboard() {
           className={
             "flex items-center justify-between rounded-full px-3 py-2 text-left text-sm transition-colors " +
             (kategoriAktif === null
-              ? "bg-[#3f6382] text-white"
-              : "text-[#171717] hover:bg-[#f0ece3]")
+              ? "bg-[#37352F] text-white"
+              : "text-[#171717] hover:bg-[#efefef]")
           }
         >
           <span className="flex items-center gap-2">
@@ -263,8 +263,8 @@ export default function Dashboard() {
             className={
               "flex items-center justify-between rounded-full px-3 py-2 text-left text-sm transition-colors " +
               (kategoriAktif === k.nama
-                ? "bg-[#3f6382] text-white"
-                : "text-[#171717] hover:bg-[#f0ece3]")
+                ? "bg-[#37352F] text-white"
+                : "text-[#171717] hover:bg-[#efefef]")
             }
           >
             <span className="flex items-center gap-2 truncate">
@@ -275,7 +275,7 @@ export default function Dashboard() {
           </button>
         ))}
         {daftarKategori.length === 0 && (
-          <p className="px-3 py-2 text-xs text-[#6e6a5e]">
+          <p className="px-3 py-2 text-xs text-[#787774]">
             Buat kategori lewat tombol folder di kartu CV.
           </p>
         )}
@@ -291,14 +291,14 @@ export default function Dashboard() {
             <button
               onClick={exportWorkspace}
               title="Backup workspace"
-              className="flex h-9 w-9 items-center justify-center rounded-md border border-[#171717]/15 text-[#3f6382] transition-transform hover:bg-[#e8e3d8] hover:scale-105 active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-md border border-[#171717]/15 text-[#37352F] transition-transform hover:bg-[#e8e8e6] hover:scale-105 active:scale-95"
             >
               <iconify-icon icon="mdi:database-export-outline" width="18" height="18" />
             </button>
             <button
               onClick={() => fileInputRef.current?.click()}
               title="Restore dari backup"
-              className="flex h-9 w-9 items-center justify-center rounded-md border border-[#171717]/15 text-[#3f6382] transition-transform hover:bg-[#e8e3d8] hover:scale-105 active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-md border border-[#171717]/15 text-[#37352F] transition-transform hover:bg-[#e8e8e6] hover:scale-105 active:scale-95"
             >
               <iconify-icon icon="mdi:database-import-outline" width="18" height="18" />
             </button>
@@ -315,7 +315,7 @@ export default function Dashboard() {
             />
             <button
               onClick={bukaModalBuat}
-              className="flex items-center gap-2 rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#355573] hover:scale-[1.02] active:scale-95"
+              className="flex items-center gap-2 rounded-md bg-[#37352F] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#2f2b26] hover:scale-[1.02] active:scale-95"
             >
               <iconify-icon icon="mdi:plus" width="16" height="16" />
               Tambah CV
@@ -330,19 +330,19 @@ export default function Dashboard() {
                 icon="mdi:magnify"
                 width="16"
                 height="16"
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#6e6a5e]"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#787774]"
               />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Cari CV…"
-                className="w-64 rounded-md border border-[#171717]/15 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-[#3f6382]"
+                className="w-64 rounded-md border border-[#171717]/15 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-[#37352F]"
               />
             </div>
             <select
               value={sortMode}
               onChange={(e) => setSortMode(e.target.value as "terbaru" | "az")}
-              className="rounded-md border border-[#171717]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#3f6382]"
+              className="rounded-md border border-[#171717]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#37352F]"
             >
               <option value="terbaru">Terbaru</option>
               <option value="az">A–Z</option>
@@ -352,16 +352,16 @@ export default function Dashboard() {
                 onClick={() => zoomKe(-1)}
                 disabled={gridZoom === "kecil"}
                 title="Perkecil"
-                className="flex h-7 w-7 items-center justify-center rounded text-[#171717] transition-colors hover:bg-[#f0ece3] disabled:opacity-30"
+                className="flex h-7 w-7 items-center justify-center rounded text-[#171717] transition-colors hover:bg-[#efefef] disabled:opacity-30"
               >
                 <iconify-icon icon="mdi:magnify-minus" width="16" height="16" />
               </button>
-              <span className="w-10 text-center text-xs text-[#6e6a5e]">{zoomPersen}%</span>
+              <span className="w-10 text-center text-xs text-[#787774]">{zoomPersen}%</span>
               <button
                 onClick={() => zoomKe(1)}
                 disabled={gridZoom === "besar"}
                 title="Perbesar"
-                className="flex h-7 w-7 items-center justify-center rounded text-[#171717] transition-colors hover:bg-[#f0ece3] disabled:opacity-30"
+                className="flex h-7 w-7 items-center justify-center rounded text-[#171717] transition-colors hover:bg-[#efefef] disabled:opacity-30"
               >
                 <iconify-icon icon="mdi:magnify-plus" width="16" height="16" />
               </button>
@@ -370,20 +370,20 @@ export default function Dashboard() {
         )}
 
         {loading ? (
-          <p className="mt-8 text-[#6e6a5e]">Memuat…</p>
+          <p className="mt-8 text-[#787774]">Memuat…</p>
         ) : documents.length === 0 ? (
-          <div className="mt-16 flex flex-col items-center gap-4 text-[#6e6a5e]">
+          <div className="mt-16 flex flex-col items-center gap-4 text-[#787774]">
             <iconify-icon icon="mdi:file-document-outline" width="48" height="48" />
             <p>Belum ada CV.</p>
             <button
               onClick={bukaModalBuat}
-              className="rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white hover:bg-[#355573]"
+              className="rounded-md bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
             >
               Buat CV pertama
             </button>
           </div>
         ) : hasil.length === 0 ? (
-          <p className="mt-8 text-[#6e6a5e]">Tidak ada CV di kategori ini.</p>
+          <p className="mt-8 text-[#787774]">Tidak ada CV di kategori ini.</p>
         ) : (
           <ul className={"mt-8 grid gap-6 " + gridClasses}>
             {hasil.map((cv, idx) => (
@@ -395,11 +395,11 @@ export default function Dashboard() {
                 <div
                   className={
                     "relative rounded-md border bg-white p-3 shadow-sm transition-shadow hover:shadow-md " +
-                    (cv.id === cvTerbaruId ? "border-[#3f6382] ring-1 ring-[#3f6382]/40" : "border-[#171717]/15")
+                    (cv.id === cvTerbaruId ? "border-[#37352F] ring-1 ring-[#37352F]/40" : "border-[#171717]/15")
                   }
                 >
                   {cv.id === cvTerbaruId && (
-                    <span className="absolute right-2 top-2 rounded-full bg-[#3f6382] px-2 py-0.5 text-[10px] font-medium text-white">
+                    <span className="absolute right-2 top-2 rounded-full bg-[#37352F] px-2 py-0.5 text-[10px] font-medium text-white">
                       Terakhir dikerjakan
                     </span>
                   )}
@@ -422,7 +422,7 @@ export default function Dashboard() {
                       >
                         {cv.title}
                       </Link>
-                      <p className="mt-0.5 truncate text-xs text-[#6e6a5e]">
+                      <p className="mt-0.5 truncate text-xs text-[#787774]">
                         {cv.category ?? "Tanpa kategori"} · {waktuRelatif(cv.updatedAt)}
                       </p>
                     </div>
@@ -435,21 +435,21 @@ export default function Dashboard() {
                           setKategoriBuatBaru(false);
                         }}
                         title="Atur kategori"
-                        className="rounded p-1 text-[#6e6a5e] transition-transform hover:scale-110 hover:bg-[#e8e3d8] hover:text-[#171717] active:scale-95"
+                        className="rounded p-1 text-[#787774] transition-transform hover:scale-110 hover:bg-[#e8e8e6] hover:text-[#171717] active:scale-95"
                       >
                         <iconify-icon icon="mdi:folder-cog-outline" width="15" height="15" />
                       </button>
                       <button
                         onClick={() => duplikatCV(cv)}
                         title="Duplikat"
-                        className="rounded p-1 text-[#6e6a5e] transition-transform hover:scale-110 hover:bg-[#e8e3d8] hover:text-[#171717] active:scale-95"
+                        className="rounded p-1 text-[#787774] transition-transform hover:scale-110 hover:bg-[#e8e8e6] hover:text-[#171717] active:scale-95"
                       >
                         <iconify-icon icon="mdi:content-copy" width="15" height="15" />
                       </button>
                       <button
                         onClick={() => bukaModalRename(cv)}
                         title="Ubah judul"
-                        className="rounded p-1 text-[#6e6a5e] transition-transform hover:scale-110 hover:bg-[#e8e3d8] hover:text-[#171717] active:scale-95"
+                        className="rounded p-1 text-[#787774] transition-transform hover:scale-110 hover:bg-[#e8e8e6] hover:text-[#171717] active:scale-95"
                       >
                         <iconify-icon icon="mdi:pencil-outline" width="15" height="15" />
                       </button>
@@ -482,11 +482,11 @@ export default function Dashboard() {
                   if (e.key === "Enter") simpanModal();
                 }}
                 placeholder="Contoh: Software Engineer CV"
-                className="mt-4 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
+                className="mt-4 w-full rounded border border-[#171717]/10 bg-[#efefef] px-3 py-2 text-sm outline-none focus:bg-[#e8e8e6]"
               />
               {modalMode === "buat" && (
                 <div className="mt-4">
-                  <label className="text-xs text-[#6e6a5e]">Kategori (opsional)</label>
+                  <label className="text-xs text-[#787774]">Kategori (opsional)</label>
                   <select
                     value={kategoriBuatBaru ? "__baru__" : kategoriPilihan}
                     onChange={(e) => {
@@ -500,7 +500,7 @@ export default function Dashboard() {
                         setKategoriInput(nilai);
                       }
                     }}
-                    className="mt-1 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
+                    className="mt-1 w-full rounded border border-[#171717]/10 bg-[#efefef] px-3 py-2 text-sm outline-none focus:bg-[#e8e8e6]"
                   >
                     <option value="">Tanpa kategori</option>
                     {daftarKategori.map((k) => (
@@ -516,7 +516,7 @@ export default function Dashboard() {
                       value={kategoriInput}
                       onChange={(e) => setKategoriInput(e.target.value)}
                       placeholder="Nama kategori baru"
-                      className="mt-2 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
+                      className="mt-2 w-full rounded border border-[#171717]/10 bg-[#efefef] px-3 py-2 text-sm outline-none focus:bg-[#e8e8e6]"
                     />
                   )}
                 </div>
@@ -524,13 +524,13 @@ export default function Dashboard() {
               <div className="mt-5 flex justify-end gap-3">
                 <button
                   onClick={() => setModalMode(null)}
-                  className="rounded-md px-4 py-2 text-sm text-[#6e6a5e] hover:text-[#171717]"
+                  className="rounded-md px-4 py-2 text-sm text-[#787774] hover:text-[#171717]"
                 >
                   Batal
                 </button>
                 <button
                   onClick={simpanModal}
-                  className="rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white hover:bg-[#355573]"
+                  className="rounded-md bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
                 >
                   {modalMode === "buat" ? "Buat" : "Simpan"}
                 </button>
@@ -543,7 +543,7 @@ export default function Dashboard() {
           <div className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/40">
             <div className="w-full max-w-sm animate-pop rounded-md bg-white p-6 shadow-xl">
               <h2 className="text-lg font-semibold">Atur kategori</h2>
-              <label className="mt-4 block text-xs text-[#6e6a5e]">Kategori</label>
+              <label className="mt-4 block text-xs text-[#787774]">Kategori</label>
               <select
                 autoFocus
                 value={kategoriBuatBaru ? "__baru__" : kategoriPilihan}
@@ -558,7 +558,7 @@ export default function Dashboard() {
                     setKategoriInput(nilai);
                   }
                 }}
-                className="mt-1 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
+                className="mt-1 w-full rounded border border-[#171717]/10 bg-[#efefef] px-3 py-2 text-sm outline-none focus:bg-[#e8e8e6]"
               >
                 <option value="">Tanpa kategori</option>
                 {daftarKategori.map((k) => (
@@ -574,13 +574,13 @@ export default function Dashboard() {
                   value={kategoriInput}
                   onChange={(e) => setKategoriInput(e.target.value)}
                   placeholder="Nama kategori baru"
-                  className="mt-2 w-full rounded border border-[#171717]/10 bg-[#f0ece3] px-3 py-2 text-sm outline-none focus:bg-[#e8e3d8]"
+                  className="mt-2 w-full rounded border border-[#171717]/10 bg-[#efefef] px-3 py-2 text-sm outline-none focus:bg-[#e8e8e6]"
                 />
               )}
               <div className="mt-5 flex justify-end gap-3">
                 <button
                   onClick={() => setKategoriModalId(null)}
-                  className="rounded-md px-4 py-2 text-sm text-[#6e6a5e] hover:text-[#171717]"
+                  className="rounded-md px-4 py-2 text-sm text-[#787774] hover:text-[#171717]"
                 >
                   Batal
                 </button>
@@ -597,7 +597,7 @@ export default function Dashboard() {
                 </button>
                 <button
                   onClick={simpanKategori}
-                  className="rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white hover:bg-[#355573]"
+                  className="rounded-md bg-[#37352F] px-4 py-2 text-sm font-medium text-white hover:bg-[#2f2b26]"
                 >
                   Simpan
                 </button>

@@ -36,13 +36,13 @@ export default function ExplorePage() {
     const tampil = filter === SEMUA ? templatesDesain : templatesDesain.filter((t) => t.category === filter);
 
     return (
-        <main className="isolate min-h-screen bg-[#f6f3ed] font-sans text-[#171717]">
+        <main className="isolate min-h-screen bg-[#f7f7f5] font-sans text-[#171717]">
             {/* Latar lanskap: fixed, tidak memengaruhi layout */}
             <LandscapeBg />
             <TopNav />
             <div className="p-8">
                 <h1 className="text-2xl font-semibold">Explore</h1>
-                <p className="mt-1 text-sm text-[#6e6a5e]">
+                <p className="mt-1 text-sm text-[#787774]">
                     Jelajahi template siap pakai. Semua data bisa kamu ubah nanti.
                 </p>
 
@@ -57,8 +57,8 @@ export default function ExplorePage() {
                                 className={
                                     "rounded-full px-4 py-1.5 text-sm transition-colors " +
                                     (aktif
-                                        ? "bg-[#3f6382] font-medium text-white"
-                                        : "border border-[#171717]/15 bg-white text-[#171717] hover:bg-[#f0ece3]")
+                                        ? "bg-[#37352F] font-medium text-white"
+                                        : "border border-[#171717]/15 bg-white text-[#171717] hover:bg-[#efefef]")
                                 }
                             >
                                 {k === SEMUA ? "Semua" : NAMA_KATEGORI[k as TemplateCategory]}
@@ -86,11 +86,11 @@ export default function ExplorePage() {
                                     {NAMA_KATEGORI[t.category]}
                                 </span>
                             </div>
-                            <p className="mt-1 flex-1 text-sm text-[#6e6a5e]">{t.description}</p>
+                            <p className="mt-1 flex-1 text-sm text-[#787774]">{t.description}</p>
 
                             <button
                                 onClick={() => pakaiTemplate(t.id)}
-                                className="mt-4 flex items-center justify-center gap-2 rounded-md bg-[#3f6382] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#355573] hover:scale-[1.02] active:scale-95"
+                                className="mt-4 flex items-center justify-center gap-2 rounded-md bg-[#37352F] px-4 py-2 text-sm font-medium text-white transition-transform hover:bg-[#2f2b26] hover:scale-[1.02] active:scale-95"
                             >
                                 <iconify-icon icon="mdi:plus" width="15" height="15" />
                                 Pakai template
