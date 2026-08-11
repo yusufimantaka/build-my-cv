@@ -746,7 +746,7 @@ function TeksEditable({
     className = "",
     placeholder = "",
     style,
-    rich = false,
+    rich = true,
 }: {
     value: string;
     onUbah: (nilai: string) => void;
@@ -791,7 +791,7 @@ function TeksEditable({
     }
 
     if (rich) {
-        return <TeksRich value={value} onUbah={onUbah} className={className} placeholder={placeholder} style={gaya} />;
+        return <TeksRich value={value} onUbah={onUbah} className={className} placeholder={placeholder} style={gaya} singleLine={!multiline} />;
     }
 
     if (multiline) {
@@ -828,15 +828,25 @@ function TeksRich({
     className,
     placeholder,
     style,
+    singleLine = false,
 }: {
     value: string;
     onUbah: (nilai: string) => void;
     className?: string;
     placeholder?: string;
     style?: React.CSSProperties;
+    singleLine?: boolean;
 }) {
     const ref = useRef<HTMLDivElement>(null);
     const [fokus, setFokus] = useState(false);
+    const [adaSeleksi, setAdaSeleksi] = useState(false);
+
+    // Toolbar hanya muncul saat ada teks yang dipilih (gaya Notion),
+    // bukan saat sekadar mengklik field.
+    function cekSeleksi(): void {
+        const sel = window.getSelection();
+        setAdaSeleksi(!!sel && !sel.isCollapsed && sel.rangeCount > 0);
+    }
 
     // Sinkronkan nilai dari luar (mis. setelah load dokumen) hanya jika
     // konten DOM berbeda; jangan ganggu posisi kursor saat mengetik.
@@ -857,7 +867,13 @@ function TeksRich({
     }
 
     // Shortcut gaya Notion: Ctrl/Cmd+B = tebal, I = miring, U = garis bawah.
+    // Untuk field satu baris, Enter = selesai (pindah fokus), bukan baris baru.
     function shortcut(e: React.KeyboardEvent): void {
+        if (e.key === "Enter" && singleLine) {
+            e.preventDefault();
+            ref.current?.blur();
+            return;
+        }
         if (!(e.ctrlKey || e.metaKey)) return;
         const kunci = e.key.toLowerCase();
         const perintah = kunci === "b" ? "bold" : kunci === "i" ? "italic" : kunci === "u" ? "underline" : null;
@@ -868,7 +884,7 @@ function TeksRich({
 
     return (
         <div className="relative">
-            {fokus && (
+            {fokus && adaSeleksi && (
                 <div className="absolute -top-7 left-0 z-10 flex items-center gap-0.5 rounded-md border border-[#171717]/10 bg-white px-1 py-0.5 shadow-md">
                     <button
                         type="button"
@@ -903,10 +919,18 @@ function TeksRich({
                 ref={ref}
                 contentEditable
                 suppressContentEditableWarning
-                onInput={(e) => onUbah(e.currentTarget.innerHTML)}
+                onInput={(e) => {
+                    onUbah(e.currentTarget.innerHTML);
+                    cekSeleksi();
+                }}
                 onKeyDown={shortcut}
+                onKeyUp={cekSeleksi}
+                onMouseUp={cekSeleksi}
                 onFocus={() => setFokus(true)}
-                onBlur={() => setFokus(false)}
+                onBlur={() => {
+                    setFokus(false);
+                    setAdaSeleksi(false);
+                }}
                 data-placeholder={placeholder}
                 className={
                     "rich-teks min-w-0 outline-none transition-shadow focus:ring-1 focus:ring-[#7895b2]/60 " +
@@ -1143,6 +1167,7 @@ function PreviewBlok({
                 }
                 placeholder="Deskripsi"
                 rich
+                multiline
                 className="w-full opacity-70"
               />
             </div>
@@ -1193,6 +1218,7 @@ function PreviewBlok({
           onUbah={(v) => onUbah({ ...blok, data: { text: v } })}
           placeholder="Tulis paragraf di sini… (misalnya ringkasan tentang kamu)"
           rich
+          multiline
           className="w-full"
         />
       </div>
