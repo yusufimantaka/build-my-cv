@@ -11,7 +11,7 @@ const repo = new IndexedDBRepository();
 // Membuat blok baru dengan data kosong, sesuai jenisnya
 function blokBaru(type: CVBlock["type"], page: number): CVBlock {
   const id = crypto.randomUUID();
-  const style: BlockStyle = { fontSize: 16, color: "#171717", spacing: 4 };
+  const style: BlockStyle = { fontSize: 16, color: "#171717" };
   const name = type === "header" ? "Header" : type === "experience" ? "Pengalaman" : type === "skills" ? "Keahlian" : "Section";
   if (type === "header") {
     return { id, type, order: 0, visible: true, name, page, style, data: { fullName: "", title: "", email: "", phone: "" } };
@@ -479,7 +479,7 @@ export default function BuildPage() {
             title="Seret untuk ubah lebar"
             className="absolute -left-1 top-1/2 h-10 w-1.5 -translate-y-1/2 cursor-ew-resize rounded-full bg-[#171717]/10 transition-colors hover:bg-[#3f6382]"
           />
-          <h2 className="sticky top-0 z-10 -mx-4 flex items-center gap-2 border-b border-[#171717]/10 bg-white/85 px-4 pb-3 pt-1 text-sm font-semibold text-[#3f6382] backdrop-blur-md">
+          <h2 className="sticky top-0 z-10 -mx-4 -mt-4 flex items-center gap-2 border-b border-[#171717]/10 bg-white/85 px-4 pb-3 pt-4 text-sm font-semibold text-[#3f6382] backdrop-blur-md">
             <iconify-icon icon="mdi:tune-variant" width="16" height="16" />
             Properti
           </h2>
@@ -534,9 +534,9 @@ function BlokEditor({
                 if (draggedId && draggedId !== blok.id) onSeretKeBlok(draggedId);
             }}
             onClick={onPilih}
-            style={{ marginBottom: blok.style?.spacing ?? 4 }}
+            style={{ marginBottom: 4 }}
             className={
-                "animate-fade-in cursor-grab rounded border p-3 active:cursor-grabbing print:border-transparent " +
+                "animate-fade-in cursor-grab rounded border p-1.5 active:cursor-grabbing print:border-transparent " +
                 (terpilih ? "border-[#7895b2]" : "border-transparent hover:border-[#171717]/30")
             }
         >
@@ -940,18 +940,6 @@ function EditorBlok({
               className="h-8 w-10 cursor-pointer rounded border border-[#171717]/20 bg-transparent"
             />
           </label>
-        </div>
-        <div className="mt-3 flex items-center gap-2">
-          <label className="text-xs text-[#6e6a5e]">Jarak antar blok</label>
-          <input
-            type="range"
-            min={0}
-            max={64}
-            value={style.spacing ?? 4}
-            onChange={(e) => ubahStyle({ spacing: Number(e.target.value) })}
-            className="flex-1 accent-[#3f6382]"
-          />
-          <span className="w-8 text-right text-xs text-[#6e6a5e]">{style.spacing ?? 4}px</span>
         </div>
       </div>
 

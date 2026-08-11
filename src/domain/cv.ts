@@ -33,7 +33,6 @@ export interface CustomData {
 export interface BlockStyle {
     fontSize: number;
     color: string;
-    spacing?: number;
 }
 
 export type CVBlock =
