@@ -4,6 +4,7 @@ export interface HeaderData {
     email: string;
     phone: string;
     photo?: string; // data URL hasil upload
+    photoSize?: number; // diameter foto profil (px), default 80
 }
 
 export interface ExperienceItem {

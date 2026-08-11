@@ -674,7 +674,8 @@ function PreviewBlok({ blok, onUbah }: { blok: CVBlock; onUbah: (b: CVBlock) => 
             <img
               src={blok.data.photo}
               alt="Foto profil"
-              className="h-20 w-20 shrink-0 rounded-full object-cover"
+              style={{ width: blok.data.photoSize ?? 80, height: blok.data.photoSize ?? 80 }}
+              className="shrink-0 rounded-full object-cover"
             />
           )}
           <div className="min-w-0 flex-1">
@@ -966,10 +967,14 @@ function EditorBlok({
 
 function FotoProfil({
   photo,
+  photoSize,
   onChange,
+  onUbahUkuran,
 }: {
   photo?: string;
+  photoSize?: number;
   onChange: (photo: string) => void;
+  onUbahUkuran: (ukuran: number) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -1045,6 +1050,20 @@ function FotoProfil({
         <iconify-icon icon={photo ? "mdi:image-edit-outline" : "mdi:cloud-upload-outline"} width="17" height="17" />
         {processing ? "Memproses foto…" : photo ? "Ganti foto" : "Upload foto"}
       </button>
+      {photo && (
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-[#6e6a5e]">Ukuran</span>
+          <input
+            type="range"
+            min={48}
+            max={160}
+            value={photoSize ?? 80}
+            onChange={(e) => onUbahUkuran(Number(e.target.value))}
+            className="flex-1 accent-[#3f6382]"
+          />
+          <span className="w-8 text-right text-[11px] text-[#6e6a5e]">{photoSize ?? 80}px</span>
+        </div>
+      )}
       <p className="mt-2 text-center text-[11px] text-[#8a8578]">JPG, PNG, atau WEBP · maksimal 200px</p>
       <input
         ref={inputRef}
@@ -1074,7 +1093,12 @@ function EditorHeader({
 
   return (
     <div className="flex flex-col gap-3">
-      <FotoProfil photo={blok.data.photo} onChange={(photo) => ubah("photo", photo)} />
+      <FotoProfil
+        photo={blok.data.photo}
+        photoSize={blok.data.photoSize}
+        onChange={(photo) => ubah("photo", photo)}
+        onUbahUkuran={(ukuran) => ubah("photoSize", String(ukuran))}
+      />
       <LabelInput label="Nama" value={blok.data.fullName} onUbah={(v) => ubah("fullName", v)} />
       <LabelInput label="Judul" value={blok.data.title} onUbah={(v) => ubah("title", v)} />
       <LabelInput label="Email" value={blok.data.email} onUbah={(v) => ubah("email", v)} />
