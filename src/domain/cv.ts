@@ -37,10 +37,10 @@ export interface BlockStyle {
 }
 
 export type CVBlock =
-| {id: string; type: 'header'; order: number; visible: boolean; name?: string; page?: number; column?: 'left' | 'right'; style?: BlockStyle; data: HeaderData}
-| {id: string; type: 'experience'; order: number; visible: boolean; name?: string; page?: number; column?: 'left' | 'right'; style?: BlockStyle; data: ExperienceData}
-| {id: string; type: 'skills'; order: number; visible: boolean; name?: string; page?: number; column?: 'left' | 'right'; style?: BlockStyle; data: SkillsData}
-| {id: string; type: 'custom'; order: number; visible: boolean; name?: string; page?: number; column?: 'left' | 'right'; style?: BlockStyle; data: CustomData}
+| {id: string; type: 'header'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: HeaderData}
+| {id: string; type: 'experience'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: ExperienceData}
+| {id: string; type: 'skills'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: SkillsData}
+| {id: string; type: 'custom'; order: number; visible: boolean; name?: string; page?: number; style?: BlockStyle; data: CustomData}
 
 export interface CVDocument {
     id: string;
@@ -50,15 +50,12 @@ export interface CVDocument {
     pageCount?: number;
     templateId?: string;
     templateCategory?: TemplateCategory;
-    layout?: DocumentLayout;
     accentColor?: string;
     font?: DocumentFont;
     updatedAt: number;
 }
 
 export type TemplateCategory = "simple" | "modern" | "creative" | "photo" | "compact" | "first-job";
-
-export type DocumentLayout = "single" | "two-column";
 
 export type DocumentFont = "sans" | "serif" | "mono";
 

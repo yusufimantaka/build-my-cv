@@ -76,6 +76,13 @@ body {
     margin: 0;
   }
 
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
   body {
     background: #ffffff !important;
   }
@@ -88,6 +95,15 @@ body {
     padding: 0 !important;
     margin: 0 !important;
     background: #ffffff !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Layout fixed (h-screen flex) hanya untuk layar;
+     saat print semuanya mengalir supaya tidak ada scrollbar. */
+  main {
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .paper-sheet {
@@ -96,6 +112,7 @@ body {
     margin: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+    overflow: visible !important;
   }
 
   /* Kertas kedua dan seterusnya mulai di halaman baru.

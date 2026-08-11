@@ -26,9 +26,9 @@ export interface CVTemplate {
     blocks: TemplateBlok[];
 }
 
-const styleHeader: BlockStyle = { fontSize: 24, color: "#171717", spacing: 16 };
-const styleJudul: BlockStyle = { fontSize: 16, color: "#171717", spacing: 16 };
-const styleIsi: BlockStyle = { fontSize: 14, color: "#171717", spacing: 16 };
+const styleHeader: BlockStyle = { fontSize: 24, color: "#171717", spacing: 8 };
+const styleJudul: BlockStyle = { fontSize: 16, color: "#171717", spacing: 8 };
+const styleIsi: BlockStyle = { fontSize: 14, color: "#171717", spacing: 8 };
 
 function header(
     name: string,
@@ -410,7 +410,6 @@ export function templateKeDokumen(template: CVTemplate, judul: string): CVDocume
         blocks,
         templateId: template.id,
         templateCategory: template.category,
-        layout: "single",
         accentColor: template.accent,
         font: "sans",
         updatedAt: Date.now(),

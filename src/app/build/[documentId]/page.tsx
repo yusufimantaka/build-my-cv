@@ -11,7 +11,7 @@ const repo = new IndexedDBRepository();
 // Membuat blok baru dengan data kosong, sesuai jenisnya
 function blokBaru(type: CVBlock["type"], page: number): CVBlock {
   const id = crypto.randomUUID();
-  const style: BlockStyle = { fontSize: 16, color: "#171717" };
+  const style: BlockStyle = { fontSize: 16, color: "#171717", spacing: 8 };
   const name = type === "header" ? "Header" : type === "experience" ? "Pengalaman" : type === "skills" ? "Keahlian" : "Section";
   if (type === "header") {
     return { id, type, order: 0, visible: true, name, page, style, data: { fullName: "", title: "", email: "", phone: "" } };
@@ -82,7 +82,8 @@ function pindahkanBlokKe(daftar: CVBlock[], draggedId: string, targetId: string)
     if (daftar[i].id === draggedId) draggedIndex = i;
     if (daftar[i].id === targetId) targetIndex = i;
   }
-  if (draggedIndex === -1 || targetIndex === -1 || draggedIndex === targetIndex) return daftar;
+  if (draggedIndex === -1) return daftar;
+  if (targetIndex === -1 || draggedIndex === targetIndex) return daftar;
 
   const dragged = { ...daftar[draggedIndex], page: daftar[targetIndex].page ?? 0 };
 
@@ -438,45 +439,6 @@ export default function BuildPage() {
                 <p className="no-print mt-4 text-center text-sm text-[#6e6a5e]">
                   Halaman kosong. Seret blok ke sini.
                 </p>
-              ) : doc.layout === "two-column" ? (
-                <div className="grid grid-cols-[34%_1fr] gap-6">
-                  <div className="min-w-0">
-                    {blokDiHalaman(doc, page)
-                      .filter((b) => (b.column ?? "right") === "left")
-                      .map((blok, index) => (
-                        <BlokEditor
-                          key={blok.id}
-                          blok={blok}
-                          index={index}
-                          totalDiHalaman={blokDiHalaman(doc, page).filter((b) => (b.column ?? "right") === "left").length}
-                          terpilih={selectedId === blok.id}
-                          onPilih={() => setSelectedId(blok.id)}
-                          onPindah={(arah) => pindahBlok(blok.id, arah)}
-                          onHapus={() => hapusBlok(blok.id)}
-                          onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
-                          onUbah={perbaruiBlok}
-                        />
-                      ))}
-                  </div>
-                  <div className="min-w-0">
-                    {blokDiHalaman(doc, page)
-                      .filter((b) => (b.column ?? "right") === "right")
-                      .map((blok, index) => (
-                        <BlokEditor
-                          key={blok.id}
-                          blok={blok}
-                          index={index}
-                          totalDiHalaman={blokDiHalaman(doc, page).filter((b) => (b.column ?? "right") === "right").length}
-                          terpilih={selectedId === blok.id}
-                          onPilih={() => setSelectedId(blok.id)}
-                          onPindah={(arah) => pindahBlok(blok.id, arah)}
-                          onHapus={() => hapusBlok(blok.id)}
-                          onSeretKeBlok={(draggedId) => seretBlokKeBlok(draggedId, blok.id)}
-                          onUbah={perbaruiBlok}
-                        />
-                      ))}
-                  </div>
-                </div>
               ) : (
                 blokDiHalaman(doc, page).map((blok, index) => (
                   <BlokEditor
@@ -522,7 +484,7 @@ export default function BuildPage() {
             Properti
           </h2>
           {blokTerpilih ? (
-            <EditorBlok blok={blokTerpilih} onChange={perbaruiBlok} twoColumn={doc.layout === "two-column"} />
+            <EditorBlok blok={blokTerpilih} onChange={perbaruiBlok} />
           ) : (
             <EditorDokumen doc={doc} onChange={perbaruiDokumen} />
           )}
@@ -534,8 +496,8 @@ export default function BuildPage() {
 
 // ===== Preview kertas =====
 
-// Satu blok editor di dalam kertas. Props eksplisit supaya bisa dipakai
-// di layout 1 kolom maupun 2 kolom tanpa menangkap state komponen induk.
+// Satu blok editor di dalam kertas. Props eksplisit supaya tidak menangkap
+// state komponen induk.
 function BlokEditor({
     blok,
     index,
@@ -572,7 +534,7 @@ function BlokEditor({
                 if (draggedId && draggedId !== blok.id) onSeretKeBlok(draggedId);
             }}
             onClick={onPilih}
-            style={{ marginBottom: blok.style?.spacing ?? 24 }}
+            style={{ marginBottom: blok.style?.spacing ?? 8 }}
             className={
                 "animate-fade-in cursor-grab rounded border p-4 active:cursor-grabbing print:border-transparent " +
                 (terpilih ? "border-[#7895b2]" : "border-transparent hover:border-[#171717]/30")
@@ -660,13 +622,16 @@ function TeksEditable({
     }
 
     if (multiline) {
+        // rows mengikuti jumlah baris isi, supaya textarea tumbuh
+        // dan kertas menyesuaikan tinggi secara dinamis.
+        const jumlahBaris = Math.min(Math.max(value.split("\n").length, 2), 30);
         return (
             <textarea
                 ref={inputRef as React.RefObject<HTMLTextAreaElement>}
                 value={value}
                 onChange={ubahTeks}
                 placeholder={placeholder}
-                rows={2}
+                rows={jumlahBaris}
                 style={gaya}
                 className={kelas}
             />
@@ -890,24 +855,11 @@ function EditorDokumen({
     onChange: (perubahan: Partial<CVDocument>) => void;
 }) {
     const accent = doc.accentColor ?? "#3F6382";
-    const layout = doc.layout ?? "single";
     const font = doc.font ?? "sans";
 
     return (
         <div className="mt-3 flex flex-col gap-3">
             <p className="text-sm text-[#6e6a5e]">Pengaturan dokumen</p>
-
-            <div className="rounded border border-[#171717]/10 p-3">
-                <p className="text-xs text-[#6e6a5e]">Layout</p>
-                <select
-                    value={layout}
-                    onChange={(e) => onChange({ layout: e.target.value as CVDocument["layout"] })}
-                    className="mt-2 w-full rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
-                >
-                    <option value="single">Satu kolom</option>
-                    <option value="two-column">Dua kolom</option>
-                </select>
-            </div>
 
             <div className="rounded border border-[#171717]/10 p-3">
                 <p className="text-xs text-[#6e6a5e]">Warna aksen</p>
@@ -941,11 +893,9 @@ function EditorDokumen({
 function EditorBlok({
     blok,
     onChange,
-    twoColumn,
 }: {
     blok: CVBlock;
     onChange: (b: CVBlock) => void;
-    twoColumn: boolean;
 }) {
   // Kontrol gaya berlaku untuk semua jenis blok
   const style = blok.style ?? { fontSize: 16, color: "#171717" };
@@ -958,27 +908,9 @@ function EditorBlok({
     onChange({ ...blok, name: nilai });
   }
 
-  function ubahKolom(nilai: "left" | "right"): void {
-    onChange({ ...blok, column: nilai });
-  }
-
   return (
     <div className="mt-3 flex flex-col gap-3">
       <LabelInput label="Nama blok" value={blok.name ?? ""} onUbah={ubahNama} />
-
-      {twoColumn && (
-        <div className="rounded border border-[#171717]/10 p-3">
-          <p className="text-xs text-[#6e6a5e]">Kolom</p>
-          <select
-            value={blok.column ?? "right"}
-            onChange={(e) => ubahKolom(e.target.value as "left" | "right")}
-            className="mt-2 w-full rounded bg-[#f0ece3] px-2 py-1.5 text-sm outline-none focus:bg-[#e8e3d8]"
-          >
-            <option value="right">Kanan (utama)</option>
-            <option value="left">Kiri (sidebar)</option>
-          </select>
-        </div>
-      )}
 
       <div className="rounded border border-[#171717]/10 p-3">
         <p className="text-xs text-[#6e6a5e]">Ukuran & warna</p>
@@ -1010,11 +942,11 @@ function EditorBlok({
             type="range"
             min={0}
             max={64}
-            value={style.spacing ?? 24}
+            value={style.spacing ?? 8}
             onChange={(e) => ubahStyle({ spacing: Number(e.target.value) })}
             className="flex-1 accent-[#3f6382]"
           />
-          <span className="w-8 text-right text-xs text-[#6e6a5e]">{style.spacing ?? 24}px</span>
+          <span className="w-8 text-right text-xs text-[#6e6a5e]">{style.spacing ?? 8}px</span>
         </div>
       </div>
 

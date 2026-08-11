@@ -75,7 +75,7 @@ export default function LibraryPage() {
                             style={{ animationDelay: `${Math.min(idx * 50, 400)}ms` }}
                         >
                             {/* Thumbnail template */}
-                            <TemplateThumb accent={t.accent} twoColumn={t.category === "modern" || t.category === "compact"} />
+                            <TemplateThumb accent={t.accent} />
 
                             <div className="mt-4 flex items-start justify-between gap-2">
                                 <h2 className="font-semibold leading-tight">{t.name}</h2>
