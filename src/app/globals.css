@@ -115,6 +115,14 @@ body {
     overflow: visible !important;
   }
 
+  /* Textarea di kertas: tanpa scrollbar internal, isi tercetak penuh */
+  .paper-sheet textarea,
+  .paper-sheet input {
+    overflow: visible !important;
+    height: auto !important;
+    resize: none !important;
+  }
+
   /* Kertas kedua dan seterusnya mulai di halaman baru.
      Dipakai break-before, bukan break-after, supaya kertas
      terakhir tidak menghasilkan halaman kosong ekstra. */

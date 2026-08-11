@@ -625,6 +625,16 @@ function TeksEditable({
         element.setSelectionRange(selection.start, selection.end);
     }, [value]);
 
+    // Auto-resize textarea: tinggi mengikuti isi (termasuk wrap otomatis),
+    // bukan hanya jumlah newline. Tanpa ini, deskripsi panjang terpotong
+    // dan scroll internalnya ikut tercetak saat export.
+    useLayoutEffect(() => {
+        const element = inputRef.current;
+        if (!element || element.tagName !== "TEXTAREA") return;
+        element.style.height = "auto";
+        element.style.height = `${element.scrollHeight}px`;
+    }, [value]);
+
     function ubahTeks(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         selectionRef.current = {
             start: event.target.selectionStart ?? event.target.value.length,
@@ -634,18 +644,15 @@ function TeksEditable({
     }
 
     if (multiline) {
-        // rows mengikuti jumlah baris isi, supaya textarea tumbuh
-        // dan kertas menyesuaikan tinggi secara dinamis.
-        const jumlahBaris = Math.min(Math.max(value.split("\n").length, 1), 30);
         return (
             <textarea
                 ref={inputRef as React.RefObject<HTMLTextAreaElement>}
                 value={value}
                 onChange={ubahTeks}
                 placeholder={placeholder}
-                rows={jumlahBaris}
+                rows={1}
                 style={gaya}
-                className={kelas}
+                className={kelas + " overflow-hidden"}
             />
         );
     }
