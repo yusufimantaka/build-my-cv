@@ -295,16 +295,20 @@ export default function BuildPage() {
             Tambah blok
           </h2>
           <div className="mt-3 flex flex-col gap-2">
-            <button onClick={() => tambahBlok("header")} className="rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm hover:bg-[#e8e3d8]">
+            <button onClick={() => tambahBlok("header")} className="flex items-center gap-2 rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm transition-transform hover:bg-[#e8e3d8] hover:scale-[1.02] active:scale-95">
+              <iconify-icon icon="mdi:account-circle-outline" width="16" height="16" className="text-[#3f6382]" />
               Header
             </button>
-            <button onClick={() => tambahBlok("experience")} className="rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm hover:bg-[#e8e3d8]">
+            <button onClick={() => tambahBlok("experience")} className="flex items-center gap-2 rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm transition-transform hover:bg-[#e8e3d8] hover:scale-[1.02] active:scale-95">
+              <iconify-icon icon="mdi:briefcase-outline" width="16" height="16" className="text-[#3f6382]" />
               Experience
             </button>
-            <button onClick={() => tambahBlok("skills")} className="rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm hover:bg-[#e8e3d8]">
+            <button onClick={() => tambahBlok("skills")} className="flex items-center gap-2 rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm transition-transform hover:bg-[#e8e3d8] hover:scale-[1.02] active:scale-95">
+              <iconify-icon icon="mdi:lightbulb-on-outline" width="16" height="16" className="text-[#3f6382]" />
               Skills
             </button>
-            <button onClick={() => tambahBlok("custom")} className="rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm hover:bg-[#e8e3d8]">
+            <button onClick={() => tambahBlok("custom")} className="flex items-center gap-2 rounded-md bg-[#f0ece3] px-3 py-2 text-left text-sm transition-transform hover:bg-[#e8e3d8] hover:scale-[1.02] active:scale-95">
+              <iconify-icon icon="mdi:text-box-outline" width="16" height="16" className="text-[#3f6382]" />
               Section
             </button>
           </div>
